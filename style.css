@@ -23,3 +23,8 @@
 .founderCopy blockquote{margin:0;padding:0;border:0;font-size:20px;line-height:1.7;color:#d2d2d2}
 .aboutVision{text-align:center;padding:72px 18px 90px;max-width:900px;margin:auto}.aboutVision p{color:#aaa;line-height:1.7;font-size:18px;margin:0 auto 28px;max-width:760px}
 @media(max-width:800px){.aboutGrid,.proofGrid,.founderSection{grid-template-columns:1fr}.aboutHero{padding-top:42px}.founderSection{gap:28px}.proofGrid strong{font-size:44px}}
+
+html[dir="rtl"] body{text-align:right}
+html[dir="rtl"] .topbar,html[dir="rtl"] .row,html[dir="rtl"] .actions,html[dir="rtl"] .tools{direction:rtl}
+html[dir="rtl"] input,html[dir="rtl"] select,html[dir="rtl"] textarea{text-align:right}
+html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad4b;padding-left:0;padding-right:20px}
