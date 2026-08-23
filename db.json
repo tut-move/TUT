@@ -1,0 +1,186 @@
+{
+  "users": [
+    {
+      "id": "u_f69487c1ce",
+      "name": "Demo Market",
+      "email": "demo@capacity.local",
+      "role": "carrier",
+      "verified": true,
+      "salt": "b03c69f1e08a036bb1f8c30338e98330",
+      "hash": "b949daeda67c3d37ea930e70b2a1b8a8995740400e077d40cf8e755254b0cecb29c158665de2ab9691a0758496e55c25841d07d65e619bd02097ee93d29764ee",
+      "createdAt": "2026-08-22T16:10:03.543Z"
+    },
+    {
+      "id": "u_6b081103bd",
+      "name": "Test Carrier",
+      "email": "test@example.com",
+      "role": "carrier",
+      "verified": false,
+      "salt": "487fd60c13310ebb19d7aeebe0d6cf75",
+      "hash": "6f9e556aea9a340d528127ac5afd480b9506971903a0f511781ddac7e6d485af2d73d1430c578c8f26eff2c0f3c1aa6f88b104bc0bfb69ef28e28238e39a7cc6",
+      "createdAt": "2026-08-22T16:10:11.187Z"
+    }
+  ],
+  "listings": [
+    {
+      "id": "l_a6fcba1297",
+      "userId": "u_f69487c1ce",
+      "type": "driver",
+      "data": {
+        "location": "Dallas, TX",
+        "date": "2026-08-25",
+        "hours": 12,
+        "license": "CDL-A",
+        "experience": 6,
+        "radius": 40,
+        "endorsements": "Hazmat",
+        "minPay": 320
+      },
+      "status": "open",
+      "createdAt": "2026-08-22T16:10:03.543Z"
+    },
+    {
+      "id": "l_84fe74386b",
+      "userId": "u_f69487c1ce",
+      "type": "driver",
+      "data": {
+        "location": "Fort Worth, TX",
+        "date": "2026-08-25",
+        "hours": 10,
+        "license": "CDL-A",
+        "experience": 4,
+        "radius": 55,
+        "endorsements": "",
+        "minPay": 300
+      },
+      "status": "open",
+      "createdAt": "2026-08-22T16:10:03.543Z"
+    },
+    {
+      "id": "l_c606fb868c",
+      "userId": "u_f69487c1ce",
+      "type": "truck",
+      "data": {
+        "location": "Dallas, TX",
+        "date": "2026-08-25",
+        "hours": 12,
+        "equipment": "Dry Van 53'",
+        "capacity": 45000,
+        "price": 480,
+        "carrier": "Demo Carrier"
+      },
+      "status": "open",
+      "createdAt": "2026-08-22T16:10:03.543Z"
+    },
+    {
+      "id": "l_211d6735bb",
+      "userId": "u_f69487c1ce",
+      "type": "load",
+      "data": {
+        "pickup": "Dallas, TX",
+        "delivery": "Austin, TX",
+        "date": "2026-08-25",
+        "weight": 32000,
+        "equipment": "Dry Van 53'",
+        "budget": 1450,
+        "pallets": 18
+      },
+      "status": "open",
+      "createdAt": "2026-08-22T16:10:03.543Z"
+    },
+    {
+      "id": "l_a06e46b79b",
+      "userId": "u_f69487c1ce",
+      "type": "warehouse",
+      "data": {
+        "location": "Dallas, TX",
+        "from": "2026-08-22",
+        "to": "2026-09-30",
+        "pallets": 220,
+        "price": 1.8,
+        "capabilities": "Dock, forklift"
+      },
+      "status": "open",
+      "createdAt": "2026-08-22T16:10:03.543Z"
+    },
+    {
+      "id": "l_95160a2a41",
+      "userId": "u_f69487c1ce",
+      "type": "storage_need",
+      "data": {
+        "location": "Dallas, TX",
+        "from": "2026-08-27",
+        "to": "2026-09-05",
+        "pallets": 80,
+        "budget": 2.4,
+        "requirements": "Forklift"
+      },
+      "status": "open",
+      "createdAt": "2026-08-22T16:10:03.543Z"
+    }
+  ],
+  "matches": [
+    {
+      "id": "m_92ee85cfc8",
+      "kind": "load_truck",
+      "score": 100,
+      "listingIds": [
+        "l_211d6735bb",
+        "l_c606fb868c"
+      ],
+      "createdAt": "2026-08-22T16:10:11.201Z"
+    },
+    {
+      "id": "m_7c2a687520",
+      "kind": "load_truck_driver",
+      "score": 100,
+      "listingIds": [
+        "l_211d6735bb",
+        "l_c606fb868c",
+        "l_a6fcba1297"
+      ],
+      "createdAt": "2026-08-22T16:10:11.201Z"
+    },
+    {
+      "id": "m_e370012ca3",
+      "kind": "load_truck_driver",
+      "score": 100,
+      "listingIds": [
+        "l_211d6735bb",
+        "l_c606fb868c",
+        "l_84fe74386b"
+      ],
+      "createdAt": "2026-08-22T16:10:11.201Z"
+    },
+    {
+      "id": "m_936570f627",
+      "kind": "driver_truck",
+      "score": 90,
+      "listingIds": [
+        "l_a6fcba1297",
+        "l_c606fb868c"
+      ],
+      "createdAt": "2026-08-22T16:10:11.201Z"
+    },
+    {
+      "id": "m_d5422b578b",
+      "kind": "warehouse_storage",
+      "score": 90,
+      "listingIds": [
+        "l_a06e46b79b",
+        "l_95160a2a41"
+      ],
+      "createdAt": "2026-08-22T16:10:11.202Z"
+    },
+    {
+      "id": "m_6690eedc1f",
+      "kind": "driver_truck",
+      "score": 75,
+      "listingIds": [
+        "l_84fe74386b",
+        "l_c606fb868c"
+      ],
+      "createdAt": "2026-08-22T16:10:11.201Z"
+    }
+  ]
+}

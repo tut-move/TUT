@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#080808">
+  <meta name="description" content="TUT connects unused drivers, trucks, loads and warehouse capacity in one live marketplace.">
+  <title>TUT — Turn Unused Into Transport</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <button class="brandLockup" onclick="go('home')" aria-label="TUT home">
+      <span class="brandGlyph">TUT</span>
+      <span><strong>TUT</strong><small>Turn Unused Into Transport</small></span>
+    </button>
+    <nav class="desktopNav" aria-label="Main navigation">
+      <button data-tab="market" onclick="go('market',this)">Market</button>
+      <button data-tab="post" onclick="go('post',this)">Post capacity</button>
+      <button data-tab="matches" onclick="go('matches',this)">Matches</button>
+    </nav>
+    <div id="account"></div>
+  </header>
+
+  <main>
+    <section id="home" class="pane">
+      <div class="hero">
+        <div class="heroCopy">
+          <span class="eyebrow">LIVE CAPACITY MARKETPLACE</span>
+          <h1>Turn unused capacity<br><em>into movement.</em></h1>
+          <p>TUT connects drivers, trucks, loads and warehouse space — so idle capacity can become a real transaction.</p>
+          <div class="heroActions">
+            <button class="goldBtn" onclick="go('market')">Explore live market</button>
+            <button class="outlineBtn" onclick="go('post')">Post what you have</button>
+          </div>
+          <div class="trustRow"><span>Drivers</span><i>•</i><span>Trucks</span><i>•</i><span>Loads</span><i>•</i><span>Warehouses</span></div>
+        </div>
+        <div class="heroVisual">
+          <img src="/tut-emblem.png" alt="TUT gold and black emblem">
+        </div>
+      </div>
+
+      <section class="valueStrip">
+        <article><span>01</span><h3>Post</h3><p>Tell TUT what you have or what you need.</p></article>
+        <article><span>02</span><h3>Match</h3><p>The engine combines location, time, capacity and requirements.</p></article>
+        <article><span>03</span><h3>Move</h3><p>Compatible resources become an executable opportunity.</p></article>
+      </section>
+
+      <section class="sectionBlock">
+        <div class="sectionHead"><span class="eyebrow">ONE NETWORK</span><h2>Four resources. One market.</h2></div>
+        <div class="resourceGrid">
+          <article class="resourceCard"><div class="icon">D</div><h3>Driver</h3><p>Available time, licence, endorsements and location become searchable capacity.</p><button onclick="go('post'); setPostType('driver')">Post driver</button></article>
+          <article class="resourceCard"><div class="icon">T</div><h3>Truck</h3><p>Make an idle truck visible by equipment type, capacity, time and location.</p><button onclick="go('post'); setPostType('truck')">Post truck</button></article>
+          <article class="resourceCard"><div class="icon">L</div><h3>Load</h3><p>Publish a shipment and let the market find compatible transport capacity.</p><button onclick="go('post'); setPostType('load')">Post load</button></article>
+          <article class="resourceCard"><div class="icon">W</div><h3>Warehouse</h3><p>Turn empty pallet positions and temporary storage space into market inventory.</p><button onclick="go('post'); setPostType('warehouse')">Post space</button></article>
+        </div>
+      </section>
+
+      <section class="darkPanel">
+        <div><span class="eyebrow">THE DIFFERENCE</span><h2>Not just a load board.</h2><p>TUT can combine independent resources into one opportunity: a load, an available truck and a qualified driver.</p></div>
+        <div class="formula"><span>LOAD</span><b>+</b><span>TRUCK</span><b>+</b><span>DRIVER</span><b>=</b><strong>MATCH</strong></div>
+      </section>
+    </section>
+
+    <section id="market" class="pane hidden">
+      <div class="pageHead"><div><span class="eyebrow">MARKETPLACE</span><h1>Open capacity</h1><p>Live listings across the TUT network.</p></div><button class="goldBtn" onclick="seedDemo()">Load demo market</button></div>
+      <div class="kpis" id="kpis"></div>
+      <div id="marketList" class="cards"></div>
+    </section>
+
+    <section id="post" class="pane hidden">
+      <div class="pageHead"><div><span class="eyebrow">PUBLISH</span><h1>Post capacity or demand</h1><p>Create a listing the matching engine can use.</p></div></div>
+      <div class="panel formPanel">
+        <label>Listing type</label>
+        <select id="type" onchange="renderFields()">
+          <option value="driver">Driver available</option>
+          <option value="truck">Truck available</option>
+          <option value="load">Load needs transport</option>
+          <option value="warehouse">Warehouse space available</option>
+          <option value="storage_need">Storage needed</option>
+        </select>
+        <div id="fields"></div>
+        <button class="goldBtn full" onclick="submitListing()">Publish listing</button>
+        <div id="postMsg" class="msg"></div>
+      </div>
+    </section>
+
+    <section id="matches" class="pane hidden">
+      <div class="pageHead"><div><span class="eyebrow">MATCHING ENGINE</span><h1>Best opportunities</h1><p>Direct and combined matches from the live market.</p></div><button class="outlineBtn" onclick="loadMatches()">Refresh matches</button></div>
+      <div id="matchList" class="cards"></div>
+    </section>
+
+    <section id="accountPane" class="pane hidden"><div class="pageHead"><div><span class="eyebrow">ACCOUNT</span><h1>Join TUT</h1><p>Create an account or sign back in.</p></div></div><div id="authArea"></div></section>
+  </main>
+
+  <footer>
+    <div><strong>TUT</strong><span>Turn Unused Into Transport</span></div>
+    <p>Validation build — real transportation requires identity, safety, insurance, payment and jurisdiction-specific compliance controls.</p>
+  </footer>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
