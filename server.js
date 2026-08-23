@@ -101,7 +101,6 @@ function auth(req) {
 
   return readDB().users.find(u => u.id === uid) || null;
 }
-
 function hashPassword(
   p,
   salt = crypto.randomBytes(16).toString('hex')
