@@ -1,5 +1,9 @@
 {
   "users": [],
   "listings": [],
-  "matches": []
+  "offers": [],
+  "bookings": [],
+  "matches": [],
+  "verifications": [],
+  "settings": {"platformFeePct": 5, "defaultCurrency": "USD"}
 }
