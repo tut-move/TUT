@@ -5,7 +5,7 @@ const crypto = require('crypto');
 const { URL } = require('url');
 
 const ROOT = __dirname;
-const PUBLIC = path.join(ROOT, 'public');
+const PUBLIC = ROOT;
 const DBFILE = path.join(ROOT, 'data', 'db.json');
 const PORT = process.env.PORT || 3000;
 const sessions = new Map();
@@ -35,7 +35,7 @@ function recomputeMatches(db){const open=db.listings.filter(x=>x.status==='open'
  for(const sn of S)for(const w of W){const s=scoreWarehouse(w.data,sn.data);if(s>=45)out.push({id:id('m'),kind:'warehouse_storage',score:s,listingIds:[w.id,sn.id],createdAt:new Date().toISOString()})}
  out.sort((a,b)=>b.score-a.score);db.matches=out.slice(0,200);return db.matches;
 }
-function serveStatic(req,res,pathname){let p=pathname==='/'?'/index.html':pathname;const f=path.normalize(path.join(PUBLIC,p));if(!f.startsWith(PUBLIC))return false;if(!fs.existsSync(f)||fs.statSync(f).isDirectory())return false;const ext=path.extname(f);const ct={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'application/javascript','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg'}[ext]||'application/octet-stream';const b=fs.readFileSync(f);res.writeHead(200,{'Content-Type':ct,'Content-Length':b.length});res.end(b);return true}
+function serveStatic(req,res,pathname){const allowed=new Set(['/','/index.html','/app.js','/style.css','/tut-emblem.png']);let p=pathname==='/'?'/index.html':pathname;if(!allowed.has(pathname)&&!allowed.has(p))return false;const f=path.join(PUBLIC,p.slice(1));if(!fs.existsSync(f)||fs.statSync(f).isDirectory())return false;const ext=path.extname(f);const ct={'.html':'text/html; charset=utf-8','.css':'text/css','.js':'application/javascript','.png':'image/png'}[ext]||'application/octet-stream';const b=fs.readFileSync(f);res.writeHead(200,{'Content-Type':ct,'Content-Length':b.length});res.end(b);return true}
 
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`), p=url.pathname;
