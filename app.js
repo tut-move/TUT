@@ -46,7 +46,7 @@ const countries=['United States','Canada','Germany','France','Netherlands','Belg
 const T={en:{tagline:'Turn Unused Into Transport',market:'Market',post:'Post',matches:'Matches',offers:'Offers',verify:'Verify',heroTitle:'One place for what you have — and what you need.',heroText:'Drivers, trucks, loads and warehouse space. The market chooses the price. TUT Move brings the sides together.',postHaveNeed:'Post I HAVE / I NEED',browse:'Browse market'},ar:{tagline:'حوّل السعة غير المستخدمة إلى حركة',market:'السوق',post:'انشر',matches:'المطابقات',offers:'العروض',verify:'التحقق',heroTitle:'مكان واحد لما لديك — وما تحتاجه.',heroText:'سائقون وشاحنات وحمولات ومساحات تخزين. السوق يحدد السعر وTUT Move يجمع الأطراف.',postHaveNeed:'انشر عندي / أحتاج',browse:'تصفح السوق'},de:{tagline:'Ungenutzte Kapazität in Bewegung bringen',market:'Markt',post:'Inserieren',matches:'Matches',offers:'Angebote',verify:'Verifizieren',heroTitle:'Ein Ort für das, was Sie haben — und brauchen.',heroText:'Fahrer, Lkw, Ladungen und Lagerfläche. Der Markt bestimmt den Preis.',postHaveNeed:'ICH HABE / ICH BRAUCHE',browse:'Markt ansehen'},fr:{tagline:'Transformer la capacité inutilisée en mouvement',market:'Marché',post:'Publier',matches:'Correspondances',offers:'Offres',verify:'Vérifier',heroTitle:'Un seul endroit pour ce que vous avez — et ce dont vous avez besoin.',heroText:'Chauffeurs, camions, chargements et entrepôts. Le marché fixe le prix.',postHaveNeed:"Publier J’AI / J’AI BESOIN",browse:'Voir le marché'},es:{tagline:'Convierte capacidad sin usar en movimiento',market:'Mercado',post:'Publicar',matches:'Coincidencias',offers:'Ofertas',verify:'Verificar',heroTitle:'Un lugar para lo que tienes — y lo que necesitas.',heroText:'Conductores, camiones, cargas y almacenes. El mercado decide el precio.',postHaveNeed:'Publicar TENGO / NECESITO',browse:'Ver mercado'}};
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 async function api(p,o={}){o.headers={'Content-Type':'application/json',...(o.headers||{})};const r=await fetch(p,o);const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Request failed');return j}
-function go(id){document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');if(id==='market')loadMarket();if(id==='matches')loadMatches();if(id==='offers'){loadOffers();loadBookings()}if(id==='adminPane')loadAdmin();if(id==='verify')loadVerification();scrollTo({top:0,behavior:'smooth'})}
+function go(id){document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');if(id==='post')scheduleMapRefresh();if(id==='market')loadMarket();if(id==='matches')loadMatches();if(id==='offers'){loadOffers();loadBookings()}if(id==='adminPane')loadAdmin();if(id==='verify')loadVerification();scrollTo({top:0,behavior:'smooth'})}
 function setLanguage(lang){
   activeLang=lang;
   localStorage.setItem('tut_lang',lang);
@@ -61,28 +61,244 @@ function setLanguage(lang){
   });
   refreshLanguage();
 }
-function fillCountries(){for(const id of ['listingCountry','verifyCountry'])$(id).innerHTML=countries.map(c=>`<option>${c}</option>`).join('')}
-async function init(){fillCountries();setLanguage(localStorage.getItem('tut_lang')||'en');const j=await api('/api/me');me=j.user;renderAccount();renderAuth();renderFields();togglePrice();await ownerStatus();await loadMarket()}
+function fillCountries(){ detectLocalMarket(); }
+async function init(){
+  setLanguage(localStorage.getItem('tut_lang')||'en');
+  const j=await api('/api/me'); me=j.user;
+  detectLocalMarket();
+  renderAccount();renderAuth();renderFields();togglePrice();
+  await ownerStatus();await loadMarket();
+}
 function renderAccount(){if(me){$('account').innerHTML=`<button class="outlineBtn mini" onclick="go('${me.role==='owner'?'adminPane':'accountPane'}')">${esc(me.name)}</button><button class="linkBtn" onclick="logout()">Logout</button>`;$('adminNav').classList.toggle('hidden',me.role!=='owner')}else{$('account').innerHTML=`<button class="goldBtn mini" onclick="go('accountPane')">Login / Join</button>`;$('adminNav').classList.add('hidden')}}
 async function ownerStatus(){const j=await api('/api/owner/status');$('ownerSetup').innerHTML=j.ownerConfigured?'':`<div class="panel ownerSetup"><h3>First-time Owner Setup</h3><p>Create the one platform-owner account. This closes after the first owner is created.</p><input id="oname" placeholder="Owner name"><input id="oemail" type="email" placeholder="Owner email"><input id="opass" type="password" placeholder="Password (10+ characters)"><button class="goldBtn" onclick="setupOwner()">Create Owner Account</button><div id="ownerMsg" class="msg"></div></div>`}
 async function setupOwner(){try{const j=await api('/api/owner/setup',{method:'POST',body:JSON.stringify({name:$('oname').value,email:$('oemail').value,password:$('opass').value,language:$('lang').value})});me=j.user;renderAccount();await ownerStatus();go('adminPane')}catch(e){$('ownerMsg').textContent=e.message}}
-function renderAuth(){if(me){$('authArea').innerHTML=`<div class="panel"><h3>${esc(me.name)}</h3><p>${esc(me.email)}</p><p>Roles: ${(me.roles||[]).map(esc).join(', ')}</p><p>Verification: <b>${esc(me.verificationStatus)}</b></p></div>`;return}$('authArea').innerHTML=`<div class="authGrid"><div class="panel"><h3>Create account</h3><input id="rname" placeholder="Name"><input id="remail" type="email" placeholder="Email"><input id="rpass" type="password" placeholder="Password (8+ characters)"><label>Your marketplace roles</label><div class="checks">${['driver','truck_owner','carrier','shipper','warehouse_owner'].map(r=>`<label><input type="checkbox" name="role" value="${r}"> ${r.replace('_',' ')}</label>`).join('')}</div><label>Country</label><select id="rcountry">${countries.map(c=>`<option>${c}</option>`).join('')}</select><button class="goldBtn" onclick="register()">Create account</button><div id="rmsg" class="msg"></div></div><div class="panel"><h3>Login</h3><input id="lemail" type="email" placeholder="Email"><input id="lpass" type="password" placeholder="Password"><button class="outlineBtn" onclick="login()">Login</button><div id="lmsg" class="msg"></div></div></div>`}
-async function register(){try{const roles=[...document.querySelectorAll('input[name=role]:checked')].map(x=>x.value);const j=await api('/api/register',{method:'POST',body:JSON.stringify({name:$('rname').value,email:$('remail').value,password:$('rpass').value,roles,country:$('rcountry').value,language:$('lang').value,currency:currencyFor($('rcountry').value)})});me=j.user;renderAccount();renderAuth();go('post')}catch(e){$('rmsg').textContent=e.message}}
+function renderAuth(){if(me){$('authArea').innerHTML=`<div class="panel"><h3>${esc(me.name)}</h3><p>${esc(me.email)}</p><p>Roles: ${(me.roles||[]).map(esc).join(', ')}</p><p>Verification: <b>${esc(me.verificationStatus)}</b></p></div>`;return}$('authArea').innerHTML=`<div class="authGrid"><div class="panel"><h3>Create account</h3><input id="rname" placeholder="Name"><input id="remail" type="email" placeholder="Email"><input id="rpass" type="password" placeholder="Password (8+ characters)"><label>Your marketplace roles</label><div class="checks">${['driver','truck_owner','carrier','shipper','warehouse_owner'].map(r=>`<label><input type="checkbox" name="role" value="${r}"> ${r.replace('_',' ')}</label>`).join('')}</div><label>Local market</label><div class="autoCurrency">${esc((detectedMarket.province?detectedMarket.country+' · '+detectedMarket.province:detectedMarket.country))}</div><input id="rcountry" type="hidden" value="${esc(detectedMarket.country)}"><button class="goldBtn" onclick="register()">Create account</button><div id="rmsg" class="msg"></div></div><div class="panel"><h3>Login</h3><input id="lemail" type="email" placeholder="Email"><input id="lpass" type="password" placeholder="Password"><button class="outlineBtn" onclick="login()">Login</button><div id="lmsg" class="msg"></div></div></div>`}
+async function register(){try{detectLocalMarket();const roles=[...document.querySelectorAll('input[name=role]:checked')].map(x=>x.value);const j=await api('/api/register',{method:'POST',body:JSON.stringify({name:$('rname').value,email:$('remail').value,password:$('rpass').value,roles,country:$('rcountry').value,language:$('lang').value,currency:currencyFor($('rcountry').value)})});me=j.user;renderAccount();renderAuth();go('post')}catch(e){$('rmsg').textContent=e.message}}
 async function login(){try{const j=await api('/api/login',{method:'POST',body:JSON.stringify({email:$('lemail').value,password:$('lpass').value})});me=j.user;renderAccount();renderAuth();go(me.role==='owner'?'adminPane':'market')}catch(e){$('lmsg').textContent=e.message}}
 async function logout(){await api('/api/logout',{method:'POST'});me=null;renderAccount();renderAuth();go('home')}
-function currencyFor(c){if(c==='Canada')return'CAD';if(c==='United Kingdom')return'GBP';if(c==='United Arab Emirates')return'AED';if(c==='Saudi Arabia')return'SAR';if(c==='Qatar')return'QAR';if(['United States'].includes(c))return'USD';return'EUR'}
+
+const EU_HEAVY_COUNTRIES=new Set(['Germany','France','Netherlands','Belgium','Spain','Italy','Poland','Austria','Ireland','Sweden','Denmark','Finland','Czechia','Portugal','Greece','Romania']);
+const MARKET_PROFILES={
+  'United States':{currency:'USD',units:'imperial',licenceTitle:'Commercial Driver’s License (CDL)',licences:[
+    ['Class A CDL','Combination vehicles ≥26,001 lb with towed unit >10,000 lb'],
+    ['Class B CDL','Single heavy vehicle ≥26,001 lb; limited towing'],
+    ['Class C CDL','Commercial passenger/hazardous-material vehicle not meeting A/B']
+  ],endorsements:['H — Hazardous Materials','N — Tank Vehicles','P — Passenger','S — School Bus','T — Double/Triple Trailers','X — Tank + Hazmat']},
+  'Germany':{currency:'EUR',units:'metric',licenceTitle:'EU/German heavy-vehicle categories',licences:[
+    ['C1','>3,500 kg to 7,500 kg; trailer ≤750 kg'],
+    ['C1E','C1 combination with trailer >750 kg; combination ≤12,000 kg'],
+    ['C','>3,500 kg; trailer ≤750 kg'],
+    ['CE','Category C with trailer/semi-trailer >750 kg']
+  ],endorsements:['ADR','Driver CPC / Berufskraftfahrer qualification']},
+  'United Kingdom':{currency:'GBP',units:'metric',licenceTitle:'UK lorry licence categories',licences:[
+    ['C1','Medium-sized vehicles 3,500–7,500 kg'],
+    ['C1E','C1 vehicle with trailer'],
+    ['C','Large goods vehicle over 3,500 kg'],
+    ['CE','Category C vehicle with trailer']
+  ],endorsements:['Driver CPC','ADR']},
+  'Canada':{currency:'CAD',units:'metric',licenceTitle:'Provincial commercial licence',licences:[
+    ['Class 1 / A equivalent','Tractor-trailer / heavy combination — exact name depends on province'],
+    ['Class 3 / D equivalent','Heavy straight truck — exact name depends on province']
+  ],endorsements:['Air brake endorsement where required']},
+  'United Arab Emirates':{currency:'AED',units:'metric',licenceTitle:'UAE commercial/heavy vehicle categories',licences:[
+    ['Heavy Vehicle Driving Licence','Light and heavy vehicles'],
+    ['Cargo Transport Vehicle Licence','Cargo transport vehicles within category limits'],
+    ['Tractors / Light Equipment Licence','Tractors and light equipment'],
+    ['Tractors / Heavy Equipment Licence','Tractors and heavy equipment']
+  ],endorsements:[]},
+  'Saudi Arabia':{currency:'SAR',units:'metric',licenceTitle:'Saudi heavy transport / equipment licensing',licences:[
+    ['Heavy Vehicle / Heavy Transport Licence','Appropriate licence for heavy commercial transport'],
+    ['Heavy Equipment & Machinery Driving Licence','Heavy equipment and machinery']
+  ],endorsements:['Professional Driver Card where activity requires it']},
+  'Qatar':{currency:'QAR',units:'metric',licenceTitle:'Qatar heavy vehicle categories',licences:[
+    ['Private Heavy Vehicle Driving Licence','Heavy vehicle driving licence'],
+    ['Construction / Agricultural / Industrial Vehicle Licence','Construction, agricultural or industrial vehicles']
+  ],endorsements:[]}
+};
+
+const CANADA_PROVINCES={
+  'Ontario':{licences:[['Class A','Tractor-trailer / combination where towed vehicles exceed 4,600 kg'],['Class D','Heavy straight truck over 11,000 kg; limited trailer']],endorsements:['Z — Air Brake']},
+  'Quebec':{licences:[['Class 1','Heavy vehicle combinations'],['Class 3','Trucks'],['Class 2','Bus over 24 passengers']],endorsements:['F — Air Brakes','M — Manual Transmission']},
+  'Alberta':{licences:[['Class 1','Commercial combination / tractor-trailer'],['Class 3','Commercial 3+ axle single vehicle']],endorsements:['Q — Air Brake']},
+  'British Columbia':{licences:[['Class 1','Commercial tractor-trailer / heavy combination'],['Class 3','Heavy truck']],endorsements:['Air Brake endorsement']},
+  'Saskatchewan':{licences:[['Class 1','Power unit + semi-trailer / heavy towed combination'],['Class 3','Heavy truck']],endorsements:['Air Brake endorsement']},
+  'Manitoba':{licences:[['Class 1','Semi-trailer / heavy combination'],['Class 3','Heavy truck']],endorsements:['Air Brake endorsement']}
+};
+
+function marketByTimezone(){
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  const lang=(navigator.language||'').toLowerCase();
+  const exact={
+    'Europe/Berlin':'Germany','Europe/Paris':'France','Europe/Amsterdam':'Netherlands','Europe/Brussels':'Belgium',
+    'Europe/Madrid':'Spain','Europe/Rome':'Italy','Europe/Warsaw':'Poland','Europe/Vienna':'Austria',
+    'Europe/Zurich':'Switzerland','Europe/London':'United Kingdom','Europe/Dublin':'Ireland','Europe/Stockholm':'Sweden',
+    'Europe/Oslo':'Norway','Europe/Copenhagen':'Denmark','Europe/Helsinki':'Finland','Europe/Prague':'Czechia',
+    'Europe/Lisbon':'Portugal','Europe/Athens':'Greece','Europe/Bucharest':'Romania',
+    'Asia/Dubai':'United Arab Emirates','Asia/Riyadh':'Saudi Arabia','Asia/Qatar':'Qatar','Asia/Kuwait':'Kuwait',
+    'Asia/Bahrain':'Bahrain','Asia/Muscat':'Oman','Asia/Amman':'Jordan','Africa/Cairo':'Egypt'
+  };
+  if(exact[tz])return exact[tz];
+  if(lang.endsWith('-ca')||tz.includes('Toronto')||tz.includes('Vancouver')||tz.includes('Edmonton')||tz.includes('Winnipeg')||tz.includes('Regina')||tz.includes('Halifax'))return'Canada';
+  if(lang.endsWith('-us')||tz.startsWith('America/'))return'United States';
+  return 'United States';
+}
+function provinceByTimezone(country){
+  if(country!=='Canada')return'';
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  if(tz.includes('Toronto'))return'Ontario';
+  if(tz.includes('Vancouver'))return'British Columbia';
+  if(tz.includes('Edmonton')||tz.includes('Calgary'))return'Alberta';
+  if(tz.includes('Winnipeg'))return'Manitoba';
+  if(tz.includes('Regina')||tz.includes('Swift_Current'))return'Saskatchewan';
+  if((navigator.language||'').toLowerCase().startsWith('fr-ca'))return'Quebec';
+  return'';
+}
+function profileFor(country){
+  if(MARKET_PROFILES[country])return JSON.parse(JSON.stringify(MARKET_PROFILES[country]));
+  if(EU_HEAVY_COUNTRIES.has(country)){
+    const p=JSON.parse(JSON.stringify(MARKET_PROFILES['Germany']));
+    p.licenceTitle='EU heavy-vehicle categories';
+    return p;
+  }
+  const currency=currencyFor(country);
+  return {currency,units:'metric',licenceTitle:'Local commercial / heavy-vehicle licence',licences:[
+    ['Local Heavy / Commercial Licence','The exact local category is verified from the uploaded licence for this market']
+  ],endorsements:[]};
+}
+let detectedMarket={country:'United States',province:'',profile:null};
+function detectLocalMarket(){
+  const country=(me&&me.country)||marketByTimezone();
+  const province=provinceByTimezone(country);
+  const profile=profileFor(country);
+  if(country==='Canada'&&province&&CANADA_PROVINCES[province]){
+    profile.licenceTitle=`${province} commercial licence`;
+    profile.licences=CANADA_PROVINCES[province].licences;
+    profile.endorsements=CANADA_PROVINCES[province].endorsements;
+  }
+  detectedMarket={country,province,profile};
+  const label=province?`${country} · ${province}`:country;
+  if($('listingCountry'))$('listingCountry').value=country;
+  if($('verifyCountry'))$('verifyCountry').value=country;
+  if($('marketDisplay'))$('marketDisplay').textContent=label;
+  if($('verifyMarketDisplay'))$('verifyMarketDisplay').textContent=label;
+  if($('currency'))$('currency').value=profile.currency;
+  if($('currencyDisplay'))$('currencyDisplay').textContent=profile.currency;
+  setTimeout(syncVerificationLicenceUI,0);
+  return detectedMarket;
+}
+function localLicenceOptions(){
+  const m=detectedMarket.profile?detectedMarket:detectLocalMarket();
+  return (m.profile.licences||[]).map(x=>x[0]);
+}
+function localLicenceHelp(){
+  const m=detectedMarket.profile?detectedMarket:detectLocalMarket();
+  return `<div class="localLicenceCard"><span>${esc(m.profile.licenceTitle)}</span>${m.profile.licences.map(x=>`<small><b>${esc(x[0])}</b> — ${esc(x[1])}</small>`).join('')}${m.profile.endorsements?.length?`<small><b>Local endorsements / qualifications:</b> ${esc(m.profile.endorsements.join(' · '))}</small>`:''}</div>`;
+}
+
+function syncVerificationLicenceUI(){
+  const old=$('licenseClass');
+  if(!old)return;
+  if(old.tagName==='SELECT'){
+    old.innerHTML=localLicenceOptions().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+    return;
+  }
+  const selEl=document.createElement('select');
+  selEl.id='licenseClass';
+  selEl.innerHTML=localLicenceOptions().map(x=>`<option value="${esc(x)}">${esc(x)}</option>`).join('');
+  old.replaceWith(selEl);
+}
+function currencyFor(c){
+  const map={
+    'United States':'USD','Canada':'CAD','United Kingdom':'GBP','Switzerland':'CHF',
+    'United Arab Emirates':'AED','Saudi Arabia':'SAR','Qatar':'QAR','Kuwait':'KWD',
+    'Bahrain':'BHD','Oman':'OMR','Jordan':'JOD','Egypt':'EGP',
+    'Sweden':'SEK','Norway':'NOK','Denmark':'DKK','Poland':'PLN','Czechia':'CZK',
+    'Romania':'RON'
+  };
+  return map[c] || 'EUR';
+}
+function syncListingCurrency(){
+  const country=$('listingCountry')?.value || 'United States';
+  const cur=currencyFor(country);
+  if($('currency')) $('currency').value=cur;
+  if($('currencyDisplay')) $('currencyDisplay').textContent=cur;
+}
 function setIntent(v){$('intent').value=v;$('haveBtn').classList.toggle('active',v==='have');$('needBtn').classList.toggle('active',v==='need');renderFields()}
 let activeMaps=[];
-function destroyActiveMaps(){for(const m of activeMaps){try{m.remove()}catch{}}activeMaps=[]}
+function destroyActiveMaps(){for(const m of activeMaps){try{m.__tutResizeObserver?.disconnect();m.remove()}catch{}}activeMaps=[]}
 function fld(k,label,type='text',ph='',extra=''){return `<div class="field"><label>${tr(label)}</label><input data-k="${k}" type="${type}" placeholder="${esc(tr(ph))}" ${extra}></div>`}
 function sel(k,label,options){return `<div class="field"><label>${tr(label)}</label><select data-k="${k}">${options.map(x=>`<option value="${esc(x)}">${tr(x)}</option>`).join('')}</select></div>`}
 function checks(k,label,items){return `<fieldset class="specChecks" data-check-key="${k}"><legend>${tr(label)}</legend>${items.map(x=>`<label><input type="checkbox" value="${esc(x)}"> ${tr(x)}</label>`).join('')}</fieldset>`}
 function mapWidget(key,label,placeholder){return `<div class="mapField"><label>${tr(label)}</label><div class="locationSearch"><input data-k="${key}" id="addr_${key}" placeholder="${esc(tr(placeholder))}"><button type="button" class="outlineBtn mini" onclick="searchAddress('${key}')">${tr('Find on map')}</button></div><input data-k="${key}Lat" id="lat_${key}" type="hidden"><input data-k="${key}Lng" id="lng_${key}" type="hidden"><div id="map_${key}" class="listingMap"></div><small>${tr('Type any address or click the map to set the exact point.')}</small></div>`}
-function initListingMap(key){if(typeof L==='undefined')return;const el=$('map_'+key);if(!el)return;const m=L.map(el,{scrollWheelZoom:false}).setView([30,10],2);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(m);let marker=null;function setPoint(lat,lng){$('lat_'+key).value=Number(lat).toFixed(6);$('lng_'+key).value=Number(lng).toFixed(6);if(marker)marker.setLatLng([lat,lng]);else marker=L.marker([lat,lng]).addTo(m)}m.on('click',e=>setPoint(e.latlng.lat,e.latlng.lng));m.__setPoint=(lat,lng,label)=>{setPoint(lat,lng);m.setView([lat,lng],14);if(label)$('addr_'+key).value=label};activeMaps.push(m);setTimeout(()=>m.invalidateSize(),50)}
+function refreshActiveMaps(){
+  for(const m of activeMaps){
+    try{
+      const el=m.getContainer();
+      if(el && el.offsetParent!==null && el.clientWidth>0 && el.clientHeight>0){
+        m.invalidateSize({pan:false,animate:false});
+      }
+    }catch{}
+  }
+}
+function scheduleMapRefresh(){
+  [0,80,220,500].forEach(ms=>setTimeout(refreshActiveMaps,ms));
+}
+function initListingMap(key){
+  if(typeof L==='undefined')return;
+  const el=$('map_'+key);
+  if(!el)return;
+  // Avoid duplicate Leaflet instances on the same element.
+  if(el._leaflet_id){
+    try{const old=activeMaps.find(x=>x.getContainer()===el);if(old)old.remove()}catch{}
+    el._leaflet_id=null;
+  }
+  const m=L.map(el,{
+    scrollWheelZoom:false,
+    zoomControl:true,
+    attributionControl:true,
+    preferCanvas:false
+  });
+  m.setView([30,10],2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+    maxZoom:19,
+    tileSize:256,
+    zoomOffset:0,
+    noWrap:false,
+    updateWhenIdle:true,
+    crossOrigin:true,
+    attribution:'&copy; OpenStreetMap contributors'
+  }).addTo(m);
+
+  let marker=null;
+  function setPoint(lat,lng){
+    const latEl=$('lat_'+key),lngEl=$('lng_'+key);
+    if(latEl)latEl.value=Number(lat).toFixed(6);
+    if(lngEl)lngEl.value=Number(lng).toFixed(6);
+    if(marker)marker.setLatLng([lat,lng]);
+    else marker=L.marker([lat,lng]).addTo(m);
+  }
+  m.on('click',e=>setPoint(e.latlng.lat,e.latlng.lng));
+  m.__setPoint=(lat,lng,label)=>{
+    setPoint(lat,lng);
+    m.setView([lat,lng],14,{animate:false});
+    const a=$('addr_'+key);
+    if(label&&a)a.value=label;
+    scheduleMapRefresh();
+  };
+  activeMaps.push(m);
+
+  // Leaflet must recalculate after a hidden pane becomes visible or its width changes.
+  if(typeof ResizeObserver!=='undefined'){
+    const ro=new ResizeObserver(()=>scheduleMapRefresh());
+    ro.observe(el);
+    m.__tutResizeObserver=ro;
+  }
+  scheduleMapRefresh();
+}
 async function searchAddress(key){const q=$('addr_'+key)?.value?.trim();if(!q)return;const btn=document.activeElement;try{if(btn)btn.disabled=true;const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q),{headers:{'Accept':'application/json'}});const a=await r.json();if(!a.length){alert(tr('Location not found. Try a more complete address.'));return}const m=activeMaps.find(x=>x.getContainer().id==='map_'+key);if(m)m.__setPoint(Number(a[0].lat),Number(a[0].lon),a[0].display_name)}catch(e){alert(tr('Map search is temporarily unavailable. You can still type the address and click the map.'))}finally{if(btn)btn.disabled=false}}
 function categoryFields(r,intent){
  const available=intent==='have';
- if(r==='driver')return `<div class="formSection"><h3>${tr('Driver / operator profile')}</h3><div class="two">${fld('licenseClass','Licence / qualification','text','CDL-A, C+E, forklift certificate')}${fld('experience','Years of experience','number','5','min="0"')}</div>${checks('skills','Qualified to operate',['Car','Van','Truck','Bus','Forklift','Crane','Heavy equipment'])}<div class="two">${fld('availableFrom',available?'Available from':'Needed from','datetime-local','')}${fld('availableTo',available?'Available until':'Needed until','datetime-local','')}</div>${fld('radius','Working radius (km)','number','100','min="0"')}${fld('languages','Languages','text','English, German, Arabic')}${fld('certifications','Certificates / endorsements','text','ADR, Hazmat, tanker, forklift...')}</div>${mapWidget('location',available?'Current / work location':'Work location','Street, city, postcode or place')}`;
+ if(r==='driver')return `<div class="formSection"><h3>${tr('Driver / operator profile')}</h3><div class="two">${sel('licenseClass','Licence / qualification',localLicenceOptions())}${localLicenceHelp()}${fld('experience','Years of experience','number','5','min="0"')}</div>${checks('skills','Qualified to operate',['Car','Van','Truck','Bus','Forklift','Crane','Heavy equipment'])}<div class="two">${fld('availableFrom',available?'Available from':'Needed from','datetime-local','')}${fld('availableTo',available?'Available until':'Needed until','datetime-local','')}</div>${fld('radius','Working radius (km)','number','100','min="0"')}${fld('languages','Languages','text','English, German, Arabic')}${fld('certifications','Certificates / endorsements','text','ADR, Hazmat, tanker, forklift...')}</div>${mapWidget('location',available?'Current / work location':'Work location','Street, city, postcode or place')}`;
  if(r==='truck')return `<div class="formSection"><h3>${tr('Truck / vehicle specification')}</h3><div class="two">${sel('vehicleType','Vehicle type',['Tractor unit','Rigid truck','Van','Box truck','Reefer','Flatbed','Tanker','Tipper','Other'])}${fld('makeModel','Make / model','text','Volvo FH, Mercedes Actros...')}</div><div class="two">${fld('year','Year','number','2022')}${fld('capacity','Payload capacity','number','20000')}</div><div class="two">${sel('capacityUnit','Capacity unit',['kg','lb','pallets','m³'])}${sel('driverIncluded','Driver included?',['No','Yes'])}</div>${sel('temperatureType','Temperature capability',['Ambient','Chilled','Frozen','Multi-temperature','Not applicable'])}<div class="two">${fld('tempMin','Minimum temperature °C','number','-20')}${fld('tempMax','Maximum temperature °C','number','5')}</div><div class="two">${fld('availableFrom',available?'Available from':'Needed from','datetime-local','')}${fld('availableTo',available?'Available until':'Needed until','datetime-local','')}</div>${fld('insurance','Insurance / operating status','text','Insured, carrier authority, registration...')}</div>${mapWidget('location',available?'Vehicle location':'Where vehicle is needed','Street, depot, city or postcode')}`;
  if(r==='warehouse')return `<div class="formSection"><h3>${tr('Warehouse / storage specification')}</h3><div class="two">${sel('storageType','Storage type',['Ambient','Chilled','Frozen','Food grade','Pharma','Hazardous goods','General logistics'])}${fld('availableArea','Available / required area','number','500')}</div><div class="two">${sel('areaUnit','Area unit',['m²','ft²','pallet positions'])}${fld('pallets','Pallet positions','number','200')}</div><div class="two">${fld('tempMin','Minimum temperature °C','number','2')}${fld('tempMax','Maximum temperature °C','number','5')}</div>${checks('facilities','Facilities',['Loading docks','Forklifts','Racking','24/7 access','Security','Chilled zone','Frozen zone'])}${fld('certifications','Certifications / suitability','text','Food, pharma, HACCP, GDP...')}<div class="two">${fld('availableFrom',available?'Available from':'Needed from','date','')}${fld('availableTo',available?'Available until':'Needed until','date','')}</div></div>${mapWidget('location',available?'Warehouse location':'Preferred storage location','Street, industrial area, city or postcode')}`;
  if(r==='load')return `<div class="formSection"><h3>${tr('Load / cargo specification')}</h3><div class="two">${sel('loadType','Load type',['Full truckload','Partial / LTL','Palletised','Refrigerated','Bulk','Hazardous','Oversized','Other'])}${fld('goods','Goods / commodity','text','Food, machinery, retail goods...')}</div><div class="two">${fld('weight','Weight','number','12000')}${sel('weightUnit','Weight unit',['kg','lb','tonnes'])}</div><div class="two">${fld('pallets','Pallets','number','20')}${fld('volume','Volume m³','number','40')}</div>${sel('equipmentNeeded','Equipment needed',['Dry van','Reefer','Flatbed','Tanker','Box truck','Any suitable'])}<div class="two">${fld('tempMin','Minimum temperature °C','number','2')}${fld('tempMax','Maximum temperature °C','number','5')}</div>${fld('pickupDate',available?'Pickup date / time':'Required pickup','datetime-local','')}${fld('details','Cargo notes','text','Non-hazardous, loading requirements...')}</div>${mapWidget('pickup','Pickup location','Exact pickup address or place')}${mapWidget('delivery','Destination','Exact destination address or place')}`;
@@ -124,3 +340,6 @@ const tutObserver=new MutationObserver(muts=>{
 window.addEventListener('DOMContentLoaded',()=>{tutObserver.observe(document.body,{childList:true,subtree:true});refreshLanguage();});
 
 init();
+
+window.addEventListener('resize',scheduleMapRefresh,{passive:true});
+window.addEventListener('orientationchange',()=>setTimeout(scheduleMapRefresh,150),{passive:true});

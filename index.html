@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/style.css?v=17-mapfix">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -133,7 +133,12 @@
         <label>Category</label>
         <select id="resource" onchange="renderFields()"><option value="driver">Driver / Operator</option><option value="truck">Truck / Vehicle</option><option value="load">Load / Cargo</option><option value="warehouse">Warehouse / Storage</option><option value="equipment">Equipment</option></select>
         <label>Listing title</label><input id="listingTitle" placeholder="Example: Refrigerated warehouse space available near Frankfurt">
-        <div class="two"><div><label>Country / market</label><select id="listingCountry"></select></div><div><label>Currency</label><select id="currency"><option>USD</option><option>CAD</option><option>EUR</option><option>GBP</option><option>AED</option><option>SAR</option><option>QAR</option></select></div></div>
+        <div class="autoMarketRow">
+      <div class="marketBadge"><span>Local market</span><b id="marketDisplay">Detecting…</b></div>
+      <input id="listingCountry" type="hidden" value="United States">
+      <input id="currency" type="hidden" value="USD">
+      <span id="currencyDisplay" class="hidden">USD</span>
+    </div>
         <label>Commercial terms</label>
         <select id="priceMode" onchange="togglePrice()"><option value="negotiable">Negotiable</option><option value="fixed">Fixed price</option><option value="request_quotes">Request quotes</option><option value="open_bidding">Open bidding</option></select>
         <div id="priceWrap"><label>Your asking price / budget</label><input id="price" type="number" min="0" step="0.01" placeholder="Optional"></div>
@@ -156,7 +161,7 @@
     <section id="verify" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">IDENTITY & DRIVER PRE-CHECK</span><h1>Verification</h1><p>Upload licence, ID and selfie. This MVP runs an automated file pre-check; official KYC/document verification will require an external provider before real-world launch.</p></div></div>
       <div class="panel formPanel">
-        <div class="two"><div><label>Country</label><select id="verifyCountry"></select></div><div><label>Licence class</label><input id="licenseClass" placeholder="CDL-A / CE / C+E"></div></div>
+        <div class="two"><div><label>Local market</label><div id="verifyMarketDisplay" class="autoCurrency">Detecting…</div><input id="verifyCountry" type="hidden" value="United States"></div><div><label>Licence class</label><input id="licenseClass" placeholder="CDL-A / CE / C+E"></div></div>
         <label>Licence number</label><input id="licenseNumber" placeholder="Licence number">
         <label>Licence expiry</label><input id="licenseExpiry" type="date">
         <label>Driver licence</label><input id="licenseFile" type="file" accept="image/*,application/pdf">
@@ -180,6 +185,6 @@
   <footer><div><strong>TUT MOVE</strong><span>tutmove.com · Turn Unused Into Transport</span></div><p>© 2026 TUT Move. Marketplace MVP. Real payments, KYC, background checks, insurance and transport compliance must be connected per jurisdiction before commercial launch.</p></footer>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="/app.js"></script>
+<script src="/app.js?v=17-mapfix"></script>
 </body>
 </html>

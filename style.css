@@ -148,3 +148,59 @@ html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad
 @media(max-width:1050px){.resourceTiles{grid-template-columns:repeat(3,1fr)}}
 @media(max-width:700px){.resourceTiles{grid-template-columns:1fr 1fr}.resourceTile{min-height:245px;padding:17px}.resourceChooser{padding-top:36px}.locationSearch{grid-template-columns:1fr}.listingMap{height:260px}.marketPrinciple strong{font-size:26px}.marketPrinciple span{padding:0 8px}}
 @media(max-width:430px){.resourceTiles{grid-template-columns:1fr}.resourceTile{min-height:auto}.resourceTile p{min-height:0}.marketPrinciple{padding-left:4px;padding-right:4px}}
+
+.autoCurrency{width:100%;padding:13px;border-radius:10px;border:1px solid #363126;background:#0a0a0a;color:var(--gold2);font-weight:900;min-height:48px;display:flex;align-items:center}
+
+.autoMarketRow{margin:12px 0 18px}
+.marketBadge{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid #3d3420;border-radius:12px;background:#0b0b0b}
+.marketBadge span{color:#918873;font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.marketBadge b{color:var(--gold2)}
+.localLicenceCard{grid-column:1/-1;padding:12px 14px;border:1px solid #312b1f;border-radius:12px;background:#0a0a0a;margin-top:4px}
+.localLicenceCard>span{display:block;color:var(--gold2);font-weight:800;margin-bottom:7px}
+.localLicenceCard small{display:block;color:#aaa;line-height:1.45;margin:4px 0}
+
+
+/* v17 Leaflet rendering failsafe — keeps tiles aligned even if CDN stylesheet is delayed */
+.leaflet-container{overflow:hidden;position:relative;outline:0;background:#ddd;z-index:0}
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,
+.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas{
+  position:absolute;left:0;top:0
+}
+.leaflet-map-pane,.leaflet-tile-pane,.leaflet-overlay-pane,.leaflet-shadow-pane,
+.leaflet-marker-pane,.leaflet-tooltip-pane,.leaflet-popup-pane{position:absolute;left:0;top:0}
+.leaflet-tile{visibility:hidden;user-select:none;-webkit-user-drag:none}
+.leaflet-tile-loaded{visibility:inherit}
+.leaflet-zoom-animated{transform-origin:0 0}
+.leaflet-zoom-hide{visibility:hidden}
+.leaflet-container .leaflet-overlay-pane svg{max-width:none!important;max-height:none!important}
+.leaflet-container .leaflet-marker-pane img,
+.leaflet-container .leaflet-shadow-pane img,
+.leaflet-container .leaflet-tile-pane img,
+.leaflet-container img.leaflet-image-layer,
+.leaflet-container .leaflet-tile{
+  max-width:none!important;
+  max-height:none!important;
+  width:256px;
+  height:256px;
+  padding:0!important;
+  margin:0!important;
+  border:0!important
+}
+.leaflet-control{position:relative;z-index:800;pointer-events:auto}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}
+.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}
+.leaflet-control{float:left;clear:both}
+.leaflet-right .leaflet-control{float:right}
+.leaflet-top .leaflet-control{margin-top:10px}
+.leaflet-bottom .leaflet-control{margin-bottom:10px}
+.leaflet-left .leaflet-control{margin-left:10px}
+.leaflet-right .leaflet-control{margin-right:10px}
+.listingMap{
+  width:100%!important;
+  min-width:0!important;
+  height:320px;
+  display:block;
+  position:relative;
+  isolation:isolate;
+}
+@media(max-width:700px){.listingMap{height:280px}}
