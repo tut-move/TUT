@@ -204,3 +204,14 @@ html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad
   isolation:isolate;
 }
 @media(max-width:700px){.listingMap{height:280px}}
+
+/* v18 — compact local licence UI + visible automatic currency */
+.priceWithCurrency{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
+.currencyBadge{min-width:96px;padding:0 14px;border:1px solid #5b4b25;border-radius:10px;background:#151107;color:var(--gold2);font-weight:900;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.specChecks{display:flex;flex-wrap:wrap;gap:10px 18px;border:1px solid #302b20;border-radius:12px;padding:14px;margin:10px 0 16px}
+.specChecks legend{padding:0 8px;color:#d8cda9;font-weight:800}
+.specChecks label{display:flex;align-items:center;gap:8px;min-height:36px;margin:0;color:#eee;cursor:pointer}
+.specChecks input[type="checkbox"]{width:20px;height:20px;accent-color:#d9b652;flex:0 0 auto}
+.localLicenceCard{display:none!important}
+@media(max-width:600px){.priceWithCurrency{grid-template-columns:1fr}.currencyBadge{min-height:46px}.specChecks{gap:8px 12px}.specChecks label{flex:1 1 44%;}}
+html[dir="rtl"] .specChecks label{flex-direction:row-reverse;justify-content:flex-end}
