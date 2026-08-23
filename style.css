@@ -28,3 +28,114 @@ html[dir="rtl"] body{text-align:right}
 html[dir="rtl"] .topbar,html[dir="rtl"] .row,html[dir="rtl"] .actions,html[dir="rtl"] .tools{direction:rtl}
 html[dir="rtl"] input,html[dir="rtl"] select,html[dir="rtl"] textarea{text-align:right}
 html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad4b;padding-left:0;padding-right:20px}
+
+
+/* v13 — Mobile layout: same TUT Move experience, adapted to small screens */
+@media (max-width: 860px){
+  body{background:radial-gradient(circle at 70% 0,#181306 0,#080808 24%,#050505 62%);}
+  main{width:min(100% - 32px,1180px);}
+  .topbar{
+    position:sticky;
+    top:0;
+    padding:10px 16px 0;
+    gap:8px 10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .brandLockup{flex:1 1 auto;min-width:0;gap:9px;}
+  .brandGlyph{width:42px;height:42px;flex:0 0 42px;font-size:15px;}
+  .brandLockup strong{font-size:15px;letter-spacing:.14em;white-space:nowrap;}
+  .brandLockup small{display:none;}
+  .tools{margin-left:auto;gap:6px;flex:0 0 auto;}
+  .tools select{width:82px;padding:9px 10px;border-radius:10px;}
+  .tools .goldBtn,.tools .outlineBtn{padding:10px 12px;font-size:13px;white-space:nowrap;}
+
+  /* Keep the full navigation on mobile instead of hiding it */
+  .desktopNav{
+    display:flex;
+    order:3;
+    width:calc(100% + 32px);
+    margin:0 -16px;
+    padding:8px 12px 10px;
+    gap:2px;
+    overflow-x:auto;
+    flex-wrap:nowrap;
+    scrollbar-width:none;
+    border-top:1px solid rgba(215,175,69,.11);
+  }
+  .desktopNav::-webkit-scrollbar{display:none;}
+  .desktopNav button{
+    flex:0 0 auto;
+    padding:9px 11px;
+    font-size:13px;
+    white-space:nowrap;
+  }
+
+  .pane{padding:28px 0 48px;}
+  .hero{
+    display:flex;
+    flex-direction:column;
+    align-items:stretch;
+    gap:24px;
+    min-height:auto;
+    padding-top:8px;
+  }
+  .heroCopy{order:1;}
+  .heroVisual{order:2;text-align:center;padding:4px 0 2px;}
+  .heroVisual img{width:min(64vw,250px);max-width:250px;}
+  .hero h1{
+    font-size:clamp(42px,13vw,60px);
+    line-height:.97;
+    letter-spacing:-.035em;
+    margin:10px 0 20px;
+  }
+  .hero p{font-size:17px;line-height:1.55;margin-bottom:0;}
+  .eyebrow{font-size:11px;letter-spacing:.18em;}
+  .heroActions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px;}
+  .heroActions .goldBtn,.heroActions .outlineBtn{width:100%;padding:13px 10px;font-size:13px;}
+  .trustRow{margin-top:20px;gap:8px;font-size:12px;}
+
+  .valueStrip{grid-template-columns:1fr;gap:12px;margin-top:22px;}
+  .valueStrip article{padding:22px;}
+  .valueStrip h3{font-size:19px;margin:12px 0 9px;}
+  .valueStrip p{line-height:1.5;margin-bottom:0;}
+
+  .pageHead h1{font-size:36px;}
+  .filters,.two,.authGrid,.cards,.kpis{grid-template-columns:1fr;}
+  .formPanel{width:100%;}
+  .panel,.card,.kpi{padding:18px;border-radius:14px;}
+  .segmented{gap:6px;}
+  input,select{font-size:16px;} /* prevents iOS/Android zoom-on-focus */
+  .offerBox{grid-template-columns:1fr;}
+  .actions{gap:8px;}
+  .actions button{flex:1 1 auto;}
+
+  footer{padding:26px 16px 34px;font-size:13px;line-height:1.55;}
+
+  .aboutHero{padding:34px 0 34px;}
+  .aboutHero h1{font-size:clamp(40px,12vw,56px);}
+  .aboutHero>p{font-size:16px;}
+  .aboutHero .aboutLead{font-size:18px;}
+  .aboutGrid,.proofGrid,.founderSection{grid-template-columns:1fr;}
+  .aboutGrid{margin-bottom:48px;}
+  .proofGrid strong{font-size:42px;}
+  .founderSection{gap:26px;padding:52px 0;}
+  .founderPhoto{max-width:420px;margin:auto;}
+  .founderCopy blockquote{font-size:17px;line-height:1.65;}
+  .aboutVision{padding:52px 0 64px;}
+}
+
+/* Extra-small phones */
+@media (max-width: 430px){
+  main{width:calc(100% - 28px);}
+  .topbar{padding-left:14px;padding-right:14px;}
+  .desktopNav{width:calc(100% + 28px);margin-left:-14px;margin-right:-14px;}
+  .brandLockup strong{font-size:13px;letter-spacing:.12em;}
+  .brandGlyph{width:39px;height:39px;flex-basis:39px;}
+  .tools select{width:74px;padding:8px;}
+  .tools .goldBtn,.tools .outlineBtn{padding:9px 10px;font-size:12px;}
+  .hero h1{font-size:clamp(40px,12.2vw,52px);}
+  .heroActions{grid-template-columns:1fr;}
+  .heroVisual img{width:min(58vw,220px);}
+  .pageHead h1{font-size:32px;}
+}
