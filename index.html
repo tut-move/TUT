@@ -19,6 +19,7 @@
       <button data-tab="market" onclick="go('market',this)">Market</button>
       <button data-tab="post" onclick="go('post',this)">Post capacity</button>
       <button data-tab="matches" onclick="go('matches',this)">Matches</button>
+      <button id="adminNav" class="hidden" data-tab="adminPane" onclick="go('adminPane',this)">Owner</button>
     </nav>
     <div id="account"></div>
   </header>
@@ -91,7 +92,12 @@
       <div id="matchList" class="cards"></div>
     </section>
 
-    <section id="accountPane" class="pane hidden"><div class="pageHead"><div><span class="eyebrow">ACCOUNT</span><h1>Join TUT</h1><p>Create an account or sign back in.</p></div></div><div id="authArea"></div></section>
+    <section id="accountPane" class="pane hidden"><div class="pageHead"><div><span class="eyebrow">ACCOUNT</span><h1>Join TUT</h1><p>Create an account or sign back in.</p></div></div><div id="ownerSetup"></div><div id="authArea"></div></section>
+
+    <section id="adminPane" class="pane hidden">
+      <div class="pageHead"><div><span class="eyebrow">OWNER CONTROL</span><h1>TUT Admin Dashboard</h1><p>Private control panel for the platform owner.</p></div><button class="outlineBtn" onclick="loadAdmin()">Refresh</button></div>
+      <div id="adminArea"></div>
+    </section>
   </main>
 
   <footer>
