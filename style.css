@@ -215,3 +215,7 @@ html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad
 .localLicenceCard{display:none!important}
 @media(max-width:600px){.priceWithCurrency{grid-template-columns:1fr}.currencyBadge{min-height:46px}.specChecks{gap:8px 12px}.specChecks label{flex:1 1 44%;}}
 html[dir="rtl"] .specChecks label{flex-direction:row-reverse;justify-content:flex-end}
+
+/* v19 language consistency */
+html[lang="de"] .pageHead p,html[lang="de"] .hero p{hyphens:auto}
+html[dir="rtl"] .marketBadge,html[dir="rtl"] .priceWithCurrency{direction:rtl}
