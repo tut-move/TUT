@@ -219,3 +219,13 @@ html[dir="rtl"] .specChecks label{flex-direction:row-reverse;justify-content:fle
 /* v19 language consistency */
 html[lang="de"] .pageHead p,html[lang="de"] .hero p{hyphens:auto}
 html[dir="rtl"] .marketBadge,html[dir="rtl"] .priceWithCurrency{direction:rtl}
+
+/* v22: persistent locale overrides + live market ticker */
+.tools{gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.tools select{max-width:170px}
+.liveTicker{display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);padding:8px 18px;background:#0d0d0d;font-size:12px;overflow:hidden}
+.liveDot{width:7px;height:7px;border-radius:50%;background:#d9b55b;box-shadow:0 0 10px #d9b55b;flex:none}
+.tickerViewport{overflow:hidden;white-space:nowrap;flex:1}
+.tickerTrack{display:inline-block;min-width:100%;padding-left:100%;animation:tutTicker 34s linear infinite}
+@keyframes tutTicker{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@media(max-width:850px){.tools select{max-width:110px}.liveTicker{padding-inline:10px}}

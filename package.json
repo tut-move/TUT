@@ -1,0 +1,16 @@
+{
+  "name": "tut-move",
+  "version": "23.0.0",
+  "private": true,
+  "description": "TUT Move marketplace",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
+  }
+}
