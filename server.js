@@ -15,7 +15,7 @@ const sessions = new Map();
 let pgPool = null;
 let dbCache = null;
 
-function emptyDB(){return {users:[], listings:[], offers:[], bookings:[], matches:[], verifications:[], settings:{brandName:'TUT Move',siteUrl:'https://tutmove.com',platformFeePct:5,defaultCurrency:'USD',ownerName:'',ownerEmail:'',legalEntity:'',supportEmail:'',launchMarkets:['USA','Canada','Europe','Middle East']}};}
+function emptyDB(){return {users:[], listings:[], offers:[], bookings:[], matches:[], verifications:[], settings:{brandName:'TUT Move',siteUrl:'https://tutmove.com',platformFeePct:5,defaultCurrency:'USD',ownerName:'',ownerEmail:'',legalEntity:'',supportEmail:'info@tutmove.com',launchMarkets:['USA','Canada','Europe','Middle East']}};}
 function normalizeDB(d){return {...emptyDB(),...(d||{}),settings:{...emptyDB().settings,...((d&&d.settings)||{})}}}
 function readLocalDB(){
   try{return normalizeDB(JSON.parse(fs.readFileSync(DBFILE,'utf8')))}
