@@ -24,6 +24,55 @@ for(const [lng,map] of Object.entries(V26_TRANSLATIONS)) Object.assign(UI_TRANSL
 const V27_TRANSLATIONS={"ar": {"MARKET PRICING": "تسعير السوق", "The parties decide the price.": "الأطراف هي التي تحدد السعر.", "TUT Move does not set or calculate the transport price. Publish the requirement, receive carrier offers, compare them, counter if needed, and accept the deal that works for both sides.": "لا تحدد TUT Move سعر النقل ولا تحسبه. انشر الطلب، واستقبل عروض الناقلين، وقارن بينها، وقدّم عرضًا مضادًا عند الحاجة، ثم اقبل الصفقة المناسبة للطرفين.", "Publish": "انشر", "Receive offers": "استقبل العروض", "Compare": "قارن", "Counter": "عرض مضاد", "Accept": "اقبل"}, "de": {"MARKET PRICING": "MARKTPREISBILDUNG", "The parties decide the price.": "Die Parteien bestimmen den Preis.", "TUT Move does not set or calculate the transport price. Publish the requirement, receive carrier offers, compare them, counter if needed, and accept the deal that works for both sides.": "TUT Move legt den Transportpreis nicht fest und berechnet ihn nicht. Veröffentlichen Sie den Bedarf, erhalten Sie Angebote von Frachtführern, vergleichen Sie diese, machen Sie bei Bedarf ein Gegenangebot und akzeptieren Sie die passende Vereinbarung.", "Publish": "Veröffentlichen", "Receive offers": "Angebote erhalten", "Compare": "Vergleichen", "Counter": "Gegenangebot", "Accept": "Annehmen"}, "fr": {"MARKET PRICING": "PRIX DU MARCHÉ", "The parties decide the price.": "Les parties décident du prix.", "TUT Move does not set or calculate the transport price. Publish the requirement, receive carrier offers, compare them, counter if needed, and accept the deal that works for both sides.": "TUT Move ne fixe ni ne calcule le prix du transport. Publiez le besoin, recevez les offres des transporteurs, comparez-les, faites une contre-offre si nécessaire et acceptez l’accord qui convient aux deux parties.", "Publish": "Publier", "Receive offers": "Recevoir des offres", "Compare": "Comparer", "Counter": "Contre-offre", "Accept": "Accepter"}, "es": {"MARKET PRICING": "PRECIO DE MERCADO", "The parties decide the price.": "Las partes deciden el precio.", "TUT Move does not set or calculate the transport price. Publish the requirement, receive carrier offers, compare them, counter if needed, and accept the deal that works for both sides.": "TUT Move no fija ni calcula el precio del transporte. Publica la necesidad, recibe ofertas de transportistas, compáralas, haz una contraoferta si hace falta y acepta el acuerdo que funcione para ambas partes.", "Publish": "Publicar", "Receive offers": "Recibir ofertas", "Compare": "Comparar", "Counter": "Contraoferta", "Accept": "Aceptar"}};
 for(const [lng,map] of Object.entries(V27_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 
+
+const V28_TRANSLATIONS={
+  ar:{
+    "HOW A DEAL MOVES":"مراحل تنفيذ الصفقة",
+    "From offer to delivery.":"من العرض حتى التسليم.",
+    "TUT Move does not set the price. The parties negotiate and agree it.":"لا تحدد TUT Move السعر. يتفاوض الطرفان ويتفقان عليه.",
+    "NEGOTIATE":"التفاوض",
+    "Offer → Counter → Accept":"عرض ← عرض مضاد ← قبول",
+    "SECURE":"التأمين",
+    "Payment → Verification":"الدفع ← التحقق",
+    "TRANSPORT":"النقل",
+    "Pickup → In transit → Delivered":"الاستلام ← قيد النقل ← تم التسليم"
+  },
+  de:{
+    "HOW A DEAL MOVES":"ABLAUF EINES AUFTRAGS",
+    "From offer to delivery.":"Vom Angebot bis zur Lieferung.",
+    "TUT Move does not set the price. The parties negotiate and agree it.":"TUT Move legt den Preis nicht fest. Die Parteien verhandeln und vereinbaren ihn.",
+    "NEGOTIATE":"VERHANDELN",
+    "Offer → Counter → Accept":"Angebot → Gegenangebot → Annahme",
+    "SECURE":"ABSICHERN",
+    "Payment → Verification":"Zahlung → Verifizierung",
+    "TRANSPORT":"TRANSPORT",
+    "Pickup → In transit → Delivered":"Abholung → Unterwegs → Geliefert"
+  },
+  fr:{
+    "HOW A DEAL MOVES":"DÉROULEMENT D'UNE TRANSACTION",
+    "From offer to delivery.":"De l'offre à la livraison.",
+    "TUT Move does not set the price. The parties negotiate and agree it.":"TUT Move ne fixe pas le prix. Les parties le négocient et le conviennent.",
+    "NEGOTIATE":"NÉGOCIER",
+    "Offer → Counter → Accept":"Offre → Contre-offre → Accepter",
+    "SECURE":"SÉCURISER",
+    "Payment → Verification":"Paiement → Vérification",
+    "TRANSPORT":"TRANSPORT",
+    "Pickup → In transit → Delivered":"Enlèvement → En transit → Livré"
+  },
+  es:{
+    "HOW A DEAL MOVES":"FLUJO DEL ACUERDO",
+    "From offer to delivery.":"De la oferta a la entrega.",
+    "TUT Move does not set the price. The parties negotiate and agree it.":"TUT Move no fija el precio. Las partes lo negocian y acuerdan.",
+    "NEGOTIATE":"NEGOCIAR",
+    "Offer → Counter → Accept":"Oferta → Contraoferta → Aceptar",
+    "SECURE":"ASEGURAR",
+    "Payment → Verification":"Pago → Verificación",
+    "TRANSPORT":"TRANSPORTE",
+    "Pickup → In transit → Delivered":"Recogida → En tránsito → Entregado"
+  }
+};
+for(const [lng,map] of Object.entries(V28_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+
 function buildTranslationReverse(){
   const rev={};
   for(const [lng,map] of Object.entries(UI_TRANSLATIONS)){

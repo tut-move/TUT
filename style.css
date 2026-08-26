@@ -274,3 +274,15 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .marketPricingSteps span{padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:800}
 .marketPricingSteps i{opacity:.45;font-style:normal}
 @media(max-width:800px){.marketPricingPanel{padding:18px}.marketPricingPanel h3{font-size:23px}}
+
+
+/* v28 — clean Offers workflow */
+.offersWorkflow{margin:34px 0 26px;padding:24px;border:1px solid rgba(212,177,92,.22);border-radius:18px;background:rgba(255,255,255,.018)}
+.offersWorkflow h2{font-size:30px;margin:7px 0 5px}
+.offersPricingNote{margin:0 0 20px;opacity:.78;line-height:1.5}
+.offersStages{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.offersStage{display:flex;align-items:center;gap:12px;padding:15px;border:1px solid rgba(255,255,255,.09);border-radius:14px;background:rgba(255,255,255,.018)}
+.offersStage>b{display:grid;place-items:center;flex:0 0 32px;height:32px;border:1px solid rgba(212,177,92,.45);border-radius:50%;font-size:13px}
+.offersStage small{display:block;color:#d4b15c;font-weight:800;letter-spacing:.1em;margin-bottom:4px}
+.offersStage strong{display:block;font-size:13px;line-height:1.45}
+@media(max-width:850px){.offersStages{grid-template-columns:1fr}.offersWorkflow{padding:18px}}

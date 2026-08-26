@@ -85,3 +85,13 @@ Upload this ZIP and say:
 - TUT Move does not set or calculate transport prices.
 - Final price is agreed only between the parties through offer / counter-offer / accept.
 - Added a multilingual explanation of the market-pricing flow.
+
+
+## v28 Offers cleanup
+- Removed the duplicated booking/trip-control and large market-pricing explanation.
+- Offers now uses one compact three-stage flow:
+  1. Negotiate: Offer -> Counter -> Accept
+  2. Secure: Payment -> Verification
+  3. Transport: Pickup -> In transit -> Delivered
+- TUT Move explicitly does not set the transport price.
+- Added Arabic, German, French and Spanish translations for the new workflow.

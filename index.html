@@ -167,20 +167,25 @@
     <section id="offers" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">NEGOTIATION</span><h1>Offers & bookings</h1><p>Offer → counter → accept. Market price is decided by the parties.</p></div></div>
       <div id="offerList" class="cards"></div>
-      <div class="bookingSectionHead">
-        <div><span class="eyebrow">TRIP CONTROL</span><h2 class="subhead">Agreed bookings & trip control</h2></div>
-      </div>
-      <div class="dealStepper" aria-label="Booking workflow">
-        <span>Agreement</span><i>→</i><span>Payment</span><i>→</i><span>Verification</span><i>→</i><span>Pickup</span><i>→</i><span>In transit</span><i>→</i><span>Delivered</span>
-      </div>
-      <div class="marketPricingPanel">
-        <span class="eyebrow">MARKET PRICING</span>
-        <h3>The parties decide the price.</h3>
-        <p>TUT Move does not set or calculate the transport price. Publish the requirement, receive carrier offers, compare them, counter if needed, and accept the deal that works for both sides.</p>
-        <div class="marketPricingSteps">
-          <span>Publish</span><i>→</i><span>Receive offers</span><i>→</i><span>Compare</span><i>→</i><span>Counter</span><i>→</i><span>Accept</span>
+      <section class="offersWorkflow">
+        <span class="eyebrow">HOW A DEAL MOVES</span>
+        <h2>From offer to delivery.</h2>
+        <p class="offersPricingNote">TUT Move does not set the price. The parties negotiate and agree it.</p>
+        <div class="offersStages">
+          <div class="offersStage">
+            <b>1</b>
+            <div><small>NEGOTIATE</small><strong>Offer → Counter → Accept</strong></div>
+          </div>
+          <div class="offersStage">
+            <b>2</b>
+            <div><small>SECURE</small><strong>Payment → Verification</strong></div>
+          </div>
+          <div class="offersStage">
+            <b>3</b>
+            <div><small>TRANSPORT</small><strong>Pickup → In transit → Delivered</strong></div>
+          </div>
         </div>
-      </div>
+      </section>
       <div id="bookingList" class="cards"></div>
     </section>
 
