@@ -101,3 +101,10 @@ Upload this ZIP and say:
 - Added account verification submission and statuses: not submitted, pending, verified, rejected.
 - Added owner review queue with approve/reject.
 - Verification is manual v1; no paid KYC provider and no real payments were connected.
+
+## v31 Verification final
+- Verification simplified and compacted.
+- Role-specific fields only.
+- Arabic/German/French/Spanish verification translations completed.
+- Arabic RTL corrected.
+- Rest of site retained from v30.
