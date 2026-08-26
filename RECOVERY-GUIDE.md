@@ -128,3 +128,12 @@ Upload this ZIP and say:
 - Added full Portuguese translation coverage for the current canonical UI dictionary and filled known French/Spanish/German gaps.
 - Dynamic account, offers, matches, verification and owner-dashboard UI now routes through the same translation function instead of injecting English-only labels.
 - English remains the canonical source language; Arabic RTL and the existing responsive desktop/tablet/mobile foundation remain unchanged.
+
+
+## v34 Language stability fix
+- Built directly on v33; no pricing, booking, date, account-deletion, verification or database behavior was removed.
+- Fixed the main source of mixed-language Market cards: free-form user text is no longer injected into translated summary cards.
+- Market cards and the LIVE ticker now use structured, translatable resource/country/specification fields.
+- User-entered free text remains stored unchanged in the database; it is not silently rewritten or mistranslated.
+- Added missing Market/Post labels and common structured values for Arabic, German, French, Spanish and Portuguese.
+- Changing language now forces dynamic Market, Matches, Offers, Bookings and Post fields to rerender immediately.
