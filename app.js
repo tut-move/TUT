@@ -549,3 +549,37 @@ init();
 
 window.addEventListener('resize',scheduleMapRefresh,{passive:true});
 window.addEventListener('orientationchange',()=>setTimeout(scheduleMapRefresh,150),{passive:true});
+
+
+async function loadVerification(){
+  if(!me){if($('verificationStatus'))$('verificationStatus').textContent=tr('Sign in to submit verification.');return}
+  try{
+    const j=await api('/api/verification/me'),v=j.verification||{};
+    $('verificationStatus').textContent=tr('Verification status')+': '+tr(v.status||'not_submitted');
+    if(v.role)$('verifyRole').value=v.role;if(v.legalName)$('verifyLegalName').value=v.legalName;if(v.country)$('verifyCountry').value=v.country;
+    if(v.licenceNumber)$('verifyLicence').value=v.licenceNumber;if(v.vehicleId)$('verifyVehicle').value=v.vehicleId;if(v.notes)$('verifyNotes').value=v.notes;
+    if(me.role==='owner')loadOwnerVerifications();
+  }catch(e){}
+}
+async function submitVerificationV1(e){
+  e.preventDefault();if(!me){alert(tr('Sign in to submit verification.'));return}
+  const body={role:$('verifyRole').value,legalName:$('verifyLegalName').value,country:$('verifyCountry').value,licenceNumber:$('verifyLicence').value,vehicleId:$('verifyVehicle').value,notes:$('verifyNotes').value};
+  const j=await api('/api/verification/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  alert(tr(j.message||'Verification submitted for review.'));loadVerification();
+}
+async function loadOwnerVerifications(){
+  if(!me||me.role!=='owner'||!$('ownerVerificationQueue'))return;
+  const j=await api('/api/admin/verifications');
+  $('ownerVerificationQueue').innerHTML=j.items.length?'<h3>'+tr('Owner review queue')+'</h3>'+j.items.map(x=>`<div class="verifyReview"><div><strong>${esc(x.name||x.email)}</strong><small>${esc(x.email)} · ${tr(x.verification.status||'pending')}</small></div><div><button class="outlineBtn mini" onclick="reviewVerification('${x.userId}','verified')">${tr('Approve')}</button><button class="outlineBtn mini" onclick="reviewVerification('${x.userId}','rejected')">${tr('Reject')}</button></div></div>`).join(''):'';
+}
+async function reviewVerification(id,status){await api(`/api/admin/verifications/${id}/review`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status})});loadOwnerVerifications()}
+document.getElementById('verificationForm')?.addEventListener('submit',submitVerificationV1);
+setTimeout(()=>{try{loadVerification()}catch{}},300);
+
+
+const V29_TRANSLATIONS={
+ar:{"Verification":"التحقق","Account verification":"التحقق من الحساب","VERIFICATION V1":"التحقق V1","Submit the information used to review your TUT Move account before real transactions are enabled.":"أرسل البيانات اللازمة لمراجعة حسابك في TUT Move قبل تفعيل المعاملات الحقيقية.","Not submitted":"لم يتم الإرسال","Account role":"نوع الحساب","Shipper / cargo owner":"صاحب شحنة / بضاعة","Carrier / transport company":"ناقل / شركة نقل","Driver":"سائق","Warehouse":"مخزن","Equipment provider":"مقدم معدات","Legal name":"الاسم القانوني","Country":"الدولة","Licence / registration number":"رقم الرخصة / التسجيل","Vehicle ID / plate":"رقم المركبة / اللوحة","Notes":"ملاحظات","Submit for review":"إرسال للمراجعة","Verification status":"حالة التحقق","not_submitted":"لم يتم الإرسال","pending":"قيد المراجعة","verified":"تم التحقق","rejected":"مرفوض","Owner review queue":"قائمة مراجعة المالك","Approve":"موافقة","Reject":"رفض","Sign in to submit verification.":"سجل الدخول لإرسال بيانات التحقق.","Verification submitted for review.":"تم إرسال بيانات التحقق للمراجعة."},
+de:{"Verification":"Verifizierung","Account verification":"Kontoverifizierung","VERIFICATION V1":"VERIFIZIERUNG V1","Submit the information used to review your TUT Move account before real transactions are enabled.":"Reichen Sie die Angaben zur Prüfung Ihres TUT-Move-Kontos ein, bevor echte Transaktionen aktiviert werden.","Not submitted":"Nicht eingereicht","Account role":"Kontorolle","Shipper / cargo owner":"Versender / Ladungseigentümer","Carrier / transport company":"Frachtführer / Transportunternehmen","Driver":"Fahrer","Warehouse":"Lager","Equipment provider":"Ausrüstungsanbieter","Legal name":"Rechtlicher Name","Country":"Land","Licence / registration number":"Lizenz- / Registrierungsnummer","Vehicle ID / plate":"Fahrzeug-ID / Kennzeichen","Notes":"Notizen","Submit for review":"Zur Prüfung einreichen","Verification status":"Verifizierungsstatus","not_submitted":"nicht eingereicht","pending":"in Prüfung","verified":"verifiziert","rejected":"abgelehnt","Owner review queue":"Prüfliste des Inhabers","Approve":"Genehmigen","Reject":"Ablehnen","Sign in to submit verification.":"Melden Sie sich an, um die Verifizierung einzureichen.","Verification submitted for review.":"Verifizierung wurde zur Prüfung eingereicht."},
+fr:{"Verification":"Vérification","Account verification":"Vérification du compte","VERIFICATION V1":"VÉRIFICATION V1","Not submitted":"Non soumis","Account role":"Rôle du compte","Legal name":"Nom légal","Country":"Pays","Licence / registration number":"Numéro de licence / immatriculation","Vehicle ID / plate":"ID véhicule / plaque","Notes":"Notes","Submit for review":"Soumettre à vérification","Verification status":"Statut de vérification","pending":"en cours","verified":"vérifié","rejected":"refusé","Approve":"Approuver","Reject":"Refuser"},
+es:{"Verification":"Verificación","Account verification":"Verificación de cuenta","VERIFICATION V1":"VERIFICACIÓN V1","Not submitted":"No enviado","Account role":"Rol de la cuenta","Legal name":"Nombre legal","Country":"País","Licence / registration number":"Número de licencia / registro","Vehicle ID / plate":"ID del vehículo / matrícula","Notes":"Notas","Submit for review":"Enviar para revisión","Verification status":"Estado de verificación","pending":"en revisión","verified":"verificado","rejected":"rechazado","Approve":"Aprobar","Reject":"Rechazar"}};
+for(const [lng,map] of Object.entries(V29_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);

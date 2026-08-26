@@ -123,7 +123,7 @@ function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'28',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'29',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -168,6 +168,25 @@ const server=http.createServer(async(req,res)=>{
     if(action==='reject'){o.status='rejected';await writeDB(db);return json(res,200,{offer:o});}
     const b=await getBody(req),amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Counter amount required.'});o.status='countered';const c={id:id('o'),listingId:o.listingId,fromUserId:u.id,toUserId:u.id===o.fromUserId?o.toUserId:o.fromUserId,amount,currency:o.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:o.id,createdAt:new Date().toISOString()};db.offers.push(c);await writeDB(db);return json(res,201,{offer:c});
   }
+  if(p==='/api/verification/me'&&req.method==='GET'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});
+    const db=readDB(),me=db.users.find(x=>x.id===u.id);if(!me)return json(res,404,{error:'User not found.'});
+    return json(res,200,{verification:me.verification||{status:'not_submitted',role:'',legalName:'',country:'',licenceNumber:'',vehicleId:'',notes:'',submittedAt:null,reviewedAt:null}});
+  }
+  if(p==='/api/verification/submit'&&req.method==='POST'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const body=await getBody(req),db=readDB(),me=db.users.find(x=>x.id===u.id);if(!me)return json(res,404,{error:'User not found.'});
+    me.verification={...(me.verification||{}),status:'pending',role:String(body.role||''),legalName:String(body.legalName||'').trim(),country:String(body.country||''),licenceNumber:String(body.licenceNumber||'').trim(),vehicleId:String(body.vehicleId||'').trim(),notes:String(body.notes||'').trim(),submittedAt:new Date().toISOString(),reviewedAt:null};
+    await writeDB(db);return json(res,200,{verification:me.verification,message:'Verification submitted for review.'});
+  }
+  if(p==='/api/admin/verifications'&&req.method==='GET'){
+    const u=auth(req);if(!u||!isOwner(u))return json(res,403,{error:'Owner only.'});const db=readDB();
+    return json(res,200,{items:db.users.filter(x=>x.verification).map(x=>({userId:x.id,email:x.email,name:x.name,verification:x.verification}))});
+  }
+  if(/^\/api\/admin\/verifications\/[^/]+\/review$/.test(p)&&req.method==='POST'){
+    const u=auth(req);if(!u||!isOwner(u))return json(res,403,{error:'Owner only.'});const body=await getBody(req);if(!['verified','rejected'].includes(body.status))return json(res,400,{error:'Invalid status.'});
+    const uid=p.split('/')[4],db=readDB(),target=db.users.find(x=>x.id===uid);if(!target||!target.verification)return json(res,404,{error:'Verification not found.'});
+    target.verification.status=body.status;target.verification.reviewNote=String(body.reviewNote||'');target.verification.reviewedAt=new Date().toISOString();await writeDB(db);return json(res,200,{verification:target.verification});
+  }
   if(p==='/api/bookings'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();const bookings=isOwner(u)?db.bookings:db.bookings.filter(b=>b.buyerUserId===u.id||b.providerUserId===u.id);return json(res,200,{bookings:bookings.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))});}
   if(/^\/api\/bookings\/[^/]+\/test-pay$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(b.buyerUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only the buyer can run the test payment.'});b.paymentMode='test';b.paymentStatus='test_authorized';b.testPaymentAt=new Date().toISOString();b.status='payment_tested';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — no real money was charged.'});
@@ -197,5 +216,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v28 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v29 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});

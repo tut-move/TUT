@@ -164,7 +164,25 @@
       <div id="matchList" class="cards"></div>
     </section>
 
-    <section id="offers" class="pane hidden">
+    <section id="verification" class="pageSection">
+  <div class="wrap verificationWrap">
+    <span class="eyebrow">VERIFICATION V1</span>
+    <h2>Account verification</h2>
+    <p class="muted">Submit the information used to review your TUT Move account before real transactions are enabled.</p>
+    <div id="verificationStatus" class="verificationStatus">Not submitted</div>
+    <form id="verificationForm" class="verificationForm">
+      <label>Account role<select id="verifyRole" required><option value="shipper">Shipper / cargo owner</option><option value="carrier">Carrier / transport company</option><option value="driver">Driver</option><option value="warehouse">Warehouse</option><option value="equipment">Equipment provider</option></select></label>
+      <label>Legal name<input id="verifyLegalName" required></label>
+      <label>Country<input id="verifyCountry" required></label>
+      <label>Licence / registration number<input id="verifyLicence"></label>
+      <label>Vehicle ID / plate<input id="verifyVehicle"></label>
+      <label class="verifyWide">Notes<textarea id="verifyNotes" rows="3"></textarea></label>
+      <button class="goldBtn" type="submit">Submit for review</button>
+    </form>
+    <div id="ownerVerificationQueue" class="ownerVerificationQueue"></div>
+  </div>
+</section>
+<section id="offers" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">NEGOTIATION</span><h1>Offers & bookings</h1><p>Offer → counter → accept. Market price is decided by the parties.</p></div></div>
       <div id="offerList" class="cards"></div>
       <section class="offersWorkflow">

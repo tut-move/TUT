@@ -286,3 +286,9 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .offersStage small{display:block;color:#d4b15c;font-weight:800;letter-spacing:.1em;margin-bottom:4px}
 .offersStage strong{display:block;font-size:13px;line-height:1.45}
 @media(max-width:850px){.offersStages{grid-template-columns:1fr}.offersWorkflow{padding:18px}}
+
+/* v29 Verification v1 — additive only */
+.verificationWrap{padding-top:54px;padding-bottom:30px}.verificationStatus{display:inline-block;margin:12px 0 18px;padding:8px 12px;border:1px solid rgba(212,177,92,.35);border-radius:999px;font-weight:800}
+.verificationForm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:900px}.verificationForm label{font-size:12px;font-weight:700}.verificationForm input,.verificationForm select,.verificationForm textarea{margin-top:6px}.verifyWide{grid-column:1/-1}
+.ownerVerificationQueue{margin-top:24px}.verifyReview{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;margin:8px 0}.verifyReview small{display:block;opacity:.65;margin-top:4px}
+@media(max-width:700px){.verificationForm{grid-template-columns:1fr}.verifyWide{grid-column:auto}}

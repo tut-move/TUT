@@ -95,3 +95,9 @@ Upload this ZIP and say:
   3. Transport: Pickup -> In transit -> Delivered
 - TUT Move explicitly does not set the transport price.
 - Added Arabic, German, French and Spanish translations for the new workflow.
+
+## v29 Verification v1
+- Built directly on v28; existing UI/features were retained.
+- Added account verification submission and statuses: not submitted, pending, verified, rejected.
+- Added owner review queue with approve/reject.
+- Verification is manual v1; no paid KYC provider and no real payments were connected.
