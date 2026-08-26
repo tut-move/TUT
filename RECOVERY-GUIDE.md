@@ -108,3 +108,14 @@ Upload this ZIP and say:
 - Arabic/German/French/Spanish verification translations completed.
 - Arabic RTL corrected.
 - Rest of site retained from v30.
+
+
+## v32 Global language, date/time and responsive foundation
+- Built directly on v31; marketplace logic and pricing model were not changed.
+- Replaced ambiguous browser datetime typing with a canonical YYYY-MM-DD + time component.
+- Dates are stored internally in ISO format and displayed according to the selected language.
+- Calendar button remains available across browsers; manual typing can no longer flip DD/MM and MM/DD.
+- Dynamic listing values and common market UI now translate individually instead of leaving mixed English.
+- Dry Van / non-temperature transport hides temperature fields; Reefer shows them.
+- Added a global desktop/tablet/mobile responsive pass and RTL-safe behavior.
+- Supported UI languages remain English, Arabic, German, French and Spanish; each selected language uses the same site-wide translation system.

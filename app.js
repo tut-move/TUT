@@ -76,6 +76,9 @@ for(const [lng,map] of Object.entries(V28_TRANSLATIONS)) Object.assign(UI_TRANSL
 const V31_TRANSLATIONS={"ar": {"Verification": "التحقق", "Verify what matters.": "تحقق مما يهم.", "TUT Move only asks for the checks required by your role and by the trip.": "تطلب TUT Move فقط التحقق المطلوب حسب دورك والرحلة.", "ACCOUNT": "الحساب", "Confirm who you are": "تأكيد هويتك", "ROLE": "الدور", "Show only relevant checks": "إظهار التحقق المناسب فقط", "TRIP": "الرحلة", "Ready before pickup": "الجاهزية قبل الاستلام", "YOUR CHECK": "التحقق الخاص بك", "Complete the essentials.": "أكمل البيانات الأساسية.", "Manual review for MVP": "مراجعة يدوية في النسخة الحالية", "Sign in, choose your role, and TUT Move will show only the information needed for that role.": "سجل الدخول واختر دورك، وستعرض TUT Move فقط البيانات المطلوبة لهذا الدور.", "Sign in to start verification.": "سجل الدخول لبدء التحقق.", "Account role": "نوع الحساب", "Shipper / cargo owner": "صاحب شحنة / بضاعة", "Carrier / transport company": "ناقل / شركة نقل", "Driver": "السائق", "Warehouse": "المخزن", "Equipment provider": "مقدم معدات", "Legal name": "الاسم القانوني", "Country / market": "الدولة / السوق", "Licence / registration number": "رقم الرخصة / التسجيل", "Vehicle ID / plate": "رقم المركبة / اللوحة", "Submit for review": "إرسال للمراجعة", "Before pickup": "قبل الاستلام", "Vehicle": "المركبة", "Cargo": "البضاعة", "Receiver": "المستلم"}, "de": {"Verification": "Verifizierung", "Verify what matters.": "Nur das Wesentliche verifizieren.", "TUT Move only asks for the checks required by your role and by the trip.": "TUT Move fragt nur die Prüfungen ab, die für Ihre Rolle und die Fahrt erforderlich sind.", "ACCOUNT": "KONTO", "Confirm who you are": "Identität bestätigen", "ROLE": "ROLLE", "Show only relevant checks": "Nur relevante Prüfungen anzeigen", "TRIP": "FAHRT", "Ready before pickup": "Bereit vor der Abholung", "YOUR CHECK": "IHRE PRÜFUNG", "Complete the essentials.": "Das Wesentliche vervollständigen.", "Manual review for MVP": "Manuelle Prüfung in der aktuellen Version", "Sign in, choose your role, and TUT Move will show only the information needed for that role.": "Melden Sie sich an, wählen Sie Ihre Rolle, und TUT Move zeigt nur die dafür benötigten Angaben.", "Sign in to start verification.": "Melden Sie sich an, um die Verifizierung zu starten.", "Account role": "Kontorolle", "Shipper / cargo owner": "Versender / Ladungseigentümer", "Carrier / transport company": "Frachtführer / Transportunternehmen", "Driver": "Fahrer", "Warehouse": "Lager", "Equipment provider": "Ausrüstungsanbieter", "Legal name": "Rechtlicher Name", "Country / market": "Land / Markt", "Licence / registration number": "Lizenz- / Registrierungsnummer", "Vehicle ID / plate": "Fahrzeug-ID / Kennzeichen", "Submit for review": "Zur Prüfung einreichen", "Before pickup": "Vor der Abholung", "Vehicle": "Fahrzeug", "Cargo": "Ladung", "Receiver": "Empfänger"}, "fr": {"Verification": "Vérification", "Verify what matters.": "Vérifiez uniquement l’essentiel.", "TUT Move only asks for the checks required by your role and by the trip.": "TUT Move demande uniquement les vérifications nécessaires selon votre rôle et le trajet.", "ACCOUNT": "COMPTE", "Confirm who you are": "Confirmez votre identité", "ROLE": "RÔLE", "Show only relevant checks": "Afficher uniquement les contrôles utiles", "TRIP": "TRAJET", "Ready before pickup": "Prêt avant l’enlèvement", "YOUR CHECK": "VOTRE VÉRIFICATION", "Complete the essentials.": "Complétez l’essentiel.", "Manual review for MVP": "Vérification manuelle pour la version actuelle", "Sign in, choose your role, and TUT Move will show only the information needed for that role.": "Connectez-vous, choisissez votre rôle et TUT Move n’affichera que les informations nécessaires.", "Sign in to start verification.": "Connectez-vous pour commencer la vérification.", "Account role": "Rôle du compte", "Shipper / cargo owner": "Expéditeur / propriétaire de la marchandise", "Carrier / transport company": "Transporteur / société de transport", "Driver": "Chauffeur", "Warehouse": "Entrepôt", "Equipment provider": "Fournisseur d’équipement", "Legal name": "Nom légal", "Country / market": "Pays / marché", "Licence / registration number": "Numéro de licence / immatriculation", "Vehicle ID / plate": "ID véhicule / plaque", "Submit for review": "Soumettre à vérification", "Before pickup": "Avant l’enlèvement", "Vehicle": "Véhicule", "Cargo": "Marchandise", "Receiver": "Destinataire"}, "es": {"Verification": "Verificación", "Verify what matters.": "Verifica solo lo necesario.", "TUT Move only asks for the checks required by your role and by the trip.": "TUT Move solo solicita las verificaciones necesarias según tu rol y el viaje.", "ACCOUNT": "CUENTA", "Confirm who you are": "Confirma quién eres", "ROLE": "ROL", "Show only relevant checks": "Mostrar solo verificaciones relevantes", "TRIP": "VIAJE", "Ready before pickup": "Listo antes de la recogida", "YOUR CHECK": "TU VERIFICACIÓN", "Complete the essentials.": "Completa lo esencial.", "Manual review for MVP": "Revisión manual en la versión actual", "Sign in, choose your role, and TUT Move will show only the information needed for that role.": "Inicia sesión, elige tu rol y TUT Move mostrará solo la información necesaria.", "Sign in to start verification.": "Inicia sesión para comenzar la verificación.", "Account role": "Rol de la cuenta", "Shipper / cargo owner": "Remitente / propietario de la carga", "Carrier / transport company": "Transportista / empresa de transporte", "Driver": "Conductor", "Warehouse": "Almacén", "Equipment provider": "Proveedor de equipos", "Legal name": "Nombre legal", "Country / market": "País / mercado", "Licence / registration number": "Número de licencia / registro", "Vehicle ID / plate": "ID del vehículo / matrícula", "Submit for review": "Enviar para revisión", "Before pickup": "Antes de la recogida", "Vehicle": "Vehículo", "Cargo": "Carga", "Receiver": "Destinatario"}};
 for(const [lng,map] of Object.entries(V31_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 
+const V32_TRANSLATIONS={"ar": {"Date": "التاريخ", "Time": "الوقت", "Open calendar": "فتح التقويم", "YYYY-MM-DD": "YYYY-MM-DD", "HH:MM": "HH:MM", "by": "بواسطة", "Member": "عضو", "Contact": "تواصل", "negotiable": "قابل للتفاوض", "AVAILABLE": "متاح", "WANTED": "مطلوب", "New available": "متاح جديد", "New wanted": "مطلوب جديد", "Pickup date / time": "تاريخ ووقت الاستلام", "Available from": "متاح من", "Available until": "متاح حتى", "Needed from": "مطلوب من", "Needed until": "مطلوب حتى", "Palletised": "على منصات", "Refrigerated": "مبرد", "Bulk": "سائب", "Hazardous": "مواد خطرة", "Oversized": "حمولة كبيرة", "Other": "أخرى", "Reefer": "شاحنة مبردة", "Flatbed": "سطحة", "Tanker": "صهريج", "Box truck": "شاحنة صندوق", "Any suitable": "أي مركبة مناسبة", "tonnes": "طن", "pallets": "منصات", "m³": "م³", "lb": "رطل", "kg": "كجم", "Request quotes": "طلب عروض أسعار", "Open bidding": "مزايدة مفتوحة", "Contact becomes available here after account verification / messaging is connected.": "سيصبح التواصل متاحًا هنا بعد ربط التحقق من الحساب ونظام الرسائل."}, "de": {"Date": "Datum", "Time": "Uhrzeit", "Open calendar": "Kalender öffnen", "YYYY-MM-DD": "JJJJ-MM-TT", "HH:MM": "HH:MM", "by": "von", "Member": "Mitglied", "Contact": "Kontakt", "negotiable": "verhandelbar", "AVAILABLE": "VERFÜGBAR", "WANTED": "GESUCHT", "New available": "Neu verfügbar", "New wanted": "Neu gesucht", "Pickup date / time": "Abholdatum / Uhrzeit", "Available from": "Verfügbar ab", "Available until": "Verfügbar bis", "Needed from": "Benötigt ab", "Needed until": "Benötigt bis", "Palletised": "Palettiert", "Refrigerated": "Gekühlt", "Bulk": "Schüttgut", "Hazardous": "Gefahrgut", "Oversized": "Übermaß", "Other": "Andere", "Reefer": "Kühlfahrzeug", "Flatbed": "Pritsche", "Tanker": "Tankwagen", "Box truck": "Koffer-Lkw", "Any suitable": "Jedes geeignete Fahrzeug", "tonnes": "Tonnen", "pallets": "Paletten", "m³": "m³", "lb": "lb", "kg": "kg", "Request quotes": "Angebote anfordern", "Open bidding": "Offene Gebote", "Contact becomes available here after account verification / messaging is connected.": "Kontakt wird hier verfügbar, sobald Kontoverifizierung und Nachrichten verbunden sind."}, "fr": {"Date": "Date", "Time": "Heure", "Open calendar": "Ouvrir le calendrier", "YYYY-MM-DD": "AAAA-MM-JJ", "HH:MM": "HH:MM", "by": "par", "Member": "Membre", "Contact": "Contacter", "negotiable": "négociable", "AVAILABLE": "DISPONIBLE", "WANTED": "RECHERCHÉ", "New available": "Nouvelle disponibilité", "New wanted": "Nouvelle demande", "Pickup date / time": "Date / heure d’enlèvement", "Available from": "Disponible à partir de", "Available until": "Disponible jusqu’à", "Needed from": "Requis à partir de", "Needed until": "Requis jusqu’à", "Palletised": "Palettisé", "Refrigerated": "Réfrigéré", "Bulk": "Vrac", "Hazardous": "Dangereux", "Oversized": "Hors gabarit", "Other": "Autre", "Reefer": "Camion frigorifique", "Flatbed": "Plateau", "Tanker": "Citerne", "Box truck": "Camion fourgon", "Any suitable": "Tout véhicule adapté", "tonnes": "tonnes", "pallets": "palettes", "m³": "m³", "lb": "lb", "kg": "kg", "Request quotes": "Demander des devis", "Open bidding": "Enchères ouvertes", "Contact becomes available here after account verification / messaging is connected.": "Le contact sera disponible ici après connexion de la vérification du compte et de la messagerie."}, "es": {"Date": "Fecha", "Time": "Hora", "Open calendar": "Abrir calendario", "YYYY-MM-DD": "AAAA-MM-DD", "HH:MM": "HH:MM", "by": "por", "Member": "Miembro", "Contact": "Contactar", "negotiable": "negociable", "AVAILABLE": "DISPONIBLE", "WANTED": "BUSCADO", "New available": "Nueva disponibilidad", "New wanted": "Nueva solicitud", "Pickup date / time": "Fecha / hora de recogida", "Available from": "Disponible desde", "Available until": "Disponible hasta", "Needed from": "Necesario desde", "Needed until": "Necesario hasta", "Palletised": "Paletizado", "Refrigerated": "Refrigerado", "Bulk": "A granel", "Hazardous": "Peligroso", "Oversized": "Sobredimensionado", "Other": "Otro", "Reefer": "Camión frigorífico", "Flatbed": "Plataforma", "Tanker": "Cisterna", "Box truck": "Camión caja", "Any suitable": "Cualquier vehículo adecuado", "tonnes": "toneladas", "pallets": "palés", "m³": "m³", "lb": "lb", "kg": "kg", "Request quotes": "Solicitar cotizaciones", "Open bidding": "Puja abierta", "Contact becomes available here after account verification / messaging is connected.": "El contacto estará disponible aquí cuando se conecten la verificación de cuenta y la mensajería."}};
+for(const [lng,map] of Object.entries(V32_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+
 function buildTranslationReverse(){
   const rev={};
   for(const [lng,map] of Object.entries(UI_TRANSLATIONS)){
@@ -409,7 +412,42 @@ function syncListingCurrency(){
 function setIntent(v){$('intent').value=v;$('haveBtn').classList.toggle('active',v==='have');$('needBtn').classList.toggle('active',v==='need');renderFields()}
 let activeMaps=[];
 function destroyActiveMaps(){for(const m of activeMaps){try{m.__tutResizeObserver?.disconnect();m.remove()}catch{}}activeMaps=[]}
-function fld(k,label,type='text',ph='',extra=''){return `<div class="field"><label>${tr(label)}</label><input data-k="${k}" type="${type}" placeholder="${esc(tr(ph))}" ${extra}></div>`}
+function syncTutDateTime(k,withTime){
+  const d=document.querySelector(`[data-date-for="${k}"]`);
+  const t=document.querySelector(`[data-time-for="${k}"]`);
+  const h=document.querySelector(`[data-k="${k}"][data-iso-field="1"]`);
+  if(!d||!h)return;
+  let date=String(d.value||'').trim().replace(/[./]/g,'-');
+  // Accept YYYY-MM-DD only to remove DD/MM vs MM/DD ambiguity everywhere.
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){h.value='';return}
+  const [y,m,day]=date.split('-').map(Number);
+  const test=new Date(Date.UTC(y,m-1,day));
+  if(test.getUTCFullYear()!==y||test.getUTCMonth()!==m-1||test.getUTCDate()!==day){h.value='';return}
+  if(withTime){
+    const time=String(t?.value||'').trim();
+    h.value=/^\d{2}:\d{2}$/.test(time)?`${date}T${time}`:'';
+  }else h.value=date;
+}
+function tutDateField(k,label,withTime=false){
+  const dateHint=tr('YYYY-MM-DD');
+  const timeHint=tr('HH:MM');
+  return `<div class="field tutDateField">
+    <label>${tr(label)}</label>
+    <div class="tutDateRow">
+      <input class="tutDateText" data-date-for="${k}" type="text" inputmode="numeric" autocomplete="off" maxlength="10" placeholder="${esc(dateHint)}" aria-label="${esc(tr('Date'))}">
+      ${withTime?`<input class="tutTimeText" data-time-for="${k}" type="time" step="300" aria-label="${esc(tr('Time'))}">`:''}
+      <button class="datePickBtn" type="button" data-pick-for="${k}" title="${esc(tr('Open calendar'))}" aria-label="${esc(tr('Open calendar'))}">📅</button>
+      <input class="nativeDatePicker" data-native-for="${k}" type="date" tabindex="-1" aria-hidden="true">
+    </div>
+    <small class="dateFormatHint">${withTime?`${dateHint} · ${timeHint}`:dateHint}</small>
+    <input data-k="${k}" data-iso-field="1" type="hidden">
+  </div>`;
+}
+function fld(k,label,type='text',ph='',extra=''){
+  if(type==='date')return tutDateField(k,label,false);
+  if(type==='datetime-local')return tutDateField(k,label,true);
+  return `<div class="field"><label>${tr(label)}</label><input data-k="${k}" type="${type}" placeholder="${esc(tr(ph))}" ${extra}></div>`;
+}
 function sel(k,label,options){return `<div class="field"><label>${tr(label)}</label><select data-k="${k}">${options.map(x=>`<option value="${esc(x)}">${tr(x)}</option>`).join('')}</select></div>`}
 function checks(k,label,items){return `<fieldset class="specChecks" data-check-key="${k}"><legend>${tr(label)}</legend>${items.map(x=>`<label><input type="checkbox" value="${esc(x)}"> ${tr(x)}</label>`).join('')}</fieldset>`}
 function countryField(k,label){return `<div class="field"><label>${tr(label)}</label><select data-k="${k}">${countries.map(x=>`<option value="${esc(x)}">${tr(x)}</option>`).join('')}</select></div>`}
@@ -489,21 +527,50 @@ function categoryFields(r,intent){
  if(r==='equipment')return `<div class="formSection"><h3>${tr('Equipment specification')}</h3><div class="two">${sel('equipmentType','Equipment type',['Forklift','Reach truck','Crane','Loader','Excavator','Pallet truck','Loading ramp','Generator','Other'])}${fld('makeModel','Make / model','text','Toyota 8FG, Linde...')}</div><div class="two">${fld('capacity','Capacity / rating','text','2.5 tonnes, 10 m reach...')}${sel('operatorIncluded','Operator included?',['No','Yes','Optional'])}</div>${fld('certifications','Inspection / certification','text','Inspection date, CE, safety certificate...')}<div class="two">${fld('availableFrom',available?'Available from':'Needed from','datetime-local','')}${fld('availableTo',available?'Available until':'Needed until','datetime-local','')}</div></div>${mapWidget('location',available?'Equipment location':'Where equipment is needed','Street, site, city or postcode')}`;
  return '';
 }
-function renderFields(){destroyActiveMaps();const r=$('resource').value,i=$('intent').value;$('fields').innerHTML=`<div class="hint">${tr(i==='have'?'Publish an available resource with its real specifications.':'Publish exactly what you are looking for.')}</div>`+categoryFields(r,i);$('fields').querySelectorAll('.listingMap').forEach(el=>initListingMap(el.id.replace('map_','')));translateNodeTree($('fields'));$('fields').querySelectorAll('option').forEach(o=>{o.textContent=tr(canonicalEnglish(o.textContent))})}
+function bindTutDateFields(root=document){
+  root.querySelectorAll('[data-date-for]').forEach(d=>{
+    const k=d.dataset.dateFor;
+    const native=root.querySelector(`[data-native-for="${k}"]`);
+    const pick=root.querySelector(`[data-pick-for="${k}"]`);
+    const time=root.querySelector(`[data-time-for="${k}"]`);
+    const clean=()=>{
+      let s=d.value.replace(/[^\d]/g,'').slice(0,8);
+      if(s.length>4)s=s.slice(0,4)+'-'+s.slice(4);
+      if(s.length>7)s=s.slice(0,7)+'-'+s.slice(7);
+      d.value=s; syncTutDateTime(k,!!time);
+    };
+    d.addEventListener('input',clean);
+    d.addEventListener('blur',()=>syncTutDateTime(k,!!time));
+    time?.addEventListener('change',()=>syncTutDateTime(k,true));
+    native?.addEventListener('change',()=>{if(native.value){d.value=native.value;syncTutDateTime(k,!!time)}});
+    pick?.addEventListener('click',()=>{
+      try{if(native.showPicker)native.showPicker();else native.click()}catch{native?.click()}
+    });
+  });
+}
+function renderFields(){destroyActiveMaps();const r=$('resource').value,i=$('intent').value;$('fields').innerHTML=`<div class="hint">${tr(i==='have'?'Publish an available resource with its real specifications.':'Publish exactly what you are looking for.')}</div>`+categoryFields(r,i);$('fields').querySelectorAll('.listingMap').forEach(el=>initListingMap(el.id.replace('map_','')));translateNodeTree($('fields'));$('fields').querySelectorAll('option').forEach(o=>{o.textContent=tr(canonicalEnglish(o.textContent))});bindTutDateFields($('fields'));bindConditionalSpecFields($('fields'))}
 function setIntent(v){$('intent').value=v;$('haveBtn').classList.toggle('active',v==='have');$('needBtn').classList.toggle('active',v==='need');renderFields()}
 function startListing(resource,intent){go('post');$('resource').value=resource;setIntent(intent);setTimeout(()=>$('listingTitle')?.focus(),120)}
 function browseResource(resource,intent){go('market');$('filterResource').value=resource;$('filterIntent').value=intent;loadMarket()}
 function togglePrice(){const m=$('priceMode').value;$('priceWrap').style.display=['request_quotes','open_bidding'].includes(m)?'none':'block'}
-async function submitListing(){if(!me){go('accountPane');return}const data={};$('fields').querySelectorAll('[data-k]').forEach(el=>data[el.dataset.k]=el.type==='number'?Number(el.value||0):el.value);$('fields').querySelectorAll('[data-check-key]').forEach(fs=>data[fs.dataset.checkKey]=[...fs.querySelectorAll('input:checked')].map(x=>x.value).join(', '));try{await api('/api/listings',{method:'POST',body:JSON.stringify({intent:$('intent').value,resource:$('resource').value,title:$('listingTitle').value,country:$('listingCountry').value,currency:$('currency').value,priceMode:$('priceMode').value,price:Number($('price').value||0),data})});$('postMsg').textContent='Published successfully.';loadMarket()}catch(e){$('postMsg').textContent=e.message}}
+async function submitListing(){if(!me){go('accountPane');return}const data={};$('fields').querySelectorAll('[data-k]').forEach(el=>data[el.dataset.k]=el.type==='number'?Number(el.value||0):el.value);$('fields').querySelectorAll('[data-check-key]').forEach(fs=>data[fs.dataset.checkKey]=[...fs.querySelectorAll('input:checked')].map(x=>x.value).join(', '));try{await api('/api/listings',{method:'POST',body:JSON.stringify({intent:$('intent').value,resource:$('resource').value,title:$('listingTitle').value,country:$('listingCountry').value,currency:$('currency').value,priceMode:$('priceMode').value,price:Number($('price').value||0),data})});$('postMsg').textContent=tr('Published successfully.');loadMarket()}catch(e){$('postMsg').textContent=tr(e.message)}}
 function listingLabel(x){return `${x.intent==='have'?tr('AVAILABLE'):tr('WANTED')} · ${tr(({driver:'Driver',truck:'Truck',load:'Load',warehouse:'Warehouse',equipment:'Equipment'})[x.resource]||x.resource.toUpperCase())}`}
-function priceText(x){if(x.priceMode==='request_quotes')return'Request quotes';if(x.priceMode==='open_bidding')return'Open bidding';if(x.priceMode==='negotiable')return x.price?`${x.currency} ${x.price} · negotiable`:'Negotiable';return`${x.currency} ${x.price}`}
-function summary(x){const d=x.data||{};if(x.resource==='driver')return `${d.location||'—'} · ${d.licenseClasses||d.licenseClass||'—'} · ${d.availableFrom||'—'}`;if(x.resource==='truck')return `${d.location||'—'} · ${d.vehicleType||'—'} · ${d.capacity||'—'} ${d.capacityUnit||''}`;if(x.resource==='load')return `${d.pickupCountry?d.pickupCountry+' · ':''}${d.pickup||'—'} → ${d.deliveryCountry?d.deliveryCountry+' · ':''}${d.delivery||'—'} · ${d.weight||'—'} ${d.weightUnit||''}`;if(x.resource==='warehouse')return `${d.location||'—'} · ${d.storageType||'—'} · ${d.availableArea||'—'} ${d.areaUnit||''}`;if(x.resource==='equipment')return `${d.location||'—'} · ${d.equipmentType||'—'} · ${d.capacity||'—'}`;return d.location||'—'}
+function priceText(x){if(x.priceMode==='request_quotes')return tr('Request quotes');if(x.priceMode==='open_bidding')return tr('Open bidding');if(x.priceMode==='negotiable')return x.price?`${x.currency} ${x.price} · ${tr('negotiable')}`:tr('Negotiable');return`${x.currency} ${x.price}`}
+function summary(x){
+  const d=x.data||{},tx=v=>v&&v!=='—'?tr(v):'—',tc=v=>v?tr(v):'';
+  if(x.resource==='driver')return `${d.location||'—'} · ${tx(d.licenseClasses||d.licenseClass)} · ${formatStoredDateTime(d.availableFrom)}`;
+  if(x.resource==='truck')return `${d.location||'—'} · ${tx(d.vehicleType)} · ${d.capacity||'—'} ${tc(d.capacityUnit)}`;
+  if(x.resource==='load')return `${d.pickupCountry?tr(d.pickupCountry)+' · ':''}${d.pickup||'—'} → ${d.deliveryCountry?tr(d.deliveryCountry)+' · ':''}${d.delivery||'—'} · ${d.weight||'—'} ${tc(d.weightUnit)}`;
+  if(x.resource==='warehouse')return `${d.location||'—'} · ${tx(d.storageType)} · ${d.availableArea||'—'} ${tc(d.areaUnit)}`;
+  if(x.resource==='equipment')return `${d.location||'—'} · ${tx(d.equipmentType)} · ${d.capacity||'—'}`;
+  return d.location||'—'
+}
 function updateLiveTicker(rows=listings){
   const t=$('liveTickerTrack');if(!t)return;
   const recent=(rows||[]).slice(-8).reverse();
   t.textContent=recent.length?recent.map(x=>`${x.intent==='have'?tr('New available'):tr('New wanted')}: ${x.title||listingLabel(x)} · ${x.country||''}`).join('   •   '):tr('TUT Move live market — new activity will appear here');
 }
-async function loadMarket(){const j=await api('/api/listings');listings=j.listings;updateLiveTicker(listings);const fi=$('filterIntent')?.value||'',fr=$('filterResource')?.value||'',fc=($('filterCountry')?.value||'').toLowerCase();const rows=listings.filter(x=>(!fi||x.intent===fi)&&(!fr||x.resource===fr)&&(!fc||(x.country||'').toLowerCase().includes(fc)));$('marketList').innerHTML=rows.length?rows.map(x=>`<article class="card marketCard"><div class="row"><span class="tag">${listingLabel(x)}</span>${x.user?.verified?'<span class="verified">✓ Verified</span>':''}</div><h3>${esc(x.title||listingLabel(x))}</h3><p>${esc(summary(x))}</p><p class="price">${esc(priceText(x))}</p><small>${esc(x.country||'')} · by ${esc(x.user?.name||'Member')}</small><div class="actions">${(!me||me.id!==x.userId)?`<button class="goldBtn mini" onclick="openOffer('${x.id}','${x.currency}')">Make offer</button><button class="outlineBtn mini" onclick="contactListing('${x.id}')">Contact</button>`:''}${me&&me.id===x.userId?`<button class="outlineBtn mini" onclick="closeListing('${x.id}')">Close</button>`:''}</div><div id="offer_${x.id}"></div></article>`).join(''):'<div class="card">No open listings match these filters.</div>'}
+async function loadMarket(){const j=await api('/api/listings');listings=j.listings;updateLiveTicker(listings);const fi=$('filterIntent')?.value||'',fr=$('filterResource')?.value||'',fc=($('filterCountry')?.value||'').toLowerCase();const rows=listings.filter(x=>(!fi||x.intent===fi)&&(!fr||x.resource===fr)&&(!fc||(x.country||'').toLowerCase().includes(fc)));$('marketList').innerHTML=rows.length?rows.map(x=>`<article class="card marketCard"><div class="row"><span class="tag">${listingLabel(x)}</span>${x.user?.verified?`<span class="verified">✓ ${tr('Verified')}</span>`:''}</div><h3>${esc(x.title||listingLabel(x))}</h3><p>${esc(summary(x))}</p><p class="price">${esc(priceText(x))}</p><small>${esc(x.country||'')} · ${tr('by')} ${esc(x.user?.name||tr('Member'))}</small><div class="actions">${(!me||me.id!==x.userId)?`<button class="goldBtn mini" onclick="openOffer('${x.id}','${x.currency}')">${tr('Make offer')}</button><button class="outlineBtn mini" onclick="contactListing('${x.id}')">${tr('Contact')}</button>`:''}${me&&me.id===x.userId?`<button class="outlineBtn mini" onclick="closeListing('${x.id}')">${tr('Close')}</button>`:''}</div><div id="offer_${x.id}"></div></article>`).join(''):`<div class="card">${tr('No open listings match these filters.')}</div>`}
 function requireAccountFor(action){sessionStorage.setItem('tut_after_login',action);go('accountPane')}
 function contactListing(id){if(!me){requireAccountFor('contact:'+id);return}alert(tr('Contact becomes available here after account verification / messaging is connected.'))}
 function openOffer(id,currency){if(!me){requireAccountFor('offer:'+id+':'+currency);return}$('offer_'+id).innerHTML=`<div class="offerBox"><input id="oa_${id}" type="number" placeholder="Amount"><input id="om_${id}" placeholder="Message / terms"><button class="goldBtn mini" onclick="sendOffer('${id}','${currency}')">Send offer</button></div>`}
@@ -623,3 +690,40 @@ function applyV31VerificationTranslations(){
 document.getElementById('verifyRole')?.addEventListener('change',updateVerificationRoleFields);
 document.addEventListener('change',e=>{if((e.target?.id||'').toLowerCase().includes('lang'))setTimeout(applyV31VerificationTranslations,0)});
 setTimeout(()=>{updateVerificationRoleFields();applyV31VerificationTranslations()},200);
+
+function bindConditionalSpecFields(root=document){
+  const equipment=root.querySelector('[data-k="equipmentNeeded"]');
+  if(equipment){
+    const update=()=>{
+      const show=equipment.value==='Reefer';
+      root.querySelectorAll('[data-k="tempMin"],[data-k="tempMax"]').forEach(inp=>{
+        const field=inp.closest('.field'); if(field)field.style.display=show?'':'none';
+        if(!show)inp.value='';
+      });
+    };
+    equipment.addEventListener('change',update);update();
+  }
+  const tempType=root.querySelector('[data-k="temperatureType"]');
+  if(tempType){
+    const update=()=>{
+      const show=!['Ambient','Not applicable'].includes(tempType.value);
+      root.querySelectorAll('[data-k="tempMin"],[data-k="tempMax"]').forEach(inp=>{
+        const field=inp.closest('.field'); if(field)field.style.display=show?'':'none';
+        if(!show)inp.value='';
+      });
+    };
+    tempType.addEventListener('change',update);update();
+  }
+}
+
+function localeForLanguage(lang=activeLang){
+  return ({ar:'ar',de:'de-DE',fr:'fr-FR',es:'es-ES',en:'en-US'})[lang]||'en-US';
+}
+function formatStoredDateTime(value){
+  if(!value)return '—';
+  const s=String(value);
+  const m=s.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/);
+  if(!m)return s;
+  const dt=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]),Number(m[4]||0),Number(m[5]||0));
+  return new Intl.DateTimeFormat(localeForLanguage(),m[4]?{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}:{year:'numeric',month:'2-digit',day:'2-digit'}).format(dt);
+}

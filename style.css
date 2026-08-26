@@ -303,3 +303,82 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .verifyPanel{padding:22px;border:1px solid rgba(212,177,92,.2);border-radius:18px;background:rgba(255,255,255,.018)}.verifyPanelHead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.verifyPanelHead h3{font-size:28px;margin:5px 0}.verifyMode{font-size:11px;opacity:.55}.compactVerify{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:none}.compactVerify label{font-size:12px;font-weight:700}.compactVerify input,.compactVerify select{margin-top:6px}.compactVerify button{grid-column:1/-1;max-width:260px}.tripReadyMini{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}.tripReadyMini span{opacity:.65}.tripReadyMini i{font-style:normal;color:#d4b15c}
 html[dir="rtl"] #verify{text-align:right}html[dir="rtl"] .verifyStep{flex-direction:row-reverse}html[dir="rtl"] .verifyPanelHead{flex-direction:row-reverse}html[dir="rtl"] .tripReadyMini{direction:rtl}
 @media(max-width:850px){.verifySteps,.compactVerify{grid-template-columns:1fr}.compactVerify button{grid-column:auto;max-width:none}.verifyPanelHead{display:block}.verifyShell>h2{font-size:34px}}
+
+
+/* ===============================================================
+   v32 GLOBAL LANGUAGE / DATE / RESPONSIVE FOUNDATION
+   =============================================================== */
+
+/* Consistent touch targets across desktop, tablet and phone */
+button,input,select,textarea{min-height:44px}
+input,select,textarea{width:100%;box-sizing:border-box}
+button{touch-action:manipulation}
+img,video,canvas,svg{max-width:100%}
+
+/* Cross-browser unambiguous date/time widget */
+.tutDateRow{display:grid;grid-template-columns:minmax(150px,1fr) minmax(110px,.55fr) 46px;gap:8px;align-items:center}
+.tutDateField:not(:has(.tutTimeText)) .tutDateRow{grid-template-columns:minmax(150px,1fr) 46px}
+.tutDateText,.tutTimeText{font-variant-numeric:tabular-nums}
+.datePickBtn{min-width:46px;width:46px;padding:0;display:grid;place-items:center;border:1px solid rgba(212,177,92,.32);border-radius:10px;background:transparent;color:inherit;cursor:pointer}
+.nativeDatePicker{position:fixed!important;left:-9999px!important;top:-9999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
+.dateFormatHint{display:block;margin-top:5px;opacity:.55;font-size:11px}
+html[dir="rtl"] .tutDateText,html[dir="rtl"] .tutTimeText{direction:ltr;text-align:right}
+
+/* Keep user-entered values readable while labels follow the active language */
+html[dir="rtl"] input[type="email"],html[dir="rtl"] input[type="url"]{direction:ltr;text-align:right}
+
+/* General responsive form/grid behavior */
+.two{align-items:start}
+.listingMap{width:100%;max-width:100%;overflow:hidden}
+.card,.formSection,.verifyPanel,.offersWorkflow,.marketPricingPanel{max-width:100%;box-sizing:border-box}
+
+/* Navigation/header resilience */
+header,.topbar,.siteHeader{max-width:100vw}
+nav{min-width:0}
+nav a,nav button{white-space:nowrap}
+#headerCountry,#headerCurrency,#lang{max-width:100%}
+
+/* RTL: reverse structural flow without reversing numeric/date content */
+html[dir="rtl"] body{text-align:right}
+html[dir="rtl"] .actions,html[dir="rtl"] .row{direction:rtl}
+html[dir="rtl"] .listingMap{direction:ltr}
+
+/* Tablet */
+@media(max-width:1000px){
+  .wrap{width:min(94%,100%);padding-left:14px;padding-right:14px}
+  .two{grid-template-columns:1fr 1fr}
+  .heroGrid,.marketGrid,.footerGrid{gap:18px}
+  nav{gap:12px}
+}
+
+/* Phone */
+@media(max-width:720px){
+  html,body{overflow-x:hidden}
+  .wrap{width:100%;padding-left:14px;padding-right:14px}
+  .two,.three,.verifySteps,.offersStages,.bookingMoney{grid-template-columns:1fr!important}
+  .field{min-width:0}
+  .listingMap{height:260px!important;min-height:260px!important;border-radius:14px}
+  .tutDateRow,.tutDateField:not(:has(.tutTimeText)) .tutDateRow{grid-template-columns:1fr 46px}
+  .tutDateRow .tutTimeText{grid-column:1/2}
+  .tutDateRow .datePickBtn{grid-column:2/3;grid-row:1/2}
+  .actions{display:flex;flex-wrap:wrap;gap:8px}
+  .actions button,.goldBtn,.outlineBtn{min-height:46px}
+  .marketCard,.card,.formSection,.verifyPanel,.offersWorkflow{padding:16px}
+  h1{font-size:clamp(38px,12vw,64px)!important;line-height:1.02}
+  h2{font-size:clamp(28px,8vw,42px)!important}
+  h3{font-size:clamp(20px,6vw,28px)!important}
+  /* Let the main nav wrap instead of clipping off-screen */
+  nav{display:flex!important;flex-wrap:wrap!important;justify-content:center!important;gap:7px 12px!important}
+  nav a{font-size:13px!important}
+  select{background-position:right 10px center}
+  html[dir="rtl"] select{background-position:left 10px center}
+}
+
+/* Narrow phones */
+@media(max-width:430px){
+  .wrap{padding-left:10px;padding-right:10px}
+  .card,.formSection,.verifyPanel,.offersWorkflow{padding:13px}
+  .tutDateText,.tutTimeText{font-size:16px} /* prevents iOS zoom */
+  input,select,textarea{font-size:16px}
+  .listingMap{height:230px!important;min-height:230px!important}
+}
