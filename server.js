@@ -123,7 +123,7 @@ function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'29',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'33',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -146,6 +146,24 @@ const server=http.createServer(async(req,res)=>{
     const b=await getBody(req),db=readDB(),u=db.users.find(x=>x.email===String(b.email||'').toLowerCase());if(!u)return json(res,401,{error:'Invalid email or password.'});const hp=hashPassword(String(b.password||''),u.salt);if(!crypto.timingSafeEqual(Buffer.from(hp.hash,'hex'),Buffer.from(u.hash,'hex')))return json(res,401,{error:'Invalid email or password.'});const sid=id('s');sessions.set(sid,u.id);res.setHeader('Set-Cookie',`sid=${sid}; HttpOnly; SameSite=Lax; Path=/`);return json(res,200,{user:safeUser(u)});
   }
   if(p==='/api/logout'&&req.method==='POST'){const sid=cookies(req).sid;if(sid)sessions.delete(sid);res.setHeader('Set-Cookie','sid=; Max-Age=0; Path=/');return json(res,200,{ok:true});}
+
+  if(p==='/api/account'&&req.method==='DELETE'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});
+    if(u.role==='owner')return json(res,403,{error:'The platform-owner account cannot be deleted from this screen.'});
+    const db=readDB(),uid=u.id;
+    const listingIds=new Set(db.listings.filter(x=>x.userId===uid).map(x=>x.id));
+    const offerIds=new Set(db.offers.filter(x=>x.fromUserId===uid||x.toUserId===uid||listingIds.has(x.listingId)).map(x=>x.id));
+    db.users=db.users.filter(x=>x.id!==uid);
+    db.listings=db.listings.filter(x=>x.userId!==uid);
+    db.offers=db.offers.filter(x=>x.fromUserId!==uid&&x.toUserId!==uid&&!listingIds.has(x.listingId));
+    db.bookings=db.bookings.filter(x=>x.buyerUserId!==uid&&x.providerUserId!==uid&&!listingIds.has(x.listingId)&&!offerIds.has(x.offerId));
+    db.verifications=db.verifications.filter(x=>x.userId!==uid);
+    db.matches=[];recomputeMatches(db);
+    try{if(fs.existsSync(UPLOADS)){for(const name of fs.readdirSync(UPLOADS)){if(name.startsWith(uid+'_')){try{fs.unlinkSync(path.join(UPLOADS,name))}catch{}}}}}catch{}
+    for(const [sid,userId] of sessions.entries())if(userId===uid)sessions.delete(sid);
+    await writeDB(db);res.setHeader('Set-Cookie','sid=; Max-Age=0; Path=/');return json(res,200,{ok:true,message:'Account deleted.'});
+  }
+
   if(p==='/api/me'&&req.method==='GET'){const u=auth(req);return json(res,200,{user:u?safeUser(u):null});}
   if(p==='/api/settings'&&req.method==='GET'){return json(res,200,{settings:readDB().settings});}
   if(p==='/api/admin/settings'&&req.method==='PUT'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const b=await getBody(req),db=readDB();if(Number.isFinite(Number(b.platformFeePct)))db.settings.platformFeePct=Math.max(0,Math.min(30,Number(b.platformFeePct)));if(b.defaultCurrency)db.settings.defaultCurrency=String(b.defaultCurrency).slice(0,5);for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail'])if(k in b)db.settings[k]=String(b[k]||'').trim().slice(0,180);await writeDB(db);return json(res,200,{settings:db.settings});}
@@ -216,5 +234,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v29 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v33 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});

@@ -119,3 +119,12 @@ Upload this ZIP and say:
 - Dry Van / non-temperature transport hides temperature fields; Reefer shows them.
 - Added a global desktop/tablet/mobile responsive pass and RTL-safe behavior.
 - Supported UI languages remain English, Arabic, German, French and Spanish; each selected language uses the same site-wide translation system.
+
+## v33 Dates, account deletion, Portuguese & language completion
+- Load/Cargo now has two explicit date/time fields: Required pickup and Required delivery.
+- Delivery must be after pickup; both are required before publishing a load request.
+- Added self-service account deletion for normal marketplace users. Deletion removes that user's listings, offers, bookings, verification records and uploaded verification files. The special platform-owner account is protected.
+- Added Portuguese (PT) to the language selector.
+- Added full Portuguese translation coverage for the current canonical UI dictionary and filled known French/Spanish/German gaps.
+- Dynamic account, offers, matches, verification and owner-dashboard UI now routes through the same translation function instead of injecting English-only labels.
+- English remains the canonical source language; Arabic RTL and the existing responsive desktop/tablet/mobile foundation remain unchanged.

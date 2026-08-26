@@ -382,3 +382,11 @@ html[dir="rtl"] .listingMap{direction:ltr}
   input,select,textarea{font-size:16px}
   .listingMap{height:230px!important;min-height:230px!important}
 }
+
+/* v33 account privacy + two-date flow */
+.privacyPanel{margin-top:16px;padding:18px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.018)}
+.privacyPanel h3{margin:0 0 8px}.privacyPanel p{margin:0 0 14px;opacity:.72}.dangerPanel{border-color:rgba(210,75,75,.28)}
+.dangerBtn{border:1px solid rgba(220,80,80,.55);background:rgba(180,45,45,.12);color:#ffdede;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer}
+.dangerBtn:hover{background:rgba(180,45,45,.2)}
+.accountProfile{overflow-wrap:anywhere}
+@media(max-width:720px){#account{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.privacyPanel{padding:15px}.dangerBtn{width:100%}}
