@@ -233,7 +233,7 @@ html[dir="rtl"] .marketBadge,html[dir="rtl"] .priceWithCurrency{direction:rtl}
 footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:underline}
 
 /* v25 — booking, trip verification and payment test workflow */
-.paymentArchitecture,.testNotice{border:1px solid rgba(212,177,92,.35)}
+.testNotice{border:1px solid rgba(212,177,92,.35)}
 .testNotice{padding:10px 12px;border-radius:10px;margin:10px 0;font-weight:700}
 .tripCard h4{margin:18px 0 8px}
 .tripTop{display:flex;gap:8px;flex-wrap:wrap}
@@ -244,3 +244,23 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .tripFlow span{padding:6px 9px;border-radius:999px;border:1px solid rgba(255,255,255,.12);font-size:12px}
 .tripFlow span.done{border-color:#d4b15c;font-weight:800}
 @media(max-width:700px){.tripChecks{grid-template-columns:1fr}}
+
+/* v26 — polished offers, booking workflow and multilingual price guidance */
+.bookingSectionHead{margin-top:42px;display:flex;justify-content:space-between;align-items:end}
+.bookingSectionHead .subhead{margin:5px 0 14px}
+.dealStepper{display:flex;align-items:center;gap:9px;overflow:auto;padding:14px 2px 20px;white-space:nowrap}
+.dealStepper span{border:1px solid rgba(212,177,92,.32);border-radius:999px;padding:8px 12px;font-size:12px;font-weight:800}
+.dealStepper i{opacity:.45;font-style:normal}
+.estimatePanel{display:grid;grid-template-columns:minmax(190px,.75fr) 1.7fr;gap:22px;padding:22px;border:1px solid rgba(212,177,92,.25);border-radius:18px;background:rgba(255,255,255,.025);margin-bottom:24px}
+.estimatePanel h3{margin:5px 0}.estimatePanel p{margin:5px 0}
+.estimateInputs{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px;align-items:end}
+.estimateInputs label{font-size:12px;font-weight:700}.estimateInputs input,.estimateInputs select{margin-top:6px}
+.estimateInputs button{height:44px}
+.estimateResult{grid-column:2;display:flex;align-items:baseline;gap:12px;padding-top:2px}
+.estimateResult strong{font-size:25px}.estimateResult small{opacity:.7}
+.estimatePanel>.muted{grid-column:2}
+.bookingMoney{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.bookingMoney>div{padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:12px}
+.bookingMoney small{display:block;opacity:.65;margin-bottom:5px}.bookingMoney strong{font-size:16px}
+.paymentArchitecture{display:none}
+@media(max-width:800px){.estimatePanel{grid-template-columns:1fr}.estimateInputs{grid-template-columns:1fr}.estimateResult,.estimatePanel>.muted{grid-column:1}.bookingMoney{grid-template-columns:1fr}.dealStepper{padding-bottom:14px}}

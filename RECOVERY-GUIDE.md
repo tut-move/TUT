@@ -72,3 +72,10 @@ Upload this ZIP and say:
 - Pickup can be confirmed only after the trip is ready.
 - Delivery follows pickup and marks a simulated payout as ready.
 - Real KYC/document provider and real Stripe Connect remain intentionally unconnected until legal entity/bank onboarding.
+
+## v26 UX / language revision
+- Rebuilt Offers & Bookings workflow UI to remove the crowded technical paragraph.
+- Added full translations for all new workflow text in Arabic, German, French and Spanish.
+- Added TUT Price Estimate as non-binding guidance; users still negotiate the final market price.
+- Price estimate is an MVP guidance formula, not live market pricing and not an Uber clone.
+- Real payments remain intentionally disabled.

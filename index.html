@@ -167,11 +167,22 @@
     <section id="offers" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">NEGOTIATION</span><h1>Offers & bookings</h1><p>Offer → counter → accept. Market price is decided by the parties.</p></div></div>
       <div id="offerList" class="cards"></div>
-      <h2 class="subhead">Agreed bookings & trip control</h2>
-      <div class="panel paymentArchitecture">
-        <span class="eyebrow">PAYMENT & TRIP WORKFLOW — TEST MODE</span>
-        <p>Agreement → test payment authorization → driver/licence/truck/cargo/receiver checks → both sides ready → pickup → in transit → delivery → simulated payout ready.</p>
-        <p class="muted">No real card, bank account, Stripe charge or payout is connected in this build.</p>
+      <div class="bookingSectionHead">
+        <div><span class="eyebrow">TRIP CONTROL</span><h2 class="subhead">Agreed bookings & trip control</h2></div>
+      </div>
+      <div class="dealStepper" aria-label="Booking workflow">
+        <span>Agreement</span><i>→</i><span>Payment</span><i>→</i><span>Verification</span><i>→</i><span>Pickup</span><i>→</i><span>In transit</span><i>→</i><span>Delivered</span>
+      </div>
+      <div class="estimatePanel">
+        <div><span class="eyebrow">PRICE GUIDANCE</span><h3>TUT Price Estimate</h3><p>A guide, not a fixed market price.</p></div>
+        <div class="estimateInputs">
+          <label>Distance (km)<input id="estimateKm" type="number" min="1" value="500"></label>
+          <label>Cargo weight (kg)<input id="estimateKg" type="number" min="0" value="10000"></label>
+          <label>Market demand<select id="estimateDemand"><option value="1">Normal</option><option value="1.15">Busy</option><option value="1.3">Very busy</option></select></label>
+          <button class="goldBtn" onclick="calculatePriceEstimate()">Calculate estimate</button>
+        </div>
+        <div id="estimateResult" class="estimateResult">—</div>
+        <p class="muted">Carriers can still offer, counter and agree their own price.</p>
       </div>
       <div id="bookingList" class="cards"></div>
     </section>
