@@ -173,16 +173,13 @@
       <div class="dealStepper" aria-label="Booking workflow">
         <span>Agreement</span><i>→</i><span>Payment</span><i>→</i><span>Verification</span><i>→</i><span>Pickup</span><i>→</i><span>In transit</span><i>→</i><span>Delivered</span>
       </div>
-      <div class="estimatePanel">
-        <div><span class="eyebrow">PRICE GUIDANCE</span><h3>TUT Price Estimate</h3><p>A guide, not a fixed market price.</p></div>
-        <div class="estimateInputs">
-          <label>Distance (km)<input id="estimateKm" type="number" min="1" value="500"></label>
-          <label>Cargo weight (kg)<input id="estimateKg" type="number" min="0" value="10000"></label>
-          <label>Market demand<select id="estimateDemand"><option value="1">Normal</option><option value="1.15">Busy</option><option value="1.3">Very busy</option></select></label>
-          <button class="goldBtn" onclick="calculatePriceEstimate()">Calculate estimate</button>
+      <div class="marketPricingPanel">
+        <span class="eyebrow">MARKET PRICING</span>
+        <h3>The parties decide the price.</h3>
+        <p>TUT Move does not set or calculate the transport price. Publish the requirement, receive carrier offers, compare them, counter if needed, and accept the deal that works for both sides.</p>
+        <div class="marketPricingSteps">
+          <span>Publish</span><i>→</i><span>Receive offers</span><i>→</i><span>Compare</span><i>→</i><span>Counter</span><i>→</i><span>Accept</span>
         </div>
-        <div id="estimateResult" class="estimateResult">—</div>
-        <p class="muted">Carriers can still offer, counter and agree their own price.</p>
       </div>
       <div id="bookingList" class="cards"></div>
     </section>

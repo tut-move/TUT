@@ -264,3 +264,13 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .bookingMoney small{display:block;opacity:.65;margin-bottom:5px}.bookingMoney strong{font-size:16px}
 .paymentArchitecture{display:none}
 @media(max-width:800px){.estimatePanel{grid-template-columns:1fr}.estimateInputs{grid-template-columns:1fr}.estimateResult,.estimatePanel>.muted{grid-column:1}.bookingMoney{grid-template-columns:1fr}.dealStepper{padding-bottom:14px}}
+
+/* v27 — market pricing without platform-set estimates */
+.estimatePanel{display:none!important}
+.marketPricingPanel{padding:24px;border:1px solid rgba(212,177,92,.25);border-radius:18px;background:rgba(255,255,255,.025);margin-bottom:24px}
+.marketPricingPanel h3{font-size:28px;margin:8px 0}
+.marketPricingPanel p{max-width:900px;line-height:1.6;margin:0 0 18px}
+.marketPricingSteps{display:flex;align-items:center;gap:9px;overflow:auto;white-space:nowrap}
+.marketPricingSteps span{padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);font-size:12px;font-weight:800}
+.marketPricingSteps i{opacity:.45;font-style:normal}
+@media(max-width:800px){.marketPricingPanel{padding:18px}.marketPricingPanel h3{font-size:23px}}

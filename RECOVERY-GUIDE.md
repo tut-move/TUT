@@ -79,3 +79,9 @@ Upload this ZIP and say:
 - Added TUT Price Estimate as non-binding guidance; users still negotiate the final market price.
 - Price estimate is an MVP guidance formula, not live market pricing and not an Uber clone.
 - Real payments remain intentionally disabled.
+
+## v27 market-pricing correction
+- Removed the TUT Price Estimate and all platform-generated transport price ranges.
+- TUT Move does not set or calculate transport prices.
+- Final price is agreed only between the parties through offer / counter-offer / accept.
+- Added a multilingual explanation of the market-pricing flow.
