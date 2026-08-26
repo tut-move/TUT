@@ -167,7 +167,13 @@
     <section id="offers" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">NEGOTIATION</span><h1>Offers & bookings</h1><p>Offer → counter → accept. Market price is decided by the parties.</p></div></div>
       <div id="offerList" class="cards"></div>
-      <h2 class="subhead">Agreed bookings</h2><div id="bookingList" class="cards"></div>
+      <h2 class="subhead">Agreed bookings & trip control</h2>
+      <div class="panel paymentArchitecture">
+        <span class="eyebrow">PAYMENT & TRIP WORKFLOW — TEST MODE</span>
+        <p>Agreement → test payment authorization → driver/licence/truck/cargo/receiver checks → both sides ready → pickup → in transit → delivery → simulated payout ready.</p>
+        <p class="muted">No real card, bank account, Stripe charge or payout is connected in this build.</p>
+      </div>
+      <div id="bookingList" class="cards"></div>
     </section>
 
     <section id="verify" class="pane hidden">

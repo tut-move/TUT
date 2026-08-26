@@ -123,7 +123,7 @@ function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'23',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'25',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -163,12 +163,28 @@ const server=http.createServer(async(req,res)=>{
   if(/^\/api\/offers\/[^/]+\/(accept|reject|counter)$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const parts=p.split('/'),oid=parts[3],action=parts[4],db=readDB(),o=db.offers.find(x=>x.id===oid);if(!o)return json(res,404,{error:'Offer not found.'});if(o.toUserId!==u.id&&o.fromUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Not allowed.'});
     if(action==='accept'){
-      if(o.toUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only recipient can accept.'});o.status='accepted';const listing=db.listings.find(x=>x.id===o.listingId);if(listing)listing.status='booked';const feePct=Number(db.settings.platformFeePct||0);const fee=+(o.amount*feePct/100).toFixed(2);const booking={id:id('b'),listingId:o.listingId,offerId:o.id,buyerUserId:o.fromUserId,providerUserId:o.toUserId,agreedPrice:o.amount,currency:o.currency,platformFeePct:feePct,platformFee:fee,providerNet:+(o.amount-fee).toFixed(2),paymentStatus:'not_connected',status:'agreed',createdAt:new Date().toISOString()};db.bookings.push(booking);recomputeMatches(db);await writeDB(db);return json(res,200,{booking});
+      if(o.toUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only recipient can accept.'});o.status='accepted';const listing=db.listings.find(x=>x.id===o.listingId);if(listing)listing.status='booked';const feePct=Number(db.settings.platformFeePct||0);const fee=+(o.amount*feePct/100).toFixed(2);const booking={id:id('b'),listingId:o.listingId,offerId:o.id,buyerUserId:o.fromUserId,providerUserId:o.toUserId,agreedPrice:o.amount,currency:o.currency,platformFeePct:feePct,platformFee:fee,providerNet:+(o.amount-fee).toFixed(2),paymentStatus:'test_unpaid',paymentMode:'test',payoutStatus:'not_ready',status:'agreed',trip:{driverVerified:false,licenceVerified:false,truckVerified:false,cargoConfirmed:false,pickupConfirmed:false,receiverConfirmed:false,providerReady:false,buyerReady:false,pickupAt:null,deliveredAt:null,updatedAt:new Date().toISOString()},createdAt:new Date().toISOString()};db.bookings.push(booking);recomputeMatches(db);await writeDB(db);return json(res,200,{booking});
     }
     if(action==='reject'){o.status='rejected';await writeDB(db);return json(res,200,{offer:o});}
     const b=await getBody(req),amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Counter amount required.'});o.status='countered';const c={id:id('o'),listingId:o.listingId,fromUserId:u.id,toUserId:u.id===o.fromUserId?o.toUserId:o.fromUserId,amount,currency:o.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:o.id,createdAt:new Date().toISOString()};db.offers.push(c);await writeDB(db);return json(res,201,{offer:c});
   }
   if(p==='/api/bookings'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();const bookings=isOwner(u)?db.bookings:db.bookings.filter(b=>b.buyerUserId===u.id||b.providerUserId===u.id);return json(res,200,{bookings:bookings.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))});}
+  if(/^\/api\/bookings\/[^/]+\/test-pay$/.test(p)&&req.method==='POST'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(b.buyerUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only the buyer can run the test payment.'});b.paymentMode='test';b.paymentStatus='test_authorized';b.testPaymentAt=new Date().toISOString();b.status='payment_tested';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — no real money was charged.'});
+  }
+  if(/^\/api\/bookings\/[^/]+\/trip-check$/.test(p)&&req.method==='POST'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],body=await getBody(req),db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});
+    b.trip=b.trip||{};const allowed=['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed'];for(const k of allowed)if(k in body)b.trip[k]=!!body[k];
+    if(u.id===b.providerUserId)b.trip.providerReady=!!body.ready;if(u.id===b.buyerUserId)b.trip.buyerReady=!!body.ready;
+    b.trip.updatedAt=new Date().toISOString();const checks=['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed'];const coreReady=checks.every(k=>b.trip[k]);b.trip.ready=coreReady&&!!b.trip.providerReady&&!!b.trip.buyerReady;
+    if(b.trip.ready&&b.paymentStatus==='test_authorized')b.status='ready_for_pickup';await writeDB(db);return json(res,200,{booking:b});
+  }
+  if(/^\/api\/bookings\/[^/]+\/pickup$/.test(p)&&req.method==='POST'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(!b.trip?.ready)return json(res,409,{error:'Trip verification is not complete.'});b.trip.pickupConfirmed=true;b.trip.pickupAt=new Date().toISOString();b.status='in_transit';await writeDB(db);return json(res,200,{booking:b});
+  }
+  if(/^\/api\/bookings\/[^/]+\/deliver$/.test(p)&&req.method==='POST'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(b.status!=='in_transit')return json(res,409,{error:'Pickup must be confirmed first.'});b.trip.receiverConfirmed=true;b.trip.deliveredAt=new Date().toISOString();b.status='completed_test';b.payoutStatus='test_ready';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — payout is simulated; no money moved.'});
+  }
   if(p==='/api/verification'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB(),v=db.verifications.find(x=>x.userId===u.id);return json(res,200,{verification:v||null});}
   if(p==='/api/verification'&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const b=await getBody(req,14e6),db=readDB();const files={};for(const k of ['license','identity','selfie']){if(b.files&&b.files[k])files[k]=saveDataUrl(u.id,k,b.files[k]);}
@@ -181,5 +197,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v23 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v25 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});
