@@ -583,3 +583,23 @@ de:{"Verification":"Verifizierung","Account verification":"Kontoverifizierung","
 fr:{"Verification":"Vérification","Account verification":"Vérification du compte","VERIFICATION V1":"VÉRIFICATION V1","Not submitted":"Non soumis","Account role":"Rôle du compte","Legal name":"Nom légal","Country":"Pays","Licence / registration number":"Numéro de licence / immatriculation","Vehicle ID / plate":"ID véhicule / plaque","Notes":"Notes","Submit for review":"Soumettre à vérification","Verification status":"Statut de vérification","pending":"en cours","verified":"vérifié","rejected":"refusé","Approve":"Approuver","Reject":"Refuser"},
 es:{"Verification":"Verificación","Account verification":"Verificación de cuenta","VERIFICATION V1":"VERIFICACIÓN V1","Not submitted":"No enviado","Account role":"Rol de la cuenta","Legal name":"Nombre legal","Country":"País","Licence / registration number":"Número de licencia / registro","Vehicle ID / plate":"ID del vehículo / matrícula","Notes":"Notas","Submit for review":"Enviar para revisión","Verification status":"Estado de verificación","pending":"en revisión","verified":"verificado","rejected":"rechazado","Approve":"Aprobar","Reject":"Rechazar"}};
 for(const [lng,map] of Object.entries(V29_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+
+
+// v30 Trust & Readiness — role-adaptive verification UI.
+const TRUST_ROLE_FIELDS={
+ shipper:[['trustRegistration','Business / registration number (if applicable)','Optional for individuals']],
+ carrier:[['trustRegistration','Carrier / company registration','Registration or operating licence number'],['trustVehicle','Primary vehicle / fleet reference','Optional at account stage']],
+ driver:[['trustRegistration','Driving licence number','Commercial / heavy-vehicle licence'],['trustVehicle','Vehicle / plate (if already assigned)','Optional until a trip is agreed']],
+ warehouse:[['trustRegistration','Business / facility registration','Registration or licence number'],['trustVehicle','Facility / warehouse reference','Optional internal reference']],
+ equipment:[['trustRegistration','Business / registration number','Registration or licence number'],['trustVehicle','Equipment reference','Optional at account stage']]
+};
+function renderTrustFields(){const role=$('trustRole')?.value||'shipper',host=$('trustRoleFields');if(!host)return;host.innerHTML=(TRUST_ROLE_FIELDS[role]||[]).map(([id,label,ph])=>`<label>${tr(label)}<input id="${id}" placeholder="${tr(ph)}"></label>`).join('');}
+async function loadTrustVerification(){
+ const status=$('trustStatus'),notice=$('trustLoginNotice'),form=$('trustForm'); if(!status)return;
+ if(!me){status.className='trustStatus';status.innerHTML='<span></span><b>'+tr('Sign in to check status')+'</b>';notice.textContent=tr('Sign in to start verification.');form.style.opacity='.55';form.querySelectorAll('input,select,button').forEach(x=>x.disabled=true);renderTrustFields();return;}
+ form.style.opacity='1';form.querySelectorAll('input,select,button').forEach(x=>x.disabled=false);notice.textContent=tr('Your verification is separate from trip readiness. Trip checks appear only after a deal is agreed.');
+ try{const j=await api('/api/verification/me'),v=j.verification||{};const st=v.status||'not_submitted';status.className='trustStatus '+(st==='verified'?'verified':st==='pending'?'pending':'');status.innerHTML=`<span></span><b>${tr(st==='verified'?'Verified':st==='pending'?'Under review':'Not submitted')}</b>`;if(v.role)$('trustRole').value=v.role;$('trustCountry').value=v.country||me.country||detectedMarket.country||'';$('trustLegalName').value=v.legalName||me.name||'';renderTrustFields();if($('trustRegistration'))$('trustRegistration').value=v.licenceNumber||'';if($('trustVehicle'))$('trustVehicle').value=v.vehicleId||'';}catch(e){notice.textContent=e.message;}
+}
+async function submitTrustVerification(e){e.preventDefault();if(!me){go('accountPane');return;}const body={role:$('trustRole').value,legalName:$('trustLegalName').value,country:$('trustCountry').value,licenceNumber:$('trustRegistration')?.value||'',vehicleId:$('trustVehicle')?.value||'',notes:''};try{const j=await api('/api/verification/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});$('trustMsg').textContent=tr(j.message||'Verification submitted for review.');loadTrustVerification();}catch(e){$('trustMsg').textContent=e.message;}}
+const _v30Go=go;go=function(id){_v30Go(id);if(id==='verify')setTimeout(loadTrustVerification,0)};
+window.addEventListener('DOMContentLoaded',()=>{renderTrustFields();setTimeout(loadTrustVerification,350)});

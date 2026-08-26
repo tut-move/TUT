@@ -163,25 +163,6 @@
       <div class="pageHead"><div><span class="eyebrow">MATCHING ENGINE</span><h1>Matches</h1><p>TUT Move suggests compatible opportunities. The users still choose.</p></div><button class="outlineBtn" onclick="loadMatches()">Refresh</button></div>
       <div id="matchList" class="cards"></div>
     </section>
-
-    <section id="verification" class="pageSection">
-  <div class="wrap verificationWrap">
-    <span class="eyebrow">VERIFICATION V1</span>
-    <h2>Account verification</h2>
-    <p class="muted">Submit the information used to review your TUT Move account before real transactions are enabled.</p>
-    <div id="verificationStatus" class="verificationStatus">Not submitted</div>
-    <form id="verificationForm" class="verificationForm">
-      <label>Account role<select id="verifyRole" required><option value="shipper">Shipper / cargo owner</option><option value="carrier">Carrier / transport company</option><option value="driver">Driver</option><option value="warehouse">Warehouse</option><option value="equipment">Equipment provider</option></select></label>
-      <label>Legal name<input id="verifyLegalName" required></label>
-      <label>Country<input id="verifyCountry" required></label>
-      <label>Licence / registration number<input id="verifyLicence"></label>
-      <label>Vehicle ID / plate<input id="verifyVehicle"></label>
-      <label class="verifyWide">Notes<textarea id="verifyNotes" rows="3"></textarea></label>
-      <button class="goldBtn" type="submit">Submit for review</button>
-    </form>
-    <div id="ownerVerificationQueue" class="ownerVerificationQueue"></div>
-  </div>
-</section>
 <section id="offers" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">NEGOTIATION</span><h1>Offers & bookings</h1><p>Offer → counter → accept. Market price is decided by the parties.</p></div></div>
       <div id="offerList" class="cards"></div>
@@ -208,17 +189,24 @@
     </section>
 
     <section id="verify" class="pane hidden">
-      <div class="pageHead"><div><span class="eyebrow">IDENTITY & DRIVER PRE-CHECK</span><h1>Verification</h1><p>Upload licence, ID and selfie. This MVP runs an automated file pre-check; official KYC/document verification will require an external provider before real-world launch.</p></div></div>
-      <div class="panel formPanel">
-        <div class="two"><div><label>Local market</label><div id="verifyMarketDisplay" class="autoCurrency">Detecting…</div><input id="verifyCountry" type="hidden" value="United States"></div><div><label>Licence class</label><input id="licenseClass" placeholder="CDL-A / CE / C+E"></div></div>
-        <label>Licence number</label><input id="licenseNumber" placeholder="Licence number">
-        <label>Licence expiry</label><input id="licenseExpiry" type="date">
-        <label>Driver licence</label><input id="licenseFile" type="file" accept="image/*,application/pdf">
-        <label>Government ID</label><input id="identityFile" type="file" accept="image/*,application/pdf">
-        <label>Selfie</label><input id="selfieFile" type="file" accept="image/*" capture="user">
-        <button class="goldBtn full" onclick="submitVerification()">Run automated pre-check</button>
-        <div id="verifyMsg" class="msg"></div>
+      <div class="pageHead trustHead"><div><span class="eyebrow">TRUST & READINESS</span><h1>Verification</h1><p>Verify only what your role and trip require. TUT Move keeps the process focused so every side can know who — and what — is ready before pickup.</p></div><div id="trustStatus" class="trustStatus"><span></span><b>Sign in to check status</b></div></div>
+      <div class="trustGrid">
+        <article class="trustCard"><span class="trustIcon">01</span><small>ACCOUNT</small><h3>Who are you?</h3><p>Confirm the person or business behind the account.</p><div class="trustLine"><i></i><span id="identityState">Required before live transactions</span></div></article>
+        <article class="trustCard"><span class="trustIcon">02</span><small>ROLE</small><h3>What are you providing?</h3><p>Requirements adapt to driver, carrier, cargo, warehouse or equipment roles.</p><div class="trustLine"><i></i><span>Only relevant details are requested</span></div></article>
+        <article class="trustCard"><span class="trustIcon">03</span><small>TRIP</small><h3>Ready for pickup?</h3><p>Driver, vehicle, cargo and receiver checks come together on the agreed booking.</p><div class="trustLine"><i></i><span>Both sides confirm readiness</span></div></article>
       </div>
+      <div class="panel trustPanel">
+        <div class="trustIntro"><div><span class="eyebrow">YOUR CHECK</span><h2>Complete the essentials.</h2><p>No unnecessary questionnaire. Choose your role and TUT Move shows only the information relevant to it.</p></div><span class="privacyChip">MVP · manual review</span></div>
+        <div id="trustLoginNotice" class="trustNotice">Sign in to start verification.</div>
+        <form id="trustForm" onsubmit="submitTrustVerification(event)">
+          <div class="two"><div><label>Account role</label><select id="trustRole" onchange="renderTrustFields()"><option value="shipper">Shipper / cargo owner</option><option value="carrier">Carrier / transport company</option><option value="driver">Driver</option><option value="warehouse">Warehouse</option><option value="equipment">Equipment provider</option></select></div><div><label>Country / market</label><input id="trustCountry" placeholder="Country"></div></div>
+          <label>Legal name</label><input id="trustLegalName" placeholder="Person or registered business name" required>
+          <div id="trustRoleFields" class="trustRoleFields"></div>
+          <div class="trustPrivacy"><b>Designed for minimum data.</b><span>This MVP records review details only. Production identity/KYC and sensitive documents should be handled by an approved verification provider for the relevant jurisdiction.</span></div>
+          <button class="goldBtn trustSubmit" type="submit">Submit for review</button><div id="trustMsg" class="msg"></div>
+        </form>
+      </div>
+      <div class="tripGate panel"><div><span class="eyebrow">BEFORE PICKUP</span><h2>One clear readiness gate.</h2></div><div class="gateFlow"><span>Identity</span><b>→</b><span>Driver / carrier</span><b>→</b><span>Vehicle</span><b>→</b><span>Cargo</span><b>→</b><span>Receiver</span><b>→</b><span class="gateReady">Ready</span></div><p>The exact checks depend on the booking. TUT Move does not mark a trip ready until the required checks and both sides' confirmations are complete.</p></div>
     </section>
 
     <section id="accountPane" class="pane hidden"><div class="pageHead"><div><span class="eyebrow">ACCOUNT</span><h1>Join TUT Move</h1><p>One account can have multiple marketplace roles.</p></div></div><div id="ownerSetup"></div><div id="authArea"></div></section>

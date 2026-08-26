@@ -37,3 +37,7 @@ verification metadata and owner settings are stored in PostgreSQL and survive de
 
 Note: uploaded verification document bytes still need object storage (e.g. S3-compatible
 storage) before a production KYC launch. The user/account/market database is persistent in v23.
+
+
+## v30 verification redesign
+Verification is now role-adaptive and trip-oriented. The UI asks for minimal account information and keeps booking readiness checks in the agreed trip workflow. No production KYC provider or real payment rail is connected in this MVP.
