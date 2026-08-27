@@ -397,3 +397,22 @@ html[dir="rtl"] .listingMap{direction:ltr}
 .quickNeedBanner{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 16px;border:1px solid #5c4a1e;border-radius:14px;background:#17140c}.quickNeedBanner span{color:#aaa;font-size:12px;text-transform:uppercase}.quickNeedBanner b{flex:1;color:#e9d68b}.quickNeedBanner button{border:0;background:transparent;color:#e3c566;cursor:pointer}.quickHidden{display:none!important}
 @media(max-width:900px){.needTiles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.needChooser{padding:34px 0 52px}.needTiles{grid-template-columns:1fr}.needTile{min-height:112px;padding:16px}}
 html[dir="rtl"] .needTile{text-align:right}
+
+/* v37 clean entry chooser */
+.needChooser{padding:54px 0 72px}
+.needPrimaryGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
+.needPrimary{min-height:132px;padding:22px 24px;border:1px solid #332c1c;border-radius:18px;background:linear-gradient(150deg,#15130f,#0c0c0c 65%);color:inherit;display:flex;align-items:center;gap:18px;text-align:left;cursor:pointer}
+.needPrimary:hover{border-color:#96762b;transform:translateY(-1px)}
+.needPrimary .needIcon{font-size:34px;flex:0 0 46px}
+.needPrimary b{display:block;font-size:21px;line-height:1.2;margin-bottom:7px}
+.needPrimary small{display:block;color:#aaa;font-size:14px;line-height:1.45}
+.needSubPanel{margin-top:18px;padding:18px;border:1px solid #5b491e;border-radius:18px;background:#11100c}
+.needSubHeader{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.needSubHeader>b{font-size:18px}.needSubHeader>button{width:40px;height:40px;border:0;border-radius:10px;background:#201b0d;color:#e4c66e;font-size:24px;cursor:pointer}
+.needSubGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.needSubChoice{min-height:64px;padding:14px 16px;border:1px solid #40361c;border-radius:13px;background:#0c0c0c;color:#f2f2f2;font-size:15px;font-weight:700;text-align:left;cursor:pointer}
+.needSubChoice:hover{border-color:#a48636;background:#16130c}
+.languageIsolated *{word-break:normal;overflow-wrap:normal}
+html[dir="rtl"] .needPrimary,html[dir="rtl"] .needSubChoice{text-align:right}
+@media(max-width:760px){.needPrimaryGrid{grid-template-columns:1fr}.needSubGrid{grid-template-columns:1fr 1fr}.needPrimary{min-height:108px;padding:17px}}
+@media(max-width:480px){.needSubGrid{grid-template-columns:1fr}.needChooser{padding:34px 0 48px}.needPrimary b{font-size:18px}}

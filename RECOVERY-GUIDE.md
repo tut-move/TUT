@@ -155,3 +155,11 @@ Upload this ZIP and say:
 - Owner/Admin navigation is guarded for owner accounts only.
 - Removed the public MVP/KYC/payment development disclaimer from the footer.
 - Added translations for the new primary choices in AR/DE/FR/ES/PT and responsive desktop/tablet/mobile styling.
+
+
+## v37 Clean Entry + Language Isolation
+- Replaces the nine simultaneous home choices with four primary areas and contextual subchoices.
+- The new chooser has its own complete EN/DE/AR/FR/ES/PT copy and is isolated from the generic translation observer.
+- Language changes now reload the page from canonical source text, preventing stale text from the previously selected language from surviving in the DOM.
+- Existing marketplace routing still maps subchoices to the same internal Available/Wanted resource model.
+- No date, account-delete, verification, booking, database or pricing logic was removed.

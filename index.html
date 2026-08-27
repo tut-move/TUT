@@ -60,19 +60,40 @@
         <div class="heroVisual"><img src="/tut-emblem.png" alt="TUT Move emblem"></div>
       </div>
 
-      <section class="needChooser">
-<div class="sectionIntro"><span class="eyebrow">START HERE</span><h2>What do you need today?</h2><p>Choose your situation. TUT Move handles the marketplace category in the background.</p></div>
-<div class="needTiles">
-<button class="needTile" onclick="quickNeed('need_truck')"><span>🚛</span><b>I need a truck</b><small>Find available transport capacity</small></button>
-<button class="needTile" onclick="quickNeed('need_driver')"><span>👨‍✈️</span><b>I need a driver</b><small>Find a driver for my vehicle</small></button>
-<button class="needTile" onclick="quickNeed('driver_work')"><span>💼</span><b>I'm a driver looking for work</b><small>Publish your availability</small></button>
-<button class="needTile featured" onclick="quickNeed('move_load')"><span>📦</span><b>I need to move a load</b><small>Post cargo that needs transport</small></button>
-<button class="needTile" onclick="quickNeed('truck_available')"><span>🚚</span><b>My truck is available</b><small>Offer your truck to the market</small></button>
-<button class="needTile featured" onclick="quickNeed('returning_empty')"><span>↩️</span><b>I'm returning empty</b><small>Find a load for the return route</small></button>
-<button class="needTile featured" onclick="quickNeed('unused_space')"><span>📦</span><b>I have unused truck space</b><small>Fill spare capacity on your route</small></button>
-<button class="needTile" onclick="quickNeed('need_warehouse')"><span>🏭</span><b>I need warehouse space</b><small>Find storage capacity</small></button>
-<button class="needTile" onclick="quickNeed('warehouse_available')"><span>🏢</span><b>I have warehouse space</b><small>Offer unused storage capacity</small></button>
-</div></section>
+      <section class="needChooser languageIsolated" id="needChooser">
+  <div class="sectionIntro">
+    <span class="eyebrow" data-need-copy="start"></span>
+    <h2 data-need-copy="question"></h2>
+    <p data-need-copy="intro"></p>
+  </div>
+
+  <div class="needPrimaryGrid">
+    <button class="needPrimary" type="button" onclick="showNeedGroup('transport')">
+      <span class="needIcon">📦</span>
+      <span><b data-need-copy="transportTitle"></b><small data-need-copy="transportText"></small></span>
+    </button>
+    <button class="needPrimary" type="button" onclick="showNeedGroup('driver')">
+      <span class="needIcon">👨‍✈️</span>
+      <span><b data-need-copy="driverTitle"></b><small data-need-copy="driverText"></small></span>
+    </button>
+    <button class="needPrimary" type="button" onclick="showNeedGroup('truck')">
+      <span class="needIcon">🚛</span>
+      <span><b data-need-copy="truckTitle"></b><small data-need-copy="truckText"></small></span>
+    </button>
+    <button class="needPrimary" type="button" onclick="showNeedGroup('warehouse')">
+      <span class="needIcon">🏭</span>
+      <span><b data-need-copy="warehouseTitle"></b><small data-need-copy="warehouseText"></small></span>
+    </button>
+  </div>
+
+  <div id="needSubPanel" class="needSubPanel hidden">
+    <div class="needSubHeader">
+      <b id="needSubTitle"></b>
+      <button type="button" onclick="hideNeedGroup()" aria-label="Close">×</button>
+    </div>
+    <div id="needSubGrid" class="needSubGrid"></div>
+  </div>
+</section>
     </section>
 
     <section id="about" class="pane hidden">

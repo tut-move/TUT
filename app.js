@@ -116,6 +116,7 @@ function translateNodeTree(root=document.body){
   const nodes=[];
   while(walker.nextNode())nodes.push(walker.currentNode);
   for(const n of nodes){
+    if(n.parentElement?.closest('.languageIsolated'))continue;
     const current=String(n.nodeValue||'');
     const trimmed=current.trim();
     if(!trimmed)continue;
@@ -166,7 +167,7 @@ function manualCurrencyOverride(cur){
   if($('currencyDisplay'))$('currencyDisplay').textContent=cur;
   if($('priceCurrencyBadge'))$('priceCurrencyBadge').textContent=currencyLabel(cur);
 }
-function manualLanguageOverride(lang){setLanguage(lang);localStorage.setItem('tut_lang',lang);renderHeaderOverrides()}
+function manualLanguageOverride(lang){localStorage.setItem('tut_lang',lang);location.reload()}
 async function detectCountryByIP(){
   if(manualMarketCountry||me?.country)return;
   try{
@@ -255,6 +256,7 @@ function setLanguage(lang){
   refreshLanguage();
   document.querySelectorAll('option').forEach(o=>{const c=o.dataset.tutCanonical||canonicalEnglish(o.textContent);o.dataset.tutCanonical=c;o.textContent=tr(c)});
   requestAnimationFrame(()=>{translateNodeTree(document.body);setTimeout(()=>translateNodeTree(document.body),80);});
+  renderNeedChooser();
   setTimeout(applyStrictSiteLanguage,0);
 }
 
@@ -807,7 +809,7 @@ function applyStrictSiteLanguage(){
   document.querySelectorAll('[data-ui-key],[data-i18n]').forEach(strictTranslateElement);
 
   document.querySelectorAll('button,label,option,h1,h2,h3,h4,h5,h6,p,small,span,a,th,td,legend').forEach(el=>{
-    if(el.closest('.userFreeText,[data-user-text="1"]'))return;
+    if(el.closest('.userFreeText,[data-user-text="1"],.languageIsolated'))return;
     if(el.children.length && !['LABEL','BUTTON','A'].includes(el.tagName))return;
     const raw=(el.dataset?.canonicalUi||el.textContent||'').trim();
     if(!raw)return;
@@ -817,19 +819,19 @@ function applyStrictSiteLanguage(){
     if(translated!==key || activeLang==='en')el.textContent=translated;
   });
 
-  document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{
+  document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{if(el.closest('.languageIsolated'))return;
     const raw=el.dataset.canonicalPlaceholder||el.getAttribute('placeholder')||'';
     if(!raw)return;
     if(!el.dataset.canonicalPlaceholder)el.dataset.canonicalPlaceholder=canonicalEnglish(raw);
     el.setAttribute('placeholder',tr(el.dataset.canonicalPlaceholder));
   });
-  document.querySelectorAll('[title]').forEach(el=>{
+  document.querySelectorAll('[title]').forEach(el=>{if(el.closest('.languageIsolated'))return;
     const raw=el.dataset.canonicalTitle||el.getAttribute('title')||'';
     if(!raw)return;
     if(!el.dataset.canonicalTitle)el.dataset.canonicalTitle=canonicalEnglish(raw);
     el.setAttribute('title',tr(el.dataset.canonicalTitle));
   });
-  document.querySelectorAll('[aria-label]').forEach(el=>{
+  document.querySelectorAll('[aria-label]').forEach(el=>{if(el.closest('.languageIsolated'))return;
     const raw=el.dataset.canonicalAria||el.getAttribute('aria-label')||'';
     if(!raw)return;
     if(!el.dataset.canonicalAria)el.dataset.canonicalAria=canonicalEnglish(raw);
@@ -882,3 +884,27 @@ function enforceOwnerPrivacy(){
  if(!ok&&$('adminPane')&&!$('adminPane').classList.contains('hidden'))go('home');
 }
 window.addEventListener('DOMContentLoaded',enforceOwnerPrivacy);
+
+const NEED_COPY={"en":{"start":"START HERE","question":"What do you need today?","intro":"Choose one area. We’ll show only the options that matter.","transportTitle":"Move a load","transportText":"I have cargo or I need transport capacity","driverTitle":"Drivers","driverText":"Find a driver or find driving work","truckTitle":"Truck capacity","truckText":"Offer a truck, return load or spare space","warehouseTitle":"Warehouse","warehouseText":"Find or offer storage space","transportGroup":"Move a load","driverGroup":"Drivers","truckGroup":"Truck capacity","warehouseGroup":"Warehouse","move_load":"I need to move a load","need_truck":"I need a truck","need_driver":"I need a driver","driver_work":"I'm a driver looking for work","truck_available":"My truck is available","returning_empty":"I'm returning empty","unused_space":"I have unused truck space","need_warehouse":"I need warehouse space","warehouse_available":"I have warehouse space"},"de":{"start":"HIER STARTEN","question":"Was brauchen Sie heute?","intro":"Wählen Sie einen Bereich. Wir zeigen nur die passenden Optionen.","transportTitle":"Ladung transportieren","transportText":"Ich habe Fracht oder brauche Transportkapazität","driverTitle":"Fahrer","driverText":"Fahrer finden oder Fahrarbeit suchen","truckTitle":"Lkw-Kapazität","truckText":"Lkw anbieten, Rückladung oder freie Kapazität","warehouseTitle":"Lager","warehouseText":"Lagerfläche finden oder anbieten","transportGroup":"Ladung transportieren","driverGroup":"Fahrer","truckGroup":"Lkw-Kapazität","warehouseGroup":"Lager","move_load":"Ich muss eine Ladung transportieren","need_truck":"Ich brauche einen Lkw","need_driver":"Ich brauche einen Fahrer","driver_work":"Ich bin Fahrer und suche Arbeit","truck_available":"Mein Lkw ist verfügbar","returning_empty":"Ich fahre leer zurück","unused_space":"Ich habe freie Lkw-Kapazität","need_warehouse":"Ich brauche Lagerfläche","warehouse_available":"Ich habe Lagerfläche"},"ar":{"start":"ابدأ هنا","question":"ماذا تحتاج اليوم؟","intro":"اختر مجالًا واحدًا وسنعرض لك فقط الخيارات التي تهمك.","transportTitle":"نقل حمولة","transportText":"لدي بضاعة أو أحتاج وسيلة نقل","driverTitle":"السائقون","driverText":"ابحث عن سائق أو عن عمل كسائق","truckTitle":"سعة الشاحنة","truckText":"اعرض شاحنتك أو رحلة العودة أو المساحة الفارغة","warehouseTitle":"المخازن","warehouseText":"ابحث عن مساحة تخزين أو اعرضها","transportGroup":"نقل حمولة","driverGroup":"السائقون","truckGroup":"سعة الشاحنة","warehouseGroup":"المخازن","move_load":"أحتاج إلى نقل حمولة","need_truck":"أحتاج شاحنة","need_driver":"أحتاج سائقًا","driver_work":"أنا سائق أبحث عن عمل","truck_available":"شاحنتي متاحة","returning_empty":"أنا عائد فارغًا","unused_space":"لدي مساحة فارغة في الشاحنة","need_warehouse":"أحتاج مساحة مخزن","warehouse_available":"لدي مساحة مخزن"},"fr":{"start":"COMMENCEZ ICI","question":"De quoi avez-vous besoin aujourd’hui ?","intro":"Choisissez un domaine. Nous afficherons uniquement les options utiles.","transportTitle":"Transporter une cargaison","transportText":"J’ai du fret ou j’ai besoin de capacité de transport","driverTitle":"Chauffeurs","driverText":"Trouver un chauffeur ou un travail de conduite","truckTitle":"Capacité camion","truckText":"Proposer un camion, un retour ou de l’espace libre","warehouseTitle":"Entrepôt","warehouseText":"Trouver ou proposer un espace de stockage","transportGroup":"Transporter une cargaison","driverGroup":"Chauffeurs","truckGroup":"Capacité camion","warehouseGroup":"Entrepôt","move_load":"J’ai une cargaison à transporter","need_truck":"J’ai besoin d’un camion","need_driver":"J’ai besoin d’un chauffeur","driver_work":"Je suis chauffeur et je cherche du travail","truck_available":"Mon camion est disponible","returning_empty":"Je rentre à vide","unused_space":"J’ai de l’espace libre dans mon camion","need_warehouse":"J’ai besoin d’un espace d’entreposage","warehouse_available":"J’ai un espace d’entreposage"},"es":{"start":"EMPIEZA AQUÍ","question":"¿Qué necesitas hoy?","intro":"Elige un área. Mostraremos solo las opciones que importan.","transportTitle":"Mover una carga","transportText":"Tengo mercancía o necesito capacidad de transporte","driverTitle":"Conductores","driverText":"Encontrar un conductor o trabajo de conducción","truckTitle":"Capacidad de camión","truckText":"Ofrecer camión, retorno o espacio libre","warehouseTitle":"Almacén","warehouseText":"Encontrar u ofrecer espacio de almacenamiento","transportGroup":"Mover una carga","driverGroup":"Conductores","truckGroup":"Capacidad de camión","warehouseGroup":"Almacén","move_load":"Necesito transportar una carga","need_truck":"Necesito un camión","need_driver":"Necesito un conductor","driver_work":"Soy conductor y busco trabajo","truck_available":"Mi camión está disponible","returning_empty":"Regreso vacío","unused_space":"Tengo espacio libre en el camión","need_warehouse":"Necesito espacio de almacén","warehouse_available":"Tengo espacio de almacén"},"pt":{"start":"COMECE AQUI","question":"O que precisa hoje?","intro":"Escolha uma área. Mostraremos apenas as opções relevantes.","transportTitle":"Transportar uma carga","transportText":"Tenho mercadoria ou preciso de capacidade de transporte","driverTitle":"Motoristas","driverText":"Encontrar um motorista ou trabalho de condução","truckTitle":"Capacidade do camião","truckText":"Oferecer camião, regresso ou espaço livre","warehouseTitle":"Armazém","warehouseText":"Encontrar ou oferecer espaço de armazenamento","transportGroup":"Transportar uma carga","driverGroup":"Motoristas","truckGroup":"Capacidade do camião","warehouseGroup":"Armazém","move_load":"Preciso de transportar uma carga","need_truck":"Preciso de um camião","need_driver":"Preciso de um motorista","driver_work":"Sou motorista e procuro trabalho","truck_available":"O meu camião está disponível","returning_empty":"Estou a regressar vazio","unused_space":"Tenho espaço livre no camião","need_warehouse":"Preciso de espaço de armazém","warehouse_available":"Tenho espaço de armazém"}};
+const NEED_GROUPS={"transport":["move_load","need_truck"],"driver":["need_driver","driver_work"],"truck":["truck_available","returning_empty","unused_space"],"warehouse":["need_warehouse","warehouse_available"]};
+function needCopy(key){
+  const dict=NEED_COPY[activeLang]||NEED_COPY.en;
+  return dict[key]||NEED_COPY.en[key]||key;
+}
+function renderNeedChooser(){
+  document.querySelectorAll('[data-need-copy]').forEach(el=>el.textContent=needCopy(el.dataset.needCopy));
+  const panel=$('needSubPanel');
+  if(panel&&!panel.classList.contains('hidden')&&panel.dataset.group)showNeedGroup(panel.dataset.group);
+}
+function showNeedGroup(group){
+  const panel=$('needSubPanel'),grid=$('needSubGrid'),title=$('needSubTitle');
+  if(!panel||!grid||!title)return;
+  panel.dataset.group=group;
+  title.textContent=needCopy(group+'Group');
+  grid.innerHTML=(NEED_GROUPS[group]||[]).map(key=>`<button type="button" class="needSubChoice" onclick="quickNeed('${key}')">${needCopy(key)}</button>`).join('');
+  panel.classList.remove('hidden');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideNeedGroup(){const p=$('needSubPanel');if(p){p.classList.add('hidden');p.dataset.group=''}}
+
+window.addEventListener('DOMContentLoaded',()=>setTimeout(renderNeedChooser,0));
