@@ -41,3 +41,12 @@ storage) before a production KYC launch. The user/account/market database is per
 
 ## v30 verification redesign
 Verification is now role-adaptive and trip-oriented. The UI asks for minimal account information and keeps booking readiness checks in the agreed trip workflow. No production KYC provider or real payment rail is connected in this MVP.
+
+
+## v40 — Action-first homepage UX
+- Removed the duplicated tagline from the top brand lockup; header now shows TUT MOVE only.
+- Reworked the home hero around drivers, trucks, loads and warehouses in one market.
+- Preserved the four-area chooser and existing marketplace routing.
+- Renamed Truck capacity to Trucks in the entry chooser and strengthened persona-first microcopy.
+- Warehouse supply is now framed as unused warehouse space.
+- No marketplace matching, pricing, account, booking, verification or database logic was removed.
