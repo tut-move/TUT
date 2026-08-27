@@ -390,3 +390,10 @@ html[dir="rtl"] .listingMap{direction:ltr}
 .dangerBtn:hover{background:rgba(180,45,45,.2)}
 .accountProfile{overflow-wrap:anywhere}
 @media(max-width:720px){#account{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.privacyPanel{padding:15px}.dangerBtn{width:100%}}
+
+.needChooser{padding:56px 0 78px}.needTiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.needTile{appearance:none;text-align:left;min-height:150px;padding:20px;border-radius:18px;border:1px solid #332c1c;background:linear-gradient(160deg,#15130e,#0c0c0c 58%);color:inherit;cursor:pointer;display:grid;grid-template-columns:48px 1fr;grid-template-rows:auto auto;column-gap:14px;align-content:center;transition:.15s}
+.needTile:hover{transform:translateY(-2px);border-color:#9d7b2e}.needTile>span{grid-row:1/3;font-size:30px;align-self:center}.needTile>b{font-size:18px;line-height:1.25}.needTile>small{color:#aaa;margin-top:7px;line-height:1.35}.needTile.featured{border-color:#66521f;background:linear-gradient(145deg,#1c180d,#0d0d0c 62%)}
+.quickNeedBanner{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding:14px 16px;border:1px solid #5c4a1e;border-radius:14px;background:#17140c}.quickNeedBanner span{color:#aaa;font-size:12px;text-transform:uppercase}.quickNeedBanner b{flex:1;color:#e9d68b}.quickNeedBanner button{border:0;background:transparent;color:#e3c566;cursor:pointer}.quickHidden{display:none!important}
+@media(max-width:900px){.needTiles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.needChooser{padding:34px 0 52px}.needTiles{grid-template-columns:1fr}.needTile{min-height:112px;padding:16px}}
+html[dir="rtl"] .needTile{text-align:right}

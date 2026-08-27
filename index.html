@@ -22,11 +22,11 @@
       <span><strong>TUT MOVE</strong><small data-i18n="tagline">Turn Unused Into Transport</small></span>
     </button>
     <nav class="desktopNav">
-      <button onclick="go('market')" data-i18n="market">Market</button>
-      <button onclick="go('post')" data-i18n="post">Post</button>
-      <button onclick="go('matches')" data-i18n="matches">Matches</button>
-      <button onclick="go('offers')" data-i18n="offers">Offers</button>
-      <button onclick="go('verify')" data-i18n="verify">Verify</button>
+      <button onclick="go('market')" data-i18n="market" data-ui-key="Market">Market</button>
+      <button onclick="go('post')" data-i18n="post" data-ui-key="Post">Post</button>
+      <button onclick="go('matches')" data-i18n="matches" data-ui-key="Matches">Matches</button>
+      <button onclick="go('offers')" data-i18n="offers" data-ui-key="Offers">Offers</button>
+      <button onclick="go('verify')" data-i18n="verify" data-ui-key="Verify">Verify</button>
       <button onclick="go('about')">About</button>
       <button id="adminNav" class="hidden" onclick="go('adminPane')">Owner</button>
     </nav>
@@ -53,28 +53,26 @@
           <p>Drivers, trucks, loads, warehouse capacity and equipment — searchable by specification, place and availability. TUT Move connects the market; users choose the deal.</p>
           <div class="heroActions">
             <button class="goldBtn" onclick="go('market')">Search the market</button>
-            <button class="outlineBtn" onclick="startListing('driver','have')">List a resource</button>
+            <button class="outlineBtn" onclick="document.querySelector('.needChooser')?.scrollIntoView({behavior:'smooth'})">Tell us what you need</button>
           </div>
           <div class="trustRow"><span>USA</span><i>•</i><span>Canada</span><i>•</i><span>Europe</span><i>•</i><span>Middle East</span></div>
         </div>
         <div class="heroVisual"><img src="/tut-emblem.png" alt="TUT Move emblem"></div>
       </div>
 
-      <section class="resourceChooser">
-        <div class="sectionIntro"><span class="eyebrow">CHOOSE A MARKET</span><h2>What are you looking for?</h2><p>Search what is available, or publish exactly what you want.</p></div>
-        <div class="resourceTiles">
-          <article class="resourceTile"><span class="resourceIcon">D</span><h3>Drivers</h3><p>Truck, van, forklift, crane and qualified operators.</p><div><button onclick="browseResource('driver','have')">Find available</button><button onclick="startListing('driver','need')">Find a driver</button></div></article>
-          <article class="resourceTile"><span class="resourceIcon">T</span><h3>Trucks</h3><p>Tractor units, vans, reefers, flatbeds and specialist vehicles.</p><div><button onclick="browseResource('truck','have')">Find available</button><button onclick="startListing('truck','need')">Find a truck</button></div></article>
-          <article class="resourceTile"><span class="resourceIcon">L</span><h3>Loads</h3><p>Full, partial, refrigerated, palletised and specialist cargo.</p><div><button onclick="browseResource('load','have')">Find loads</button><button onclick="startListing('load','need')">Post transport need</button></div></article>
-          <article class="resourceTile"><span class="resourceIcon">W</span><h3>Warehouses</h3><p>Ambient, chilled, frozen and specialist logistics storage.</p><div><button onclick="browseResource('warehouse','have')">Find space</button><button onclick="startListing('warehouse','need')">Find storage</button></div></article>
-          <article class="resourceTile"><span class="resourceIcon">E</span><h3>Equipment</h3><p>Forklifts, cranes, loading equipment and specialist machinery.</p><div><button onclick="browseResource('equipment','have')">Find equipment</button><button onclick="startListing('equipment','need')">Request equipment</button></div></article>
-        </div>
-      </section>
-
-      <section class="marketPrinciple">
-        <strong>AVAILABLE</strong><span>⇄</span><strong>WANTED</strong>
-        <p>Every category works both ways. A driver can offer time or search for a truck. A truck can be listed as available or requested. Warehouse capacity can be offered or searched. The market decides the commercial terms.</p>
-      </section>
+      <section class="needChooser">
+<div class="sectionIntro"><span class="eyebrow">START HERE</span><h2>What do you need today?</h2><p>Choose your situation. TUT Move handles the marketplace category in the background.</p></div>
+<div class="needTiles">
+<button class="needTile" onclick="quickNeed('need_truck')"><span>🚛</span><b>I need a truck</b><small>Find available transport capacity</small></button>
+<button class="needTile" onclick="quickNeed('need_driver')"><span>👨‍✈️</span><b>I need a driver</b><small>Find a driver for my vehicle</small></button>
+<button class="needTile" onclick="quickNeed('driver_work')"><span>💼</span><b>I'm a driver looking for work</b><small>Publish your availability</small></button>
+<button class="needTile featured" onclick="quickNeed('move_load')"><span>📦</span><b>I need to move a load</b><small>Post cargo that needs transport</small></button>
+<button class="needTile" onclick="quickNeed('truck_available')"><span>🚚</span><b>My truck is available</b><small>Offer your truck to the market</small></button>
+<button class="needTile featured" onclick="quickNeed('returning_empty')"><span>↩️</span><b>I'm returning empty</b><small>Find a load for the return route</small></button>
+<button class="needTile featured" onclick="quickNeed('unused_space')"><span>📦</span><b>I have unused truck space</b><small>Fill spare capacity on your route</small></button>
+<button class="needTile" onclick="quickNeed('need_warehouse')"><span>🏭</span><b>I need warehouse space</b><small>Find storage capacity</small></button>
+<button class="needTile" onclick="quickNeed('warehouse_available')"><span>🏢</span><b>I have warehouse space</b><small>Offer unused storage capacity</small></button>
+</div></section>
     </section>
 
     <section id="about" class="pane hidden">
@@ -122,7 +120,7 @@
     </section>
 
     <section id="market" class="pane hidden">
-      <div class="pageHead"><div><span class="eyebrow">LIVE MARKET</span><h1 data-i18n="market">Market</h1><p>Search all open supply and demand.</p></div></div>
+      <div class="pageHead"><div><span class="eyebrow">LIVE MARKET</span><h1 data-i18n="market" data-ui-key="Market">Market</h1><p>Search all open supply and demand.</p></div></div>
       <div class="filters">
         <select id="filterIntent" onchange="loadMarket()"><option value="">Available + Wanted</option><option value="have">Available</option><option value="need">Wanted</option></select>
         <select id="filterResource" onchange="loadMarket()"><option value="">All resources</option><option value="driver">Driver</option><option value="truck">Truck</option><option value="load">Load</option><option value="warehouse">Warehouse</option><option value="equipment">Equipment</option></select>
@@ -133,8 +131,8 @@
 
     <section id="post" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">PUBLISH TO THE MARKET</span><h1>List availability or demand</h1><p>Choose a category and describe the exact specification. TUT Move does not set the price.</p></div></div>
-      <div class="panel formPanel specForm">
-        <div class="segmented"><button id="haveBtn" class="active" onclick="setIntent('have')">AVAILABLE</button><button id="needBtn" onclick="setIntent('need')">WANTED</button></div>
+      <div class="panel formPanel specForm"><div id="quickNeedBanner" class="quickNeedBanner hidden"></div>
+        <div class="segmented"><button id="haveBtn" class="active" onclick="setIntent('have')" data-ui-key="AVAILABLE">AVAILABLE</button><button id="needBtn" onclick="setIntent('need')" data-ui-key="WANTED">WANTED</button></div>
         <input type="hidden" id="intent" value="have">
         <label>Category</label>
         <select id="resource" onchange="renderFields()"><option value="driver">Driver / Operator</option><option value="truck">Truck / Vehicle</option><option value="load">Load / Cargo</option><option value="warehouse">Warehouse / Storage</option><option value="equipment">Equipment</option></select>
@@ -160,7 +158,7 @@
     </section>
 
     <section id="matches" class="pane hidden">
-      <div class="pageHead"><div><span class="eyebrow">MATCHING ENGINE</span><h1>Matches</h1><p>TUT Move suggests compatible opportunities. The users still choose.</p></div><button class="outlineBtn" onclick="loadMatches()">Refresh</button></div>
+      <div class="pageHead"><div><span class="eyebrow">MATCHING ENGINE</span><h1 data-ui-key="Matches">Matches</h1><p>TUT Move suggests compatible opportunities. The users still choose.</p></div><button class="outlineBtn" onclick="loadMatches()">Refresh</button></div>
       <div id="matchList" class="cards"></div>
     </section>
 <section id="offers" class="pane hidden">
@@ -190,7 +188,7 @@
 
     <section id="verify" class="pane hidden">
   <div class="wrap verifyShell">
-    <span class="eyebrow" data-i18n="Verification">Verification</span>
+    <span class="eyebrow" data-i18n="Verification" data-ui-key="Verification">Verification</span>
     <h2 data-i18n="Verify what matters.">Verify what matters.</h2>
     <p class="verifyLead" data-i18n="TUT Move only asks for the checks required by your role and by the trip.">TUT Move only asks for the checks required by your role and by the trip.</p>
 
@@ -236,7 +234,7 @@
     </section>
   </main>
 
-  <footer><div><strong>TUT MOVE</strong><span>tutmove.com · Turn Unused Into Transport</span></div><p>© 2026 TUT Move. Marketplace MVP. Real payments, KYC, background checks, insurance and transport compliance must be connected per jurisdiction before commercial launch.</p>
+  <footer><div><strong>TUT MOVE</strong><span>tutmove.com · Turn Unused Into Transport</span></div><p>© 2026 TUT Move. Turn Unused Into Transport.</p>
     <span><a href="mailto:info@tutmove.com">info@tutmove.com</a></span>
 </footer>
 </div>

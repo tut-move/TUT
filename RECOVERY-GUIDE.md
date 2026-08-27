@@ -137,3 +137,21 @@ Upload this ZIP and say:
 - User-entered free text remains stored unchanged in the database; it is not silently rewritten or mistranslated.
 - Added missing Market/Post labels and common structured values for Arabic, German, French, Spanish and Portuguese.
 - Changing language now forces dynamic Market, Matches, Offers, Bookings and Post fields to rerender immediately.
+
+
+## v35 Strict full-site language layer
+- Built on v34; no booking, verification, date, account-delete, database or pricing logic was removed.
+- Added a strict site-wide translation pass for all UI chrome: headings, labels, buttons, options, placeholders, titles and ARIA labels.
+- Added Portuguese to the language selector if missing.
+- Arabic sets document RTL; all other languages remain LTR.
+- Dynamic UI is retranslated automatically through a MutationObserver.
+- User-entered free text is intentionally not silently rewritten; only the platform UI is guaranteed to follow the selected language.
+
+## v36 Simple Entry UX + Owner Privacy
+- Built on v35.
+- Replaced the technical home chooser with nine plain-language user situations.
+- Each choice maps internally to the existing Available/Wanted + Driver/Truck/Load/Warehouse model.
+- Added direct entry for Returning Empty and Unused Truck Space without changing marketplace storage architecture.
+- Owner/Admin navigation is guarded for owner accounts only.
+- Removed the public MVP/KYC/payment development disclaimer from the footer.
+- Added translations for the new primary choices in AR/DE/FR/ES/PT and responsive desktop/tablet/mobile styling.
