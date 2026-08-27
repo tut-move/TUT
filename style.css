@@ -416,3 +416,13 @@ html[dir="rtl"] .needTile{text-align:right}
 html[dir="rtl"] .needPrimary,html[dir="rtl"] .needSubChoice{text-align:right}
 @media(max-width:760px){.needPrimaryGrid{grid-template-columns:1fr}.needSubGrid{grid-template-columns:1fr 1fr}.needPrimary{min-height:108px;padding:17px}}
 @media(max-width:480px){.needSubGrid{grid-template-columns:1fr}.needChooser{padding:34px 0 48px}.needPrimary b{font-size:18px}}
+
+.globalDirection{
+  margin-top:8px;
+  margin-bottom:10px;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:#c9a94d;
+}

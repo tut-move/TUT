@@ -163,3 +163,10 @@ Upload this ZIP and say:
 - Language changes now reload the page from canonical source text, preventing stale text from the previously selected language from surviving in the DOM.
 - Existing marketplace routing still maps subchoices to the same internal Available/Wanted resource model.
 - No date, account-delete, verification, booking, database or pricing logic was removed.
+
+
+## v38 Copy cleanup only
+- Fixed duplicated TUT MOVE / tagline text in the header.
+- Added the short global positioning line: “Built for the world.”
+- Removed the public numeric opportunity/statistics block rather than displaying figures that are not source-verified.
+- No workflow, pricing, booking, verification, date, language architecture, database, or account behavior was changed.
