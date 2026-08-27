@@ -165,8 +165,9 @@ Upload this ZIP and say:
 - No date, account-delete, verification, booking, database or pricing logic was removed.
 
 
-## v38 Copy cleanup only
-- Fixed duplicated TUT MOVE / tagline text in the header.
-- Added the short global positioning line: “Built for the world.”
-- Removed the public numeric opportunity/statistics block rather than displaying figures that are not source-verified.
-- No workflow, pricing, booking, verification, date, language architecture, database, or account behavior was changed.
+## v39 Safe copy-only correction
+- Rebuilt from the intact v37 baseline, NOT from broken v38.
+- Fixed the duplicated header brand by removing only the extra TUT glyph.
+- Added “Built for the world.” to the home hero, translated in AR/DE/FR/ES/PT.
+- Removed only the About-page proof/statistics section with 502K / 660.5K / 3→1.
+- Preserved Home, Need Chooser, About founder section, Market, Post, Matches, Offers, Verify, account logic, dates, languages, database, and booking flows.

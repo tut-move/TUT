@@ -92,14 +92,14 @@ const V36_TRANSLATIONS={"ar":{"START HERE":"ابدأ هنا","What do you need t
 for(const [lng,map] of Object.entries(V36_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 
 
-const V38_TRANSLATIONS={
+const V39_TRANSLATIONS={
   ar:{"Built for the world.":"موجّه نحو العالم."},
   de:{"Built for the world.":"Für die Welt gemacht."},
   fr:{"Built for the world.":"Pensé pour le monde."},
   es:{"Built for the world.":"Hecho para el mundo."},
   pt:{"Built for the world.":"Feito para o mundo."}
 };
-for(const [lng,map] of Object.entries(V38_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+for(const [lng,map] of Object.entries(V39_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 
 function buildTranslationReverse(){
   const rev={};
