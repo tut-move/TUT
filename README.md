@@ -104,3 +104,8 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Home entry now uses two concise side choices: I WANT / I OFFER.
 - Resource choices are four horizontal single-line cards on desktop.
 - Removed resource codes and explanatory text from the cards to prevent crowded/duplicated labels.
+
+## v52 — Targeted fixes only
+- Language switching now translates the existing interface in place and does not rebuild authentication, post or verification forms, so login state, typed values and the active verification step are preserved.
+- Market dropdown is compact and no longer exposes internal DR/TR/LD/WH codes or concatenated descriptions.
+- Verification keeps the same workflow and fields, but each field is presented as one clear full-width row.

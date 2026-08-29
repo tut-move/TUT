@@ -243,31 +243,21 @@ function startTranslationObserver(){
 function setLanguage(lang){
   activeLang=lang;
   localStorage.setItem('tut_lang',lang);
-  startTranslationObserver();
+  TRANSLATION_REVERSE=buildTranslationReverse();
   document.documentElement.lang=lang;
   document.documentElement.dir=lang==='ar'?'rtl':'ltr';
-  TRANSLATION_REVERSE=buildTranslationReverse();
-
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k=el.dataset.i18n;
-    const en=(T.en&&T.en[k])||el.dataset.tutCanonical||canonicalEnglish(el.textContent.trim());
-    el.dataset.tutCanonical=en;
-    el.textContent=(T[lang]&&T[lang][k]) || tr(en);
+  document.body?.setAttribute('dir',lang==='ar'?'rtl':'ltr');
+  const sel=document.getElementById('lang');if(sel)sel.value=lang;
+  startTranslationObserver();
+  // Translate the existing DOM in place. Do not rebuild forms or authentication UI:
+  // changing language must preserve login, typed values and the current verification step.
+  translateNodeTree(document.body);
+  applyStrictSiteLanguage();
+  document.querySelectorAll('option').forEach(o=>{
+    const c=o.dataset.tutCanonical||canonicalEnglish(o.textContent);
+    o.dataset.tutCanonical=c;
+    o.textContent=tr(c);
   });
-
-  // Recreate dynamic forms using the newly selected language.
-  if(document.getElementById('fields')&&document.getElementById('resource')){
-    try{renderFields()}catch{}
-  }
-  try{renderAccount()}catch{}
-  try{renderAuth()}catch{}
-  if(document.getElementById('marketList') && listings?.length){try{loadMarket()}catch{}}
-  if(document.getElementById('bookingList') && me){try{loadBookings()}catch{}}
-  refreshLanguage();
-  document.querySelectorAll('option').forEach(o=>{const c=o.dataset.tutCanonical||canonicalEnglish(o.textContent);o.dataset.tutCanonical=c;o.textContent=tr(c)});
-  requestAnimationFrame(()=>{translateNodeTree(document.body);setTimeout(()=>translateNodeTree(document.body),80);});
-  renderNeedChooser();
-  setTimeout(applyStrictSiteLanguage,0);
 }
 
 const V46_TRANSLATIONS={
@@ -899,13 +889,22 @@ function formatStoredDateTime(value){
 }
 
 
+function setPlatformElementText(el,text){
+  if(!el)return;
+  if(['INPUT','TEXTAREA'].includes(el.tagName)){el.placeholder=text;return;}
+  const own=[...el.childNodes].filter(n=>n.nodeType===Node.TEXT_NODE && String(n.nodeValue||'').trim());
+  if(own.length){
+    const n=own[0],current=String(n.nodeValue||'');
+    const lead=current.match(/^\s*/)?.[0]||'',tail=current.match(/\s*$/)?.[0]||'';
+    n.nodeValue=lead+text+tail;
+    return;
+  }
+  if(!el.children.length)el.textContent=text;
+}
 function strictTranslateElement(el){
   if(!el)return;
   const key=el.dataset?.uiKey||el.dataset?.i18n;
-  if(key && UI_TRANSLATIONS[activeLang]?.[key]){
-    if(['INPUT','TEXTAREA'].includes(el.tagName)) el.placeholder=tr(key);
-    else el.textContent=tr(key);
-  }
+  if(key && (activeLang==='en'||UI_TRANSLATIONS[activeLang]?.[key]))setPlatformElementText(el,tr(key));
 }
 function applyStrictSiteLanguage(){
   const root=document.documentElement;
@@ -917,7 +916,7 @@ function applyStrictSiteLanguage(){
 
   document.querySelectorAll('button,label,option,h1,h2,h3,h4,h5,h6,p,small,span,a,th,td,legend').forEach(el=>{
     if(el.closest('.userFreeText,[data-user-text="1"],.languageIsolated'))return;
-    if(el.children.length && !['LABEL','BUTTON','A'].includes(el.tagName))return;
+    if(el.children.length)return;
     const raw=(el.dataset?.canonicalUi||el.textContent||'').trim();
     if(!raw)return;
     if(!el.dataset.canonicalUi)el.dataset.canonicalUi=canonicalEnglish(raw);
@@ -1280,23 +1279,45 @@ document.addEventListener('click',e=>{const m=$('marketMenu');if(m&&!m.classList
 
 function manualLanguageOverride(lang){
   const durableToken=localStorage.getItem('tut_session')||'';
-  activeLang=lang;
-  localStorage.setItem('tut_lang',lang);
-  TRANSLATION_REVERSE=buildTranslationReverse();
-  document.documentElement.lang=lang;
-  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
-  if($('lang'))$('lang').value=lang;
+  const focused=document.activeElement;
+  setLanguage(lang);
   try{renderHeaderOverrides()}catch{}
+  // Refresh read-only marketplace/activity views only. Never rebuild account, post or verification forms.
+  try{if(!$('market')?.classList.contains('hidden'))loadMarket()}catch{}
+  try{if(!$('matches')?.classList.contains('hidden'))loadMatches()}catch{}
+  try{if(!$('offers')?.classList.contains('hidden')){loadOffers();loadBookings()}}catch{}
   try{renderAccount()}catch{}
-  try{renderAuth()}catch{}
-  try{renderFields()}catch{}
-  try{loadMarket()}catch{}
-  try{loadMatches()}catch{}
-  try{loadOffers()}catch{}
-  try{loadBookings()}catch{}
-  try{loadVerification()}catch{}
-  try{loadPayments()}catch{}
   if(durableToken)localStorage.setItem('tut_session',durableToken);
-  startTranslationObserver();
-  requestAnimationFrame(()=>{translateNodeTree(document.body);applyStrictSiteLanguage();selectHomeSide(HOME_SIDE);});
+  requestAnimationFrame(()=>{
+    translateNodeTree(document.body);
+    applyStrictSiteLanguage();
+    if(focused&&document.contains(focused))try{focused.focus({preventScroll:true})}catch{}
+  });
 }
+
+
+/* v52 — translation coverage for the three corrected areas only. */
+const V52_TRANSLATIONS={
+ ar:{
+  "Drivers":"السائقون","Trucks & trailers":"الشاحنات والمقطورات","Loads & transport":"الحمولات والنقل","Warehouses":"المخازن","View all market":"عرض السوق بالكامل",
+  "TRUST & VERIFICATION":"الثقة والتحقق","Build a profile people can trust.":"أنشئ ملفًا يثق به الآخرون.","We only ask for the information relevant to your marketplace role. Your submission is stored for manual review in this test build.":"نطلب فقط المعلومات المرتبطة بدورك في السوق. يتم حفظ طلبك للمراجعة اليدوية في هذه النسخة التجريبية.","Verification steps":"خطوات التحقق","Identity":"الهوية","Qualifications":"المؤهلات","Documents":"المستندات","STEP 1 OF 3":"الخطوة 1 من 3","STEP 2 OF 3":"الخطوة 2 من 3","STEP 3 OF 3":"الخطوة 3 من 3","Who are you?":"من أنت؟","Start with the details that identify the person or business behind the account.":"ابدأ بالبيانات التي تحدد الشخص أو النشاط التجاري المرتبط بالحساب.","Account role":"دور الحساب","Full legal name":"الاسم القانوني الكامل","As shown on your ID":"كما هو ظاهر في هويتك","Country / market":"الدولة / السوق","Government ID number":"رقم الهوية الحكومية","ID / passport number":"رقم الهوية / جواز السفر","Continue":"متابعة","Back":"رجوع","Show your qualifications.":"أضف مؤهلاتك.","The fields below adapt to the role you selected.":"تتغير الحقول التالية حسب الدور الذي اخترته.","Driving licence":"رخصة القيادة","Licence type, validity and specialist endorsements.":"نوع الرخصة وصلاحيتها والتصاريح المتخصصة.","Licence number":"رقم الرخصة","Licence expiry":"تاريخ انتهاء الرخصة","Licence class / qualification":"فئة الرخصة / المؤهل","Endorsements / certificates":"التصاريح / الشهادات","Hazmat, tanker, doubles/triples...":"مواد خطرة، صهاريج، مقطورات مزدوجة/ثلاثية...","Vehicle / business":"المركبة / النشاط التجاري","Connect the account to the operating business or vehicle.":"اربط الحساب بالنشاط التشغيلي أو المركبة.","Business / registration number":"رقم النشاط / التسجيل","Vehicle ID / plate":"رقم المركبة / اللوحة","Business details":"بيانات النشاط التجاري","Add the registration used for commercial activity.":"أضف رقم التسجيل المستخدم للنشاط التجاري.","Upload supporting documents.":"ارفع المستندات الداعمة.","For this prototype, files are submitted to TUT Move for manual owner review. Do not use production-sensitive documents until secure object storage and official KYC are connected.":"في هذه النسخة التجريبية تُرسل الملفات إلى TUT Move للمراجعة اليدوية. لا تستخدم مستندات إنتاج حساسة قبل ربط تخزين آمن وخدمة تحقق هوية رسمية.","Government ID":"الهوية الحكومية","Image or PDF":"صورة أو PDF","Selfie / profile photo":"صورة شخصية / صورة الملف","Image":"صورة","Notes for reviewer":"ملاحظات للمراجع","Anything the reviewer should know":"أي معلومات يجب أن يعرفها المراجع","Test build":"نسخة تجريبية","Manual review only. Official identity verification and encrypted production document storage still need to be connected.":"مراجعة يدوية فقط. لا يزال التحقق الرسمي من الهوية وتخزين المستندات المشفر بحاجة إلى الربط.","Submit for review":"إرسال للمراجعة","Sign in to submit verification.":"سجّل الدخول لإرسال التحقق.","Verification status":"حالة التحقق","Not submitted":"لم يُرسل","Pending manual review":"قيد المراجعة اليدوية","Verified":"تم التحقق","Needs changes":"يحتاج تعديلات","Pre-check passed":"تم اجتياز الفحص الأولي","Warehouse owner":"صاحب مخزن","Truck / trailer / equipment owner":"صاحب شاحنة / مقطورة / معدات","Shipper / cargo owner":"صاحب شحنة / حمولة","Carrier / transport company":"ناقل / شركة نقل"
+ },
+ de:{
+  "Drivers":"Fahrer","Trucks & trailers":"Lkw & Anhänger","Loads & transport":"Ladungen & Transport","Warehouses":"Lager","View all market":"Gesamten Markt anzeigen",
+  "TRUST & VERIFICATION":"VERTRAUEN & VERIFIZIERUNG","Build a profile people can trust.":"Erstellen Sie ein Profil, dem andere vertrauen können.","We only ask for the information relevant to your marketplace role. Your submission is stored for manual review in this test build.":"Wir fragen nur nach Angaben, die für Ihre Rolle im Marktplatz relevant sind. Ihre Einreichung wird in dieser Testversion zur manuellen Prüfung gespeichert.","Verification steps":"Verifizierungsschritte","Identity":"Identität","Qualifications":"Qualifikationen","Documents":"Dokumente","STEP 1 OF 3":"SCHRITT 1 VON 3","STEP 2 OF 3":"SCHRITT 2 VON 3","STEP 3 OF 3":"SCHRITT 3 VON 3","Who are you?":"Wer sind Sie?","Start with the details that identify the person or business behind the account.":"Beginnen Sie mit den Angaben, die die Person oder das Unternehmen hinter dem Konto identifizieren.","Account role":"Kontorolle","Full legal name":"Vollständiger rechtlicher Name","As shown on your ID":"Wie im Ausweisdokument","Country / market":"Land / Markt","Government ID number":"Amtliche Ausweisnummer","ID / passport number":"Ausweis- / Reisepassnummer","Continue":"Weiter","Back":"Zurück","Show your qualifications.":"Geben Sie Ihre Qualifikationen an.","The fields below adapt to the role you selected.":"Die folgenden Felder passen sich Ihrer gewählten Rolle an.","Driving licence":"Führerschein","Licence type, validity and specialist endorsements.":"Führerscheinklasse, Gültigkeit und Zusatzqualifikationen.","Licence number":"Führerscheinnummer","Licence expiry":"Ablaufdatum des Führerscheins","Licence class / qualification":"Führerscheinklasse / Qualifikation","Endorsements / certificates":"Zusatzqualifikationen / Zertifikate","Hazmat, tanker, doubles/triples...":"Gefahrgut, Tankfahrzeuge, Doppel-/Dreifachanhänger...","Vehicle / business":"Fahrzeug / Unternehmen","Connect the account to the operating business or vehicle.":"Verknüpfen Sie das Konto mit dem Unternehmen oder Fahrzeug.","Business / registration number":"Unternehmens- / Registrierungsnummer","Vehicle ID / plate":"Fahrzeug-ID / Kennzeichen","Business details":"Unternehmensdaten","Add the registration used for commercial activity.":"Geben Sie die für die gewerbliche Tätigkeit verwendete Registrierung an.","Upload supporting documents.":"Nachweisdokumente hochladen.","For this prototype, files are submitted to TUT Move for manual owner review. Do not use production-sensitive documents until secure object storage and official KYC are connected.":"In dieser Testversion werden Dateien zur manuellen Prüfung an TUT Move übermittelt. Verwenden Sie keine sensiblen Produktionsdokumente, bis sicherer Objektspeicher und eine offizielle KYC-Prüfung angebunden sind.","Government ID":"Amtlicher Ausweis","Image or PDF":"Bild oder PDF","Selfie / profile photo":"Selfie / Profilfoto","Image":"Bild","Notes for reviewer":"Hinweise für die Prüfung","Anything the reviewer should know":"Alles, was die prüfende Person wissen sollte","Test build":"Testversion","Manual review only. Official identity verification and encrypted production document storage still need to be connected.":"Nur manuelle Prüfung. Offizielle Identitätsprüfung und verschlüsselte Dokumentenspeicherung müssen noch angebunden werden.","Submit for review":"Zur Prüfung einreichen","Sign in to submit verification.":"Anmelden, um die Verifizierung einzureichen.","Verification status":"Verifizierungsstatus","Not submitted":"Nicht eingereicht","Pending manual review":"Manuelle Prüfung ausstehend","Verified":"Verifiziert","Needs changes":"Änderungen erforderlich","Pre-check passed":"Vorprüfung bestanden","Warehouse owner":"Lagerbetreiber","Truck / trailer / equipment owner":"Lkw-/Anhänger-/Gerätebesitzer","Shipper / cargo owner":"Versender / Ladungseigentümer","Carrier / transport company":"Frachtführer / Transportunternehmen"
+ },
+ fr:{
+  "Drivers":"Chauffeurs","Trucks & trailers":"Camions & remorques","Loads & transport":"Chargements & transport","Warehouses":"Entrepôts","View all market":"Voir tout le marché",
+  "TRUST & VERIFICATION":"CONFIANCE & VÉRIFICATION","Build a profile people can trust.":"Créez un profil digne de confiance.","We only ask for the information relevant to your marketplace role. Your submission is stored for manual review in this test build.":"Nous demandons uniquement les informations liées à votre rôle sur la place de marché. Votre dossier est enregistré pour une vérification manuelle dans cette version de test.","Verification steps":"Étapes de vérification","Identity":"Identité","Qualifications":"Qualifications","Documents":"Documents","STEP 1 OF 3":"ÉTAPE 1 SUR 3","STEP 2 OF 3":"ÉTAPE 2 SUR 3","STEP 3 OF 3":"ÉTAPE 3 SUR 3","Who are you?":"Qui êtes-vous ?","Start with the details that identify the person or business behind the account.":"Commencez par les informations qui identifient la personne ou l’entreprise derrière le compte.","Account role":"Rôle du compte","Full legal name":"Nom légal complet","As shown on your ID":"Comme indiqué sur votre pièce d’identité","Country / market":"Pays / marché","Government ID number":"Numéro de pièce d’identité","ID / passport number":"Numéro d’identité / passeport","Continue":"Continuer","Back":"Retour","Show your qualifications.":"Indiquez vos qualifications.","The fields below adapt to the role you selected.":"Les champs ci-dessous s’adaptent au rôle sélectionné.","Driving licence":"Permis de conduire","Licence type, validity and specialist endorsements.":"Type de permis, validité et habilitations spécialisées.","Licence number":"Numéro de permis","Licence expiry":"Expiration du permis","Licence class / qualification":"Catégorie de permis / qualification","Endorsements / certificates":"Habilitations / certificats","Hazmat, tanker, doubles/triples...":"Matières dangereuses, citerne, doubles/triples...","Vehicle / business":"Véhicule / entreprise","Connect the account to the operating business or vehicle.":"Associez le compte à l’entreprise ou au véhicule exploité.","Business / registration number":"Numéro d’entreprise / d’enregistrement","Vehicle ID / plate":"ID véhicule / plaque","Business details":"Informations de l’entreprise","Add the registration used for commercial activity.":"Ajoutez l’enregistrement utilisé pour l’activité commerciale.","Upload supporting documents.":"Téléversez les documents justificatifs.","For this prototype, files are submitted to TUT Move for manual owner review. Do not use production-sensitive documents until secure object storage and official KYC are connected.":"Dans cette version de test, les fichiers sont envoyés à TUT Move pour une vérification manuelle. N’utilisez pas de documents sensibles de production tant qu’un stockage sécurisé et un KYC officiel ne sont pas connectés.","Government ID":"Pièce d’identité","Image or PDF":"Image ou PDF","Selfie / profile photo":"Selfie / photo de profil","Image":"Image","Notes for reviewer":"Notes pour la vérification","Anything the reviewer should know":"Toute information utile à la vérification","Test build":"Version de test","Manual review only. Official identity verification and encrypted production document storage still need to be connected.":"Vérification manuelle uniquement. La vérification officielle d’identité et le stockage chiffré des documents doivent encore être connectés.","Submit for review":"Soumettre pour vérification","Sign in to submit verification.":"Connectez-vous pour soumettre la vérification.","Verification status":"Statut de vérification","Not submitted":"Non soumis","Pending manual review":"Vérification manuelle en attente","Verified":"Vérifié","Needs changes":"Modifications requises","Pre-check passed":"Pré-vérification réussie","Warehouse owner":"Propriétaire d’entrepôt","Truck / trailer / equipment owner":"Propriétaire camion / remorque / équipement","Shipper / cargo owner":"Expéditeur / propriétaire de cargaison","Carrier / transport company":"Transporteur / entreprise de transport"
+ },
+ es:{
+  "Drivers":"Conductores","Trucks & trailers":"Camiones y remolques","Loads & transport":"Cargas y transporte","Warehouses":"Almacenes","View all market":"Ver todo el mercado",
+  "TRUST & VERIFICATION":"CONFIANZA Y VERIFICACIÓN","Build a profile people can trust.":"Crea un perfil en el que la gente pueda confiar.","We only ask for the information relevant to your marketplace role. Your submission is stored for manual review in this test build.":"Solo pedimos la información relevante para tu función en el mercado. Tu envío se guarda para revisión manual en esta versión de prueba.","Verification steps":"Pasos de verificación","Identity":"Identidad","Qualifications":"Cualificaciones","Documents":"Documentos","STEP 1 OF 3":"PASO 1 DE 3","STEP 2 OF 3":"PASO 2 DE 3","STEP 3 OF 3":"PASO 3 DE 3","Who are you?":"¿Quién eres?","Start with the details that identify the person or business behind the account.":"Empieza con los datos que identifican a la persona o empresa detrás de la cuenta.","Account role":"Rol de la cuenta","Full legal name":"Nombre legal completo","As shown on your ID":"Como aparece en tu documento","Country / market":"País / mercado","Government ID number":"Número de identificación oficial","ID / passport number":"Número de identificación / pasaporte","Continue":"Continuar","Back":"Atrás","Show your qualifications.":"Indica tus cualificaciones.","The fields below adapt to the role you selected.":"Los campos siguientes se adaptan al rol seleccionado.","Driving licence":"Permiso de conducir","Licence type, validity and specialist endorsements.":"Tipo de permiso, vigencia y habilitaciones especiales.","Licence number":"Número de permiso","Licence expiry":"Caducidad del permiso","Licence class / qualification":"Clase de permiso / cualificación","Endorsements / certificates":"Habilitaciones / certificados","Hazmat, tanker, doubles/triples...":"Mercancías peligrosas, cisterna, dobles/triples...","Vehicle / business":"Vehículo / empresa","Connect the account to the operating business or vehicle.":"Vincula la cuenta con la empresa operadora o el vehículo.","Business / registration number":"Número de empresa / registro","Vehicle ID / plate":"ID del vehículo / matrícula","Business details":"Datos de la empresa","Add the registration used for commercial activity.":"Añade el registro usado para la actividad comercial.","Upload supporting documents.":"Sube los documentos de respaldo.","For this prototype, files are submitted to TUT Move for manual owner review. Do not use production-sensitive documents until secure object storage and official KYC are connected.":"En esta versión de prueba, los archivos se envían a TUT Move para revisión manual. No uses documentos sensibles de producción hasta conectar almacenamiento seguro y un KYC oficial.","Government ID":"Documento de identidad","Image or PDF":"Imagen o PDF","Selfie / profile photo":"Selfie / foto de perfil","Image":"Imagen","Notes for reviewer":"Notas para el revisor","Anything the reviewer should know":"Cualquier información que deba conocer el revisor","Test build":"Versión de prueba","Manual review only. Official identity verification and encrypted production document storage still need to be connected.":"Solo revisión manual. Aún deben conectarse la verificación oficial de identidad y el almacenamiento cifrado de documentos.","Submit for review":"Enviar para revisión","Sign in to submit verification.":"Inicia sesión para enviar la verificación.","Verification status":"Estado de verificación","Not submitted":"No enviado","Pending manual review":"Revisión manual pendiente","Verified":"Verificado","Needs changes":"Requiere cambios","Pre-check passed":"Preverificación superada","Warehouse owner":"Propietario de almacén","Truck / trailer / equipment owner":"Propietario de camión / remolque / equipo","Shipper / cargo owner":"Remitente / propietario de carga","Carrier / transport company":"Transportista / empresa de transporte"
+ },
+ pt:{
+  "Drivers":"Motoristas","Trucks & trailers":"Camiões e reboques","Loads & transport":"Cargas e transporte","Warehouses":"Armazéns","View all market":"Ver todo o mercado",
+  "TRUST & VERIFICATION":"CONFIANÇA E VERIFICAÇÃO","Build a profile people can trust.":"Crie um perfil em que as pessoas possam confiar.","We only ask for the information relevant to your marketplace role. Your submission is stored for manual review in this test build.":"Pedimos apenas as informações relevantes para a sua função no mercado. O seu envio fica guardado para revisão manual nesta versão de teste.","Verification steps":"Etapas de verificação","Identity":"Identidade","Qualifications":"Qualificações","Documents":"Documentos","STEP 1 OF 3":"PASSO 1 DE 3","STEP 2 OF 3":"PASSO 2 DE 3","STEP 3 OF 3":"PASSO 3 DE 3","Who are you?":"Quem é?","Start with the details that identify the person or business behind the account.":"Comece pelos dados que identificam a pessoa ou empresa por trás da conta.","Account role":"Função da conta","Full legal name":"Nome legal completo","As shown on your ID":"Como aparece no documento de identificação","Country / market":"País / mercado","Government ID number":"Número de identificação oficial","ID / passport number":"Número de identificação / passaporte","Continue":"Continuar","Back":"Voltar","Show your qualifications.":"Indique as suas qualificações.","The fields below adapt to the role you selected.":"Os campos abaixo adaptam-se à função selecionada.","Driving licence":"Carta de condução","Licence type, validity and specialist endorsements.":"Tipo de carta, validade e habilitações especializadas.","Licence number":"Número da carta","Licence expiry":"Validade da carta","Licence class / qualification":"Categoria da carta / qualificação","Endorsements / certificates":"Habilitações / certificados","Hazmat, tanker, doubles/triples...":"Materiais perigosos, cisterna, duplos/triplos...","Vehicle / business":"Veículo / empresa","Connect the account to the operating business or vehicle.":"Associe a conta à empresa operadora ou ao veículo.","Business / registration number":"Número da empresa / registo","Vehicle ID / plate":"ID do veículo / matrícula","Business details":"Dados da empresa","Add the registration used for commercial activity.":"Adicione o registo usado na atividade comercial.","Upload supporting documents.":"Carregue os documentos de suporte.","For this prototype, files are submitted to TUT Move for manual owner review. Do not use production-sensitive documents until secure object storage and official KYC are connected.":"Nesta versão de teste, os ficheiros são enviados para a TUT Move para revisão manual. Não use documentos sensíveis de produção até existir armazenamento seguro e KYC oficial.","Government ID":"Documento de identificação","Image or PDF":"Imagem ou PDF","Selfie / profile photo":"Selfie / foto de perfil","Image":"Imagem","Notes for reviewer":"Notas para o revisor","Anything the reviewer should know":"Qualquer informação útil para a revisão","Test build":"Versão de teste","Manual review only. Official identity verification and encrypted production document storage still need to be connected.":"Apenas revisão manual. A verificação oficial de identidade e o armazenamento cifrado de documentos ainda precisam de ser ligados.","Submit for review":"Enviar para revisão","Sign in to submit verification.":"Inicie sessão para enviar a verificação.","Verification status":"Estado da verificação","Not submitted":"Não enviado","Pending manual review":"Revisão manual pendente","Verified":"Verificado","Needs changes":"Requer alterações","Pre-check passed":"Pré-verificação concluída","Warehouse owner":"Proprietário de armazém","Truck / trailer / equipment owner":"Proprietário de camião / reboque / equipamento","Shipper / cargo owner":"Expedidor / proprietário da carga","Carrier / transport company":"Transportador / empresa de transporte"
+ }
+};
+for(const [lng,map] of Object.entries(V52_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+TRANSLATION_REVERSE=null;

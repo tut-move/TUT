@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=50-clean-language">
+  <link rel="stylesheet" href="/style.css?v=52-targeted-fixes">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -24,10 +24,10 @@
       <div class="navMenu">
         <button type="button" class="navMenuTrigger" onclick="toggleMarketMenu(event)" data-ui-key="Market">Market <span aria-hidden="true">⌄</span></button>
         <div id="marketMenu" class="marketMenu hidden">
-          <button type="button" onclick="openMarketCategory('driver')"><span class="menuCode">DR</span><span class="menuCopy"><b data-ui-key="Drivers">Drivers</b><small data-ui-key="Find drivers and driving opportunities">Find drivers and driving opportunities</small></span></button>
-          <button type="button" onclick="openMarketCategory('truck')"><span class="menuCode">TR</span><span class="menuCopy"><b data-ui-key="Trucks & trailers">Trucks & trailers</b><small data-ui-key="Available and wanted vehicles">Available and wanted vehicles</small></span></button>
-          <button type="button" onclick="openMarketCategory('load')"><span class="menuCode">LD</span><span class="menuCopy"><b data-ui-key="Loads & transport">Loads & transport</b><small data-ui-key="Cargo and transport demand">Cargo and transport demand</small></span></button>
-          <button type="button" onclick="openMarketCategory('warehouse')"><span class="menuCode">WH</span><span class="menuCopy"><b data-ui-key="Warehouses">Warehouses</b><small data-ui-key="Storage space and storage needs">Storage space and storage needs</small></span></button>
+          <button type="button" onclick="openMarketCategory('driver')"><b data-ui-key="Drivers">Drivers</b></button>
+          <button type="button" onclick="openMarketCategory('truck')"><b data-ui-key="Trucks & trailers">Trucks & trailers</b></button>
+          <button type="button" onclick="openMarketCategory('load')"><b data-ui-key="Loads & transport">Loads & transport</b></button>
+          <button type="button" onclick="openMarketCategory('warehouse')"><b data-ui-key="Warehouses">Warehouses</b></button>
           <button type="button" class="marketMenuAll" onclick="openMarketCategory('')" data-ui-key="View all market">View all market</button>
         </div>
       </div>
