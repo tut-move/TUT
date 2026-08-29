@@ -51,6 +51,7 @@
   "bookings": [],
   "matches": [],
   "verifications": [],
+  "notifications": [],
   "settings": {
     "brandName": "TUT Move",
     "siteUrl": "https://tutmove.com",

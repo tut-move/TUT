@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=52-targeted-fixes">
+  <link rel="stylesheet" href="/style.css?v=53-live-flow">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -43,6 +43,7 @@
       <select id="lang" onchange="manualLanguageOverride(this.value)" aria-label="Language">
         <option value="en">EN</option><option value="ar">AR</option><option value="de">DE</option><option value="fr">FR</option><option value="es">ES</option><option value="pt">PT</option>
       </select>
+      <button id="notificationBtn" class="notificationBtn hidden" type="button" onclick="go('offers');setTimeout(loadNotifications,0)" aria-label="Notifications">🔔<span id="notificationCount" class="notificationCount hidden">0</span></button>
       <div id="account"></div>
     </div>
   </header>
@@ -120,7 +121,7 @@
       </section>
 
       <section class="founderSection">
-        <div class="founderPhoto"><img src="/founder-abdelaziz.png" alt="Founder of TUT Move"></div>
+        <div class="founderPhoto"><img src="/founder-abdelaziz.png" alt="Founder of TUT Move" loading="lazy" decoding="async"></div>
         <div class="founderCopy">
           <span class="eyebrow" data-ui-key="FOUNDER">FOUNDER</span>
           <h2 data-ui-key="Built from a simple question.">Built from a simple question.</h2>
@@ -182,6 +183,7 @@
     </section>
 <section id="offers" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">NEGOTIATION</span><h1>Offers & bookings</h1><p>Offer → counter → accept. Market price is decided by the parties.</p></div></div>
+      <div id="notificationPanel" class="notificationPanel hidden"></div>
       <div id="offerList" class="cards"></div>
       <section class="offersWorkflow">
         <span class="eyebrow">HOW A DEAL MOVES</span>
@@ -300,7 +302,7 @@
     <span><a href="mailto:info@tutmove.com">info@tutmove.com</a></span>
 </footer>
 </div>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="/app.js?v=48-polished"></script>
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script defer src="/app.js?v=53-live-flow"></script>
 </body>
 </html>

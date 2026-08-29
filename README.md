@@ -109,3 +109,13 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Language switching now translates the existing interface in place and does not rebuild authentication, post or verification forms, so login state, typed values and the active verification step are preserved.
 - Market dropdown is compact and no longer exposes internal DR/TR/LD/WH codes or concatenated descriptions.
 - Verification keeps the same workflow and fields, but each field is presented as one clear full-width row.
+
+
+## v53 live-flow test
+- Performance: optimized large images, browser caching, gzip for HTML/CSS/JS, fewer repeated translation refreshes, lazy founder image.
+- Notifications: in-app bell and Activity notifications for offers, counters, accepted agreements and simulated payments.
+- Commission: 5% charged to the requester/buyer only. Provider receives the agreed amount in full.
+- Test payment: simulated authorization works for all agreement types, including driver agreements. No real money moves.
+- Driver document privacy: uploaded licence/ID/selfie are not public. After a driver agreement is accepted, only that driver, the accepted requester, or the owner account can view/print the uploaded files.
+
+Important: this is still a test build. Do not upload real sensitive production documents until encrypted object storage, access logging, retention rules and official KYC are connected.
