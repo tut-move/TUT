@@ -597,3 +597,8 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 .driverDocs{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:14px}.driverDocs h4{margin:0 0 6px}.driverDocs p{margin:0 0 10px}.driverDocActions{display:flex;flex-wrap:wrap;gap:8px}.driverDocActions a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
 .feeNotice{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(214,169,77,.08);font-size:13px}
 @media(max-width:720px){.notificationBtn{min-width:36px;height:36px}.notificationPanel{border-radius:12px}.driverDocActions{display:grid;grid-template-columns:1fr}.driverDocActions a{width:100%}.heroVisual img{max-width:240px;height:auto}.founderPhoto img{max-width:100%;height:auto}}
+
+/* v54 targeted bugfix: mobile Market access only */
+.mobileMarketBtn{display:none;border:1px solid #65562d;background:transparent;color:var(--gold2);padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer}
+@media(max-width:860px){.mobileMarketBtn{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}.topbar{flex-wrap:wrap}.tools{margin-left:auto}}
+[dir=rtl] .tools{margin-left:0;margin-right:auto}

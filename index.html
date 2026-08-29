@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=53-live-flow">
+  <link rel="stylesheet" href="/style.css?v=54-bugfix">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -37,6 +37,7 @@
       <button onclick="go('about')" data-ui-key="About">About</button>
       <button id="adminNav" class="hidden" onclick="go('adminPane')" data-ui-key="Owner">Owner</button>
     </nav>
+    <button type="button" class="mobileMarketBtn" onclick="openMarketCategory('')" data-ui-key="Market" aria-label="Open market">Market</button>
     <div class="tools">
       <select id="headerCountry" onchange="manualCountryOverride(this.value)" aria-label="Country / market"></select>
       <select id="headerCurrency" onchange="manualCurrencyOverride(this.value)" aria-label="Currency"></select>
@@ -303,6 +304,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=53-live-flow"></script>
+<script defer src="/app.js?v=54-bugfix"></script>
 </body>
 </html>
