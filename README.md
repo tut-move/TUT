@@ -43,9 +43,17 @@ storage) before a production KYC launch. The user/account/market database is per
 Verification is now role-adaptive and trip-oriented. The UI asks for minimal account information and keeps booking readiness checks in the agreed trip workflow. No production KYC provider or real payment rail is connected in this MVP.
 
 
-## v41 — Adaptive workflows + persistent sessions
+## v42 — Adaptive workflows + persistent sessions
 - Driver, Transport, Truck, Warehouse and Equipment bookings now show different confirmation workflows.
 - Driver deals no longer show cargo/pickup/delivery controls and do not deduct a percentage from agreed driver compensation.
 - Language switching updates in place without a page reload.
 - Login sessions are stored persistently and use a 30-day cookie, so refreshes, language changes and server restarts do not intentionally sign users out.
 - Existing test driver bookings are normalized when loaded.
+
+
+## v42 — Role-aware driver deals + durable login
+- Driver bookings now show two different sides: the available driver profile and the company/request requirements.
+- Driver licence/verification snapshot comes from account verification data; users no longer tick identical driver verification boxes manually.
+- Driver and requester receive different confirmation wording and see the other side's relevant details.
+- Old transport statuses on driver deals are normalized away.
+- Browser stores an opaque session token and sends it as a Bearer fallback in addition to the secure cookie, so refresh/language changes keep the user signed in even when a browser drops the cookie.
