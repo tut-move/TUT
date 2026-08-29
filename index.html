@@ -47,9 +47,9 @@
     <section id="home" class="pane">
       <div class="hero resourceHero">
         <div class="heroCopy">
-          <span class="eyebrow">TURN UNUSED INTO TRANSPORT</span>
+          <span class="eyebrow" data-ui-key="TURN UNUSED INTO TRANSPORT">TURN UNUSED INTO TRANSPORT</span>
           <div class="globalDirection" data-ui-key="Built for the world.">Built for the world.</div>
-          <h1>Drivers. Trucks. Loads.<br><span class="goldText">Warehouses. One market.</span></h1>
+          <h1><span data-ui-key="Drivers. Trucks. Loads.">Drivers. Trucks. Loads.</span><br><span class="goldText" data-ui-key="Warehouses. One market.">Warehouses. One market.</span></h1>
           <p>Find what your next move needs — or put unused capacity to work. TUT Move connects drivers, trucks, loads and warehouse space in one marketplace.</p>
           <div class="heroActions">
             <button class="goldBtn" onclick="document.querySelector('.needChooser')?.scrollIntoView({behavior:'smooth'})">Start here</button>
@@ -234,7 +234,7 @@
   </div>
 </section>
 
-    <section id="accountPane" class="pane hidden"><div class="pageHead"><div><span class="eyebrow">ACCOUNT</span><h1>Join TUT Move</h1><p>One account can have multiple marketplace roles.</p></div></div><div id="ownerSetup"></div><div id="authArea"></div></section>
+    <section id="accountPane" class="pane hidden"><div class="pageHead"><div><span class="eyebrow" data-ui-key="ACCOUNT">ACCOUNT</span><h1 data-ui-key="Join TUT Move">Join TUT Move</h1><p data-ui-key="Choose one role to start. You can add more roles later.">Choose one role to start. You can add more roles later.</p></div></div><div id="ownerSetup"></div><div id="authArea"></div></section>
 
     <section id="adminPane" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">OWNER CONTROL</span><h1>TUT Move Owner Dashboard</h1><p>Monitor the market; do not control its prices.</p></div><button class="outlineBtn" onclick="loadAdmin()">Refresh</button></div>
@@ -249,6 +249,6 @@
 </footer>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="/app.js?v=44-complete"></script>
+<script src="/app.js?v=45-clean-start"></script>
 </body>
 </html>
