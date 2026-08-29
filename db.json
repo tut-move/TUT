@@ -1,9 +1,25 @@
 {
   "users": [],
+  "sessions": [],
   "listings": [],
   "offers": [],
   "bookings": [],
   "matches": [],
   "verifications": [],
-  "settings": {"platformFeePct": 5, "defaultCurrency": "USD"}
+  "settings": {
+    "brandName": "TUT Move",
+    "siteUrl": "https://tutmove.com",
+    "platformFeePct": 5,
+    "defaultCurrency": "USD",
+    "ownerName": "",
+    "ownerEmail": "",
+    "legalEntity": "",
+    "supportEmail": "info@tutmove.com",
+    "launchMarkets": [
+      "USA",
+      "Canada",
+      "Europe",
+      "Middle East"
+    ]
+  }
 }

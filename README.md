@@ -57,3 +57,12 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Driver and requester receive different confirmation wording and see the other side's relevant details.
 - Old transport statuses on driver deals are normalized away.
 - Browser stores an opaque session token and sends it as a Bearer fallback in addition to the secure cookie, so refresh/language changes keep the user signed in even when a browser drops the cookie.
+
+
+## v44 — Complete language + counterpart workflows
+- Language switching rerenders the entire current UI in place and keeps the active session.
+- Durable bearer-token + cookie session survives refresh and language changes.
+- Account deletion now requires the current password; typing DELETE is no longer used.
+- Registration has explicit visual role cards so users know whether they joined as driver, truck/trailer owner, carrier, shipper or warehouse owner.
+- Driver, warehouse, truck/trailer, equipment and cargo/transport agreements show the relevant counterpart information to both sides.
+- Truck marketplace now explicitly supports truck and trailer rental/lease requests and offers.
