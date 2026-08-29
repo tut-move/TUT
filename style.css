@@ -445,3 +445,19 @@ html[dir="rtl"] .brandLockup > span{align-items:flex-end}
 
 /* v46 role selector: language-safe buttons */
 .roleChoice{width:100%;text-align:start;color:var(--text);font:inherit}.roleChoice:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.roleChoice.selected .roleMark{background:var(--gold);border-color:var(--gold)}.roleChoice.selected .roleMark::after{opacity:1}
+
+/* v47 — explicit selectable qualifications + universal route blocks */
+.checkCard{position:relative;border:1px solid #3a3427;border-radius:12px;padding:10px 12px!important;background:#111;transition:.15s ease;min-width:130px}
+.checkCard:hover{border-color:#8f7841;background:#17150f}
+.checkCard input[type="checkbox"]{position:absolute;opacity:0;pointer-events:none}
+.checkBoxVisual{width:23px;height:23px;border:2px solid #76643a;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:transparent;font-weight:900;background:#090909;flex:0 0 23px}
+.checkCard:has(input:checked){border-color:#d9b652;background:rgba(217,182,82,.09);box-shadow:0 0 0 1px rgba(217,182,82,.2) inset}
+.checkCard:has(input:checked) .checkBoxVisual{background:#d9b652;color:#111;border-color:#d9b652}
+.routeBlock{margin-top:26px;padding:18px;border:1px solid #403824;border-radius:16px;background:rgba(217,182,82,.035)}
+.routeBlock>h3{margin:0 0 6px!important;padding:0!important;border:0!important;color:#e4c86e!important}
+.routeHint{margin:0 0 14px;color:#aaa}
+.roleVerifyBlock{grid-column:1/-1;border:1px solid #302b20;border-radius:14px;padding:16px;margin-top:6px;background:#0d0d0d}
+.roleVerifyBlock h4{margin:0 0 14px;color:#e0c268;font-size:18px}
+.verificationChecks{margin:10px 0}
+.verificationForm input[type=file]{padding:10px;background:#0a0a0a;border:1px dashed #5d5134}
+@media(max-width:700px){.checkCard{min-width:0;flex:1 1 45%}.routeBlock{padding:12px}}

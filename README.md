@@ -66,3 +66,10 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Registration has explicit visual role cards so users know whether they joined as driver, truck/trailer owner, carrier, shipper or warehouse owner.
 - Driver, warehouse, truck/trailer, equipment and cargo/transport agreements show the relevant counterpart information to both sides.
 - Truck marketplace now explicitly supports truck and trailer rental/lease requests and offers.
+
+## v47 — Verification + route correction
+- Verification now collects real visible fields: legal name, government ID number/document, selfie, driver licence number/class/expiry/document, endorsements, and role-specific business/vehicle details.
+- Driver licence/qualification choices are explicit clickable cards with a visible selected state.
+- Every marketplace listing category now contains two required route points: pickup/start address and delivery/end address, each with its own map. This applies to drivers, trucks/trailers, loads, warehouses/storage and equipment, for both AVAILABLE and WANTED listings.
+- The two addresses are stored in listing data and surfaced to counterpart views.
+- Added translations for the new verification and pickup/delivery UI in Arabic, German, French, Spanish and Portuguese.

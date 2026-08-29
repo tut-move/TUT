@@ -1,6 +1,51 @@
 {
-  "users": [],
-  "sessions": [],
+  "users": [
+    {
+      "id": "u_5cb45026ec23",
+      "name": "Test Driver",
+      "email": "v47test1787990915@example.com",
+      "role": "driver",
+      "roles": [
+        "driver"
+      ],
+      "country": "United States",
+      "region": "",
+      "language": "en",
+      "currency": "USD",
+      "verified": false,
+      "verificationStatus": "not_started",
+      "salt": "2301cf9a2fa4e3710b1a94961181fed8",
+      "hash": "a8dd402091b670fc5c59d333be497d2521e0f7259e2d256e142c1ae4b3c7af1858c8195ba91f1365e96f33476bdafcc54574f719b7815b661fc977d7f15b5527",
+      "createdAt": "2026-08-29T08:08:35.602Z",
+      "verification": {
+        "status": "pending",
+        "role": "driver",
+        "legalName": "Test Driver Legal",
+        "country": "United States",
+        "identityNumber": "ID12345",
+        "licenceNumber": "D1234567",
+        "licenceClasses": [
+          "Class A CDL"
+        ],
+        "licenceExpiry": "2030-01-01",
+        "endorsements": "H, N",
+        "registrationNumber": "",
+        "vehicleId": "",
+        "notes": "test",
+        "files": {},
+        "submittedAt": "2026-08-29T08:08:36.333Z",
+        "reviewedAt": null
+      }
+    }
+  ],
+  "sessions": [
+    {
+      "id": "s_08215571834d",
+      "userId": "u_5cb45026ec23",
+      "createdAt": "2026-08-29T08:08:35.603Z",
+      "expiresAt": "2026-09-28T08:08:35.603Z"
+    }
+  ],
   "listings": [],
   "offers": [],
   "bookings": [],

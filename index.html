@@ -198,37 +198,62 @@
 
     <section id="verify" class="pane hidden">
   <div class="wrap verifyShell">
-    <span class="eyebrow" data-i18n="Verification" data-ui-key="Verification">Verification</span>
-    <h2 data-i18n="Verify what matters.">Verify what matters.</h2>
-    <p class="verifyLead" data-i18n="TUT Move only asks for the checks required by your role and by the trip.">TUT Move only asks for the checks required by your role and by the trip.</p>
-
-    <div class="verifySteps">
-      <div class="verifyStep"><b>01</b><div><small data-i18n="ACCOUNT">ACCOUNT</small><strong data-i18n="Confirm who you are">Confirm who you are</strong></div></div>
-      <div class="verifyStep"><b>02</b><div><small data-i18n="ROLE">ROLE</small><strong data-i18n="Show only relevant checks">Show only relevant checks</strong></div></div>
-      <div class="verifyStep"><b>03</b><div><small data-i18n="TRIP">TRIP</small><strong data-i18n="Ready before pickup">Ready before pickup</strong></div></div>
-    </div>
+    <span class="eyebrow" data-i18n="Verification">Verification</span>
+    <h2 data-i18n="Verify your real details.">Verify your real details.</h2>
+    <p class="verifyLead" data-i18n="Enter the identity and licence information that the other party needs to trust before an agreement.">Enter the identity and licence information that the other party needs to trust before an agreement.</p>
 
     <div class="verifyPanel">
-      <div class="verifyPanelHead"><div><span class="eyebrow" data-i18n="YOUR CHECK">YOUR CHECK</span><h3 data-i18n="Complete the essentials.">Complete the essentials.</h3></div><span class="verifyMode" data-i18n="Manual review for MVP">Manual review for MVP</span></div>
-      <p data-i18n="Sign in, choose your role, and TUT Move will show only the information needed for that role.">Sign in, choose your role, and TUT Move will show only the information needed for that role.</p>
+      <div class="verifyPanelHead"><div><span class="eyebrow" data-i18n="YOUR DETAILS">YOUR DETAILS</span><h3 data-i18n="Identity and qualification">Identity and qualification</h3></div><span class="verifyMode" data-i18n="Manual review for MVP">Manual review for MVP</span></div>
       <div id="verificationStatus" class="verificationStatus" data-i18n="Sign in to start verification.">Sign in to start verification.</div>
 
-      <form id="verificationForm" class="verificationForm compactVerify">
-        <label><span data-i18n="Account role">Account role</span><select id="verifyRole" required>
-          <option value="shipper" data-i18n="Shipper / cargo owner">Shipper / cargo owner</option>
-          <option value="carrier" data-i18n="Carrier / transport company">Carrier / transport company</option>
-          <option value="driver" data-i18n="Driver">Driver</option>
-          <option value="warehouse" data-i18n="Warehouse">Warehouse</option>
-          <option value="equipment" data-i18n="Equipment provider">Equipment provider</option>
-        </select></label>
-        <label><span data-i18n="Legal name">Legal name</span><input id="verifyLegalName" required></label>
-        <label><span data-i18n="Country / market">Country / market</span><input id="verifyCountry" required></label>
-        <label data-role-field="driver carrier"><span data-i18n="Licence / registration number">Licence / registration number</span><input id="verifyLicence"></label>
-        <label data-role-field="driver carrier"><span data-i18n="Vehicle ID / plate">Vehicle ID / plate</span><input id="verifyVehicle"></label>
-        <button class="goldBtn" type="submit" data-i18n="Submit for review">Submit for review</button>
-      </form>
+      <form id="verificationForm" class="verificationForm compactVerify" enctype="multipart/form-data">
+        <div class="two">
+          <label><span data-i18n="Account role">Account role</span><select id="verifyRole" required>
+            <option value="shipper" data-i18n="Shipper / cargo owner">Shipper / cargo owner</option>
+            <option value="carrier" data-i18n="Carrier / transport company">Carrier / transport company</option>
+            <option value="driver" data-i18n="Driver">Driver</option>
+            <option value="warehouse" data-i18n="Warehouse owner">Warehouse owner</option>
+            <option value="equipment" data-i18n="Truck / trailer / equipment owner">Truck / trailer / equipment owner</option>
+          </select></label>
+          <label><span data-i18n="Full legal name">Full legal name</span><input id="verifyLegalName" required autocomplete="name"></label>
+        </div>
+        <div class="two">
+          <label><span data-i18n="Country / market">Country / market</span><input id="verifyCountry" required></label>
+          <label><span data-i18n="Government ID number">Government ID number</span><input id="verifyIdentityNumber" required></label>
+        </div>
+        <div class="two">
+          <label><span data-i18n="Government ID document">Government ID document</span><input id="verifyIdentityFile" type="file" accept="image/*,.pdf" required></label>
+          <label><span data-i18n="Selfie / profile photo">Selfie / profile photo</span><input id="verifySelfieFile" type="file" accept="image/*"></label>
+        </div>
 
-      <div class="tripReadyMini"><span data-i18n="Before pickup">Before pickup</span><b data-i18n="Driver">Driver</b><i>✓</i><b data-i18n="Vehicle">Vehicle</b><i>✓</i><b data-i18n="Cargo">Cargo</b><i>✓</i><b data-i18n="Receiver">Receiver</b><i>✓</i></div>
+        <div data-role-field="driver carrier" class="roleVerifyBlock">
+          <h4 data-i18n="Driving licence">Driving licence</h4>
+          <div class="two">
+            <label><span data-i18n="Licence number">Licence number</span><input id="verifyLicence"></label>
+            <label><span data-i18n="Licence expiry">Licence expiry</span><input id="verifyLicenceExpiry" type="date"></label>
+          </div>
+          <div id="verifyLicenceClasses" class="verificationChecks"></div>
+          <label><span data-i18n="Driving licence document">Driving licence document</span><input id="verifyLicenceFile" type="file" accept="image/*,.pdf"></label>
+          <label><span data-i18n="Endorsements / certificates">Endorsements / certificates</span><input id="verifyEndorsements" placeholder="Hazmat, tanker, doubles/triples..."></label>
+        </div>
+
+        <div data-role-field="carrier equipment" class="roleVerifyBlock">
+          <h4 data-i18n="Vehicle / business details">Vehicle / business details</h4>
+          <div class="two">
+            <label><span data-i18n="Business / registration number">Business / registration number</span><input id="verifyRegistration"></label>
+            <label><span data-i18n="Vehicle ID / plate">Vehicle ID / plate</span><input id="verifyVehicle"></label>
+          </div>
+        </div>
+
+        <div data-role-field="warehouse shipper" class="roleVerifyBlock">
+          <h4 data-i18n="Business details">Business details</h4>
+          <label><span data-i18n="Business / registration number">Business / registration number</span><input id="verifyBusinessRegistration"></label>
+        </div>
+
+        <label><span data-i18n="Notes">Notes</span><textarea id="verifyNotes" rows="3"></textarea></label>
+        <button class="goldBtn" type="submit" data-i18n="Submit for review">Submit for review</button>
+        <div id="verifySubmitMsg" class="muted"></div>
+      </form>
       <div id="ownerVerificationQueue" class="ownerVerificationQueue"></div>
     </div>
   </div>
@@ -249,6 +274,6 @@
 </footer>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="/app.js?v=46-clean-start"></script>
+<script src="/app.js?v=47-clean-start"></script>
 </body>
 </html>

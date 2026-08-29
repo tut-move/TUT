@@ -223,7 +223,7 @@ function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'44',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'47',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -296,8 +296,9 @@ const server=http.createServer(async(req,res)=>{
     return json(res,200,{verification:me.verification||{status:'not_submitted',role:'',legalName:'',country:'',licenceNumber:'',vehicleId:'',notes:'',submittedAt:null,reviewedAt:null}});
   }
   if(p==='/api/verification/submit'&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const body=await getBody(req),db=readDB(),me=db.users.find(x=>x.id===u.id);if(!me)return json(res,404,{error:'User not found.'});
-    me.verification={...(me.verification||{}),status:'pending',role:String(body.role||''),legalName:String(body.legalName||'').trim(),country:String(body.country||''),licenceNumber:String(body.licenceNumber||'').trim(),vehicleId:String(body.vehicleId||'').trim(),notes:String(body.notes||'').trim(),submittedAt:new Date().toISOString(),reviewedAt:null};
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const body=await getBody(req,14e6),db=readDB(),me=db.users.find(x=>x.id===u.id);if(!me)return json(res,404,{error:'User not found.'});
+    const files={};for(const k of ['license','identity','selfie']){if(body.files&&body.files[k])files[k]=saveDataUrl(u.id,k,body.files[k]);}
+    me.verification={...(me.verification||{}),status:'pending',role:String(body.role||''),legalName:String(body.legalName||'').trim(),country:String(body.country||''),identityNumber:String(body.identityNumber||'').trim(),licenceNumber:String(body.licenceNumber||'').trim(),licenceClasses:Array.isArray(body.licenceClasses)?body.licenceClasses.map(x=>String(x).slice(0,50)).slice(0,20):[],licenceExpiry:String(body.licenceExpiry||'').slice(0,20),endorsements:String(body.endorsements||'').trim().slice(0,500),registrationNumber:String(body.registrationNumber||'').trim().slice(0,120),vehicleId:String(body.vehicleId||'').trim(),notes:String(body.notes||'').trim(),files:{...(me.verification?.files||{}),...files},submittedAt:new Date().toISOString(),reviewedAt:null};
     await writeDB(db);return json(res,200,{verification:me.verification,message:'Verification submitted for review.'});
   }
   if(p==='/api/admin/verifications'&&req.method==='GET'){
@@ -348,5 +349,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v42 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v47 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});
