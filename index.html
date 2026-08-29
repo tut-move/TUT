@@ -18,17 +18,24 @@
 <div class="shell">
   <header class="topbar">
     <button class="brandLockup" onclick="go('home')" aria-label="TUT Move home">
-      <img class="brandMark" src="/tut-emblem.png" alt=""><span class="brandWords"><strong>TUT MOVE</strong><small>Turn Unused Into Transport</small></span>
+      <img class="brandMark" src="/tut-emblem.png" alt=""><span class="brandWords"><strong>TUT MOVE</strong></span>
     </button>
-    <nav class="desktopNav">
-      <button onclick="go('market')" data-i18n="market" data-ui-key="Market">Market</button>
-      <button onclick="go('post')" data-i18n="post" data-ui-key="Post">Post</button>
-      <button onclick="go('matches')" data-i18n="matches" data-ui-key="Matches">Matches</button>
-      <button onclick="go('offers')" data-i18n="offers" data-ui-key="Offers">Offers</button>
-      <button onclick="go('payments')" data-ui-key="Payments">Payments</button>
-      <button onclick="go('verify')" data-i18n="verify" data-ui-key="Verify">Verify</button>
-      <button onclick="go('about')">About</button>
-      <button id="adminNav" class="hidden" onclick="go('adminPane')">Owner</button>
+    <nav class="desktopNav compactNav">
+      <div class="navMenu">
+        <button type="button" class="navMenuTrigger" onclick="toggleMarketMenu(event)" data-ui-key="Market">Market <span aria-hidden="true">⌄</span></button>
+        <div id="marketMenu" class="marketMenu hidden">
+          <button type="button" onclick="openMarketCategory('driver')"><span>👤</span><b data-ui-key="Drivers">Drivers</b><small data-ui-key="Find drivers and driving opportunities">Find drivers and driving opportunities</small></button>
+          <button type="button" onclick="openMarketCategory('truck')"><span>🚛</span><b data-ui-key="Trucks & trailers">Trucks & trailers</b><small data-ui-key="Available and wanted vehicles">Available and wanted vehicles</small></button>
+          <button type="button" onclick="openMarketCategory('load')"><span>📦</span><b data-ui-key="Loads & transport">Loads & transport</b><small data-ui-key="Cargo and transport demand">Cargo and transport demand</small></button>
+          <button type="button" onclick="openMarketCategory('warehouse')"><span>🏭</span><b data-ui-key="Warehouses">Warehouses</b><small data-ui-key="Storage space and storage needs">Storage space and storage needs</small></button>
+          <button type="button" class="marketMenuAll" onclick="openMarketCategory('')" data-ui-key="View all market">View all market</button>
+        </div>
+      </div>
+      <button onclick="go('post')" data-ui-key="Post">Post</button>
+      <button onclick="go('offers')" data-ui-key="Activity">Activity</button>
+      <button onclick="go('verify')" data-ui-key="Verify">Verify</button>
+      <button onclick="go('about')" data-ui-key="About">About</button>
+      <button id="adminNav" class="hidden" onclick="go('adminPane')" data-ui-key="Owner">Owner</button>
     </nav>
     <div class="tools">
       <select id="headerCountry" onchange="manualCountryOverride(this.value)" aria-label="Country / market"></select>
@@ -46,61 +53,53 @@
 
   <main>
     <section id="home" class="pane">
-      <div class="hero resourceHero v48Hero">
+      <div class="hero resourceHero v49Hero">
         <div class="heroCopy">
-          <span class="eyebrow">THE LOGISTICS CAPACITY MARKETPLACE</span>
-          <h1>One place for what you <span class="goldText">need</span><br>and what you <span class="goldText">have.</span></h1>
-          <p>Find a driver, truck, trailer or warehouse — or turn unused transport capacity into new work. Publish, match, negotiate, verify and confirm in one flow.</p>
+          <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
+          <h1 data-ui-key="Find what you need. Put what you have to work.">Find what you need. Put what you have to work.</h1>
+          <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.">Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.</p>
           <div class="heroActions">
-            <button class="goldBtn" onclick="document.querySelector('.needChooser')?.scrollIntoView({behavior:'smooth'})">Tell us what you need</button>
-            <button class="outlineBtn" onclick="go('market')">Explore live market</button>
+            <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})" data-ui-key="Start now">Start now</button>
+            <button class="outlineBtn" onclick="openMarketCategory('')" data-ui-key="Browse market">Browse market</button>
           </div>
-          <div class="heroProof">
-            <div><strong>AVAILABLE</strong><span>Drivers · Vehicles · Storage</span></div>
-            <div><strong>WANTED</strong><span>Jobs · Capacity · Transport</span></div>
-            <div><strong>AGREE</strong><span>Offer · Verify · Confirm</span></div>
+          <div class="heroProof compactProof">
+            <div><strong data-ui-key="FIND">FIND</strong><span data-ui-key="People and capacity">People and capacity</span></div>
+            <div><strong data-ui-key="OFFER">OFFER</strong><span data-ui-key="Unused resources">Unused resources</span></div>
+            <div><strong data-ui-key="AGREE">AGREE</strong><span data-ui-key="On your own terms">On your own terms</span></div>
           </div>
         </div>
         <div class="heroVisual brandStage">
           <img src="/tut-emblem.png" alt="TUT Move emblem">
-          <div class="brandStageCaption"><span>GLOBAL • MULTI-ROLE • MULTI-LANGUAGE</span></div>
         </div>
       </div>
 
-      <section class="needChooser languageIsolated" id="needChooser">
-  <div class="sectionIntro">
-    <span class="eyebrow" data-need-copy="start"></span>
-    <h2 data-need-copy="question"></h2>
-    <p data-need-copy="intro"></p>
-  </div>
-
-  <div class="needPrimaryGrid">
-    <button class="needPrimary" type="button" onclick="showNeedGroup('transport')">
-      <span class="needIcon">📦</span>
-      <span><b data-need-copy="transportTitle"></b><small data-need-copy="transportText"></small></span>
-    </button>
-    <button class="needPrimary" type="button" onclick="showNeedGroup('driver')">
-      <span class="needIcon">👨‍✈️</span>
-      <span><b data-need-copy="driverTitle"></b><small data-need-copy="driverText"></small></span>
-    </button>
-    <button class="needPrimary" type="button" onclick="showNeedGroup('truck')">
-      <span class="needIcon">🚛</span>
-      <span><b data-need-copy="truckTitle"></b><small data-need-copy="truckText"></small></span>
-    </button>
-    <button class="needPrimary" type="button" onclick="showNeedGroup('warehouse')">
-      <span class="needIcon">🏭</span>
-      <span><b data-need-copy="warehouseTitle"></b><small data-need-copy="warehouseText"></small></span>
-    </button>
-  </div>
-
-  <div id="needSubPanel" class="needSubPanel hidden">
-    <div class="needSubHeader">
-      <b id="needSubTitle"></b>
-      <button type="button" onclick="hideNeedGroup()" aria-label="Close">×</button>
-    </div>
-    <div id="needSubGrid" class="needSubGrid"></div>
-  </div>
-</section>
+      <section class="startChoice" id="startChoice">
+        <div class="sectionIntro conciseIntro">
+          <span class="eyebrow" data-ui-key="START WITH ONE CHOICE">START WITH ONE CHOICE</span>
+          <h2 data-ui-key="What are you here to do?">What are you here to do?</h2>
+          <p data-ui-key="Choose a side first. Then choose the exact resource.">Choose a side first. Then choose the exact resource.</p>
+        </div>
+        <div class="sideChoiceGrid">
+          <article class="sideChoice">
+            <div class="sideChoiceHead"><span class="sideIcon">⌕</span><div><span class="eyebrow" data-ui-key="I NEED">I NEED</span><h3 data-ui-key="Find something">Find something</h3></div></div>
+            <div class="resourceQuickGrid">
+              <button type="button" onclick="quickNeed('need_driver')"><span>👤</span><b data-ui-key="Driver">Driver</b></button>
+              <button type="button" onclick="quickNeed('need_truck')"><span>🚛</span><b data-ui-key="Truck / trailer">Truck / trailer</b></button>
+              <button type="button" onclick="quickNeed('move_load')"><span>📦</span><b data-ui-key="Transport for a load">Transport for a load</b></button>
+              <button type="button" onclick="quickNeed('need_warehouse')"><span>🏭</span><b data-ui-key="Warehouse space">Warehouse space</b></button>
+            </div>
+          </article>
+          <article class="sideChoice">
+            <div class="sideChoiceHead"><span class="sideIcon">＋</span><div><span class="eyebrow" data-ui-key="I HAVE">I HAVE</span><h3 data-ui-key="Offer something">Offer something</h3></div></div>
+            <div class="resourceQuickGrid">
+              <button type="button" onclick="quickNeed('driver_work')"><span>👤</span><b data-ui-key="I am a driver">I am a driver</b></button>
+              <button type="button" onclick="quickNeed('truck_available')"><span>🚛</span><b data-ui-key="Truck / trailer">Truck / trailer</b></button>
+              <button type="button" onclick="quickNeed('unused_space')"><span>📦</span><b data-ui-key="Unused truck space">Unused truck space</b></button>
+              <button type="button" onclick="quickNeed('warehouse_available')"><span>🏭</span><b data-ui-key="Warehouse space">Warehouse space</b></button>
+            </div>
+          </article>
+        </div>
+      </section>
       <section class="confidenceStrip" aria-label="How TUT Move works">
         <article><span>01</span><div><b>Publish</b><small>Tell the market what you have or need.</small></div></article>
         <article><span>02</span><div><b>Match</b><small>Compare relevant people and capacity.</small></div></article>

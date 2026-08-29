@@ -218,12 +218,12 @@ function sanitizeData(data){const out={};for(const [k,v] of Object.entries(data|
 function saveDataUrl(userId,kind,dataUrl){if(!dataUrl||typeof dataUrl!=='string')return null;const m=dataUrl.match(/^data:(image\/(?:jpeg|png|webp)|application\/pdf);base64,(.+)$/);if(!m)return null;const buf=Buffer.from(m[2],'base64');if(buf.length>3e6)throw new Error('File too large (3MB max).');const ext=m[1]==='application/pdf'?'pdf':m[1].split('/')[1].replace('jpeg','jpg');fs.mkdirSync(UPLOADS,{recursive:true});const name=`${userId}_${kind}_${Date.now()}.${ext}`;fs.writeFileSync(path.join(UPLOADS,name),buf);return {name,mime:m[1],size:buf.length};}
 function autoPrecheck(v){const required=['license','identity','selfie'];const files=v.files||{};const present=required.every(k=>files[k]&&files[k].size>0);if(!present)return {status:'incomplete',score:0,message:'Required documents are missing.'};const acceptable=required.every(k=>files[k].size>=15000&&files[k].size<=3e6);if(!acceptable)return {status:'review_required',score:45,message:'Files received but quality/size needs review.'};return {status:'precheck_passed',score:80,message:'Automated file pre-check passed. Official identity/document verification provider is not connected yet.'};}
 function publicListing(x,db){const u=db.users.find(z=>z.id===x.userId);return {...x,user:u?{id:u.id,name:u.name,verified:!!u.verified,verificationStatus:u.verificationStatus||'not_started'}:null};}
-function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','/style.css','/tut-emblem.png']);const route=p==='/'?'/index.html':p;if(!allowed.has(route))return false;const f=path.join(ROOT,route.slice(1));if(!fs.existsSync(f))return false;const ext=path.extname(f);const ct={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.png':'image/png'}[ext]||'application/octet-stream';const b=fs.readFileSync(f);res.writeHead(200,{'Content-Type':ct,'Content-Length':b.length});res.end(b);return true;}
+function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','/style.css','/tut-emblem.png','/founder-abdelaziz.png']);const route=p==='/'?'/index.html':p;if(!allowed.has(route))return false;const f=path.join(ROOT,route.slice(1));if(!fs.existsSync(f))return false;const ext=path.extname(f);const ct={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'application/javascript; charset=utf-8','.png':'image/png'}[ext]||'application/octet-stream';const b=fs.readFileSync(f);res.writeHead(200,{'Content-Type':ct,'Content-Length':b.length});res.end(b);return true;}
 
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'48',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'49',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -350,5 +350,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v48 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v49 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});

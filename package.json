@@ -1,6 +1,6 @@
 {
   "name": "tut-move",
-  "version": "48.0.0",
+  "version": "49.0.0",
   "private": true,
   "description": "TUT Move marketplace",
   "main": "server.js",

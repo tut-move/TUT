@@ -82,3 +82,11 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Preserved the existing marketplace, offers, bookings, multilingual behavior, PostgreSQL support and owner review flow.
 - Real payment capture remains disabled by design. Connecting Stripe Connect or another marketplace payment provider requires provider SDK/API work, webhooks, legal/business onboarding and payout configuration.
 - Production KYC still requires an official provider plus secure object storage for document bytes.
+
+
+## v49 UX correction
+- Founder image is now served by the Node static-file allowlist.
+- Language switching rerenders in place and preserves the durable session token.
+- Header navigation is reduced; Market opens resource categories.
+- Home entry is simplified into I NEED / I HAVE with direct resource choices.
+- Payments is removed from primary navigation but the page/logic remains available.
