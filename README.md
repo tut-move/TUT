@@ -119,3 +119,6 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Driver document privacy: uploaded licence/ID/selfie are not public. After a driver agreement is accepted, only that driver, the accepted requester, or the owner account can view/print the uploaded files.
 
 Important: this is still a test build. Do not upload real sensitive production documents until encrypted object storage, access logging, retention rules and official KYC are connected.
+
+## v59 targeted flow fix
+After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The requester gets a Proceed to payment button that opens the existing TEST MODE payment center; the provider sees that payment is pending. Test payment for truck/equipment agreements is blocked server-side until readiness is complete.
