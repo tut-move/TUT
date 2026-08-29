@@ -335,7 +335,10 @@ const server=http.createServer(async(req,res)=>{
   if(/^\/api\/bookings\/[^/]+\/trip-check$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],body=await getBody(req),db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});
     const dealType=bookingDealType(b,db);b.dealType=dealType;b.trip=b.trip||{};
+    const prevProviderReady=!!b.trip.providerReady,prevBuyerReady=!!b.trip.buyerReady;
     if(u.id===b.providerUserId)b.trip.providerReady=!!body.ready;if(u.id===b.buyerUserId)b.trip.buyerReady=!!body.ready;
+    if(u.id===b.buyerUserId&&b.trip.buyerReady&&!prevBuyerReady){addNotification(db,b.providerUserId,'agreement','Requester confirmed',`The requester confirmed the ${dealType} agreement. Open Activity for your next action.`,'offers')}
+    if(u.id===b.providerUserId&&b.trip.providerReady&&!prevProviderReady){addNotification(db,b.buyerUserId,'agreement','Provider ready',`The provider confirmed the ${dealType} agreement. Open Activity to continue.`,'offers')}
     if(dealType==='driver'){
       const ctx=driverDealContext(b,db),driver=ctx&&db.users.find(x=>x.id===ctx.driverUserId),vs=driver?userVerificationSummary(driver,db):{verified:false};
       b.trip.driverVerified=!!vs.verified;b.trip.licenceVerified=!!vs.verified;b.trip.termsConfirmed=true;
@@ -345,6 +348,9 @@ const server=http.createServer(async(req,res)=>{
       const allowed=['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed','termsConfirmed','warehouseVerified','datesConfirmed','handoverConfirmed','equipmentVerified'];for(const k of allowed)if(k in body)b.trip[k]=!!body[k];
       const checks=requiredChecks(dealType);const coreReady=checks.every(k=>b.trip[k]);b.trip.ready=coreReady&&!!b.trip.providerReady&&!!b.trip.buyerReady;
       if(b.trip.ready){if(dealType==='warehouse')b.status='storage_confirmed';else if(dealType==='truck'||dealType==='equipment')b.status='vehicle_ready';else if(b.paymentStatus==='test_authorized')b.status='ready_for_pickup';else b.status='verified_waiting_payment';}
+      else if(b.trip.buyerReady&&!b.trip.providerReady)b.status='requester_confirmed';
+      else if(b.trip.providerReady&&!b.trip.buyerReady)b.status='provider_ready';
+      else if(!b.trip.buyerReady&&!b.trip.providerReady&&['requester_confirmed','provider_ready'].includes(b.status))b.status='agreed';
     }
     b.trip.updatedAt=new Date().toISOString();
     await writeDB(db);return json(res,200,{booking:b});
