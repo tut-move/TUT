@@ -73,3 +73,12 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Every marketplace listing category now contains two required route points: pickup/start address and delivery/end address, each with its own map. This applies to drivers, trucks/trailers, loads, warehouses/storage and equipment, for both AVAILABLE and WANTED listings.
 - The two addresses are stored in listing data and surfaced to counterpart views.
 - Added translations for the new verification and pickup/delivery UI in Arabic, German, French, Spanish and Portuguese.
+
+## v48 — Polished test experience
+- Reworked the home screen into a clearer two-sided logistics marketplace entry.
+- Added a dedicated Payments screen using the existing safe TEST MODE booking payment state.
+- Added `/api/integrations/status` to show whether payment/KYC environment credentials are present without exposing secrets.
+- Rebuilt account verification as a three-step, role-adaptive wizard: Identity → Qualifications → Documents.
+- Preserved the existing marketplace, offers, bookings, multilingual behavior, PostgreSQL support and owner review flow.
+- Real payment capture remains disabled by design. Connecting Stripe Connect or another marketplace payment provider requires provider SDK/API work, webhooks, legal/business onboarding and payout configuration.
+- Production KYC still requires an official provider plus secure object storage for document bytes.

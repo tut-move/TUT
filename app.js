@@ -1106,3 +1106,88 @@ const V45_TRANSLATIONS={
 for(const [lng,map] of Object.entries(V45_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 TRANSLATION_REVERSE=null;
 setTimeout(()=>{try{refreshLanguage();renderHeaderOverrides();renderNeedChooser();renderAuth();}catch(e){}},0);
+
+/* =========================================================
+   v48 — polished navigation, verification wizard, payments
+   ========================================================= */
+let verifyWizardStep=1;
+function setVerifyWizardStep(step){
+  verifyWizardStep=Math.max(1,Math.min(3,Number(step)||1));
+  document.querySelectorAll('[data-step-panel]').forEach(el=>el.classList.toggle('hidden',Number(el.dataset.stepPanel)!==verifyWizardStep));
+  document.querySelectorAll('.verifyStep').forEach(el=>{
+    const n=Number(el.dataset.verifyStep);el.classList.toggle('active',n===verifyWizardStep);el.classList.toggle('complete',n<verifyWizardStep);
+  });
+  document.querySelector('.verifyWizard')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function verifyStepOneValid(){
+  const ids=['verifyRole','verifyLegalName','verifyCountry','verifyIdentityNumber'];
+  for(const id of ids){const el=$(id);if(el&&!String(el.value||'').trim()){el.focus();el.reportValidity?.();return false}}
+  return true;
+}
+function verifyNextStep(){
+  if(verifyWizardStep===1&&!verifyStepOneValid())return;
+  if(verifyWizardStep===2){
+    const role=$('verifyRole')?.value||'';
+    if((role==='driver'||role==='carrier')&&!document.querySelectorAll('#verifyLicenceClasses input:checked').length){
+      const host=$('verifyLicenceClasses');host?.scrollIntoView({behavior:'smooth',block:'center'});return;
+    }
+  }
+  setVerifyWizardStep(verifyWizardStep+1);
+}
+function verifyPrevStep(){setVerifyWizardStep(verifyWizardStep-1)}
+document.querySelectorAll('.verifyStep').forEach(btn=>btn.addEventListener('click',()=>{const target=Number(btn.dataset.verifyStep);if(target<=verifyWizardStep||target===1)setVerifyWizardStep(target)}));
+
+function verificationStatusPresentation(v){
+  const status=String(v?.status||'not_submitted');
+  const labels={not_submitted:'Not submitted',pending:'Pending manual review',verified:'Verified',rejected:'Needs changes',manual_verified:'Verified',precheck_passed:'Pre-check passed'};
+  const cls=status.includes('verified')||status==='precheck_passed'?'status-verified':status==='pending'?'status-pending':status==='rejected'?'status-rejected':'';
+  return {text:labels[status]||status.replaceAll('_',' '),cls};
+}
+async function loadVerification(){
+  const statusEl=$('verificationStatus');
+  if(!me){if(statusEl){statusEl.className='verificationStatus statusCard';statusEl.textContent=tr('Sign in to submit verification.')}return}
+  try{
+    const j=await api('/api/verification/me'),v=j.verification||{};
+    const st=verificationStatusPresentation(v);if(statusEl){statusEl.className='verificationStatus statusCard '+st.cls;statusEl.innerHTML=`<div><small>${tr('Verification status')}</small><br><strong>${esc(tr(st.text))}</strong></div>`}
+    if(v.role)$('verifyRole').value=v.role;if(v.legalName)$('verifyLegalName').value=v.legalName;if(v.country)$('verifyCountry').value=v.country;if(v.identityNumber)$('verifyIdentityNumber').value=v.identityNumber;
+    if(v.licenceNumber)$('verifyLicence').value=v.licenceNumber;if(v.licenceExpiry)$('verifyLicenceExpiry').value=v.licenceExpiry;if(v.endorsements)$('verifyEndorsements').value=v.endorsements;if(v.vehicleId)$('verifyVehicle').value=v.vehicleId;
+    if(v.registrationNumber){if($('verifyRegistration'))$('verifyRegistration').value=v.registrationNumber;if($('verifyBusinessRegistration'))$('verifyBusinessRegistration').value=v.registrationNumber}if(v.notes)$('verifyNotes').value=v.notes;
+    renderVerifyLicenceClasses();(v.licenceClasses||[]).forEach(val=>{const cb=[...document.querySelectorAll('#verifyLicenceClasses input')].find(x=>x.value===val);if(cb)cb.checked=true});updateVerificationRoleFields();
+    if(v.status==='pending'||v.status==='verified')setVerifyWizardStep(3);else setVerifyWizardStep(1);
+    if(me.role==='owner')loadOwnerVerifications();
+  }catch(e){if(statusEl)statusEl.textContent=tr(e.message||'Could not load verification.')}
+}
+
+function money(n){const x=Number(n||0);return Number.isFinite(x)?x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'0.00'}
+function paymentStatusText(b){if(b.dealType==='driver'||b.paymentStatus==='not_required')return 'Payment not required';if(b.paymentStatus==='test_authorized')return 'Test authorized';return 'Awaiting payment'}
+async function loadPayments(){
+  const list=$('paymentList');if(!list)return;
+  if(!me){list.innerHTML='<div class="card">Sign in to view payments.</div>';return}
+  try{
+    const [bookingsResponse,integrationResponse]=await Promise.all([api('/api/bookings'),api('/api/integrations/status')]);
+    const bookings=(bookingsResponse.bookings||[]).filter(b=>b.dealType!=='driver');
+    const pending=bookings.filter(b=>b.paymentStatus==='test_unpaid').length,authorized=bookings.filter(b=>b.paymentStatus==='test_authorized').length;
+    if($('paymentBookingCount'))$('paymentBookingCount').textContent=bookings.length;if($('paymentPendingCount'))$('paymentPendingCount').textContent=pending;if($('paymentAuthorizedCount'))$('paymentAuthorizedCount').textContent=authorized;
+    const integ=integrationResponse||{},payment=integ.payment||{},kyc=integ.kyc||{};
+    if($('paymentIntegrationStatus'))$('paymentIntegrationStatus').innerHTML=`<div class="integrationBanner"><div><strong>${payment.mode==='provider_credentials_detected'?'Payment provider credentials detected':'Safe test mode is active'}</strong><small>${payment.mode==='provider_credentials_detected'?'Credentials exist in the server environment, but real capture is intentionally not activated in this build.':'No real card or bank transaction can occur from this version.'}</small></div><div class="integrationDots"><span class="integrationDot ${payment.credentialsDetected?'ready':''}">Payment credentials ${payment.credentialsDetected?'✓':'○'}</span><span class="integrationDot ${payment.webhookSecretDetected?'ready':''}">Webhook secret ${payment.webhookSecretDetected?'✓':'○'}</span><span class="integrationDot ${kyc.providerConfigured?'ready':''}">KYC provider ${kyc.providerConfigured?'✓':'○'}</span></div></div>`;
+    list.innerHTML=bookings.length?bookings.map(b=>{const authorized=b.paymentStatus==='test_authorized';return `<article class="paymentCard"><div class="paymentCardTop"><div><span class="eyebrow">${esc((b.dealType||'transport').toUpperCase())} AGREEMENT</span><h3>${esc(b.currency)} ${money(b.agreedPrice)}</h3></div><span class="paymentStatus ${authorized?'authorized':''}">${esc(paymentStatusText(b))}</span></div><div class="paymentMoney"><div><small>Agreed amount</small><b>${esc(b.currency)} ${money(b.agreedPrice)}</b></div><div><small>TUT Move fee (${money(b.platformFeePct)}%)</small><b>${esc(b.currency)} ${money(b.platformFee)}</b></div><div><small>Provider net</small><b>${esc(b.currency)} ${money(b.providerNet)}</b></div></div><div class="paymentActionRow"><p>${authorized?'Authorization recorded in TEST MODE. No money moved.':'Use the button to test the booking/payment state machine before connecting a provider.'}</p>${b.buyerUserId===me.id&&!authorized?`<button class="goldBtn mini" onclick="payTestFromCenter('${b.id}')">Authorize test payment</button>`:''}</div></article>`}).join(''):'<div class="card"><h3>No payment-ready agreements yet.</h3><p class="muted">Accept an offer on a truck, warehouse, equipment or transport listing and it will appear here.</p></div>';
+  }catch(e){list.innerHTML=`<div class="card">${esc(tr(e.message||'Could not load payments.'))}</div>`}
+}
+async function payTestFromCenter(id){try{const j=await api(`/api/bookings/${id}/test-pay`,{method:'POST'});const el=$('paymentIntegrationStatus');if(el)el.insertAdjacentHTML('afterend',`<div class="msg">✓ ${esc(j.message||'Test payment authorized.')}</div>`);await loadPayments();loadBookings()}catch(e){alert(tr(e.message))}}
+
+function go(id){
+  if(id==='adminPane'&&(!me||me.role!=='owner'))id='home';
+  document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));const target=$(id);if(!target)return;target.classList.remove('hidden');
+  if(id==='post')scheduleMapRefresh();if(id==='market')loadMarket();if(id==='matches')loadMatches();if(id==='offers'){loadOffers();loadBookings()}if(id==='payments')loadPayments();if(id==='adminPane')loadAdmin();if(id==='verify')loadVerification();scrollTo({top:0,behavior:'smooth'});
+}
+setTimeout(()=>{try{setVerifyWizardStep(1)}catch{}},250);
+
+// v48 role-field display refinement
+function updateVerificationRoleFields(){
+  const role=document.getElementById('verifyRole')?.value||'';
+  document.querySelectorAll('#verify [data-role-field]').forEach(el=>{
+    const roles=(el.getAttribute('data-role-field')||'').split(/\s+/);
+    el.classList.toggle('hidden',!roles.includes(role));
+    el.style.display='';
+  });
+}

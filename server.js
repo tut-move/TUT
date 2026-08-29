@@ -223,7 +223,7 @@ function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'47',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'48',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -269,6 +269,7 @@ const server=http.createServer(async(req,res)=>{
   }
 
   if(p==='/api/me'&&req.method==='GET'){const u=auth(req);return json(res,200,{user:u?safeUser(u):null});}
+  if(p==='/api/integrations/status'&&req.method==='GET'){const paymentCredentials=!!(process.env.STRIPE_SECRET_KEY||process.env.PAYMENT_PROVIDER_SECRET);const webhookSecret=!!(process.env.STRIPE_WEBHOOK_SECRET||process.env.PAYMENT_WEBHOOK_SECRET);const kycProvider=!!(process.env.KYC_PROVIDER||process.env.KYC_API_KEY);return json(res,200,{payment:{mode:paymentCredentials?'provider_credentials_detected':'test',credentialsDetected:paymentCredentials,webhookSecretDetected:webhookSecret,realCaptureEnabled:false},kyc:{providerConfigured:kycProvider,manualReviewEnabled:true}});}
   if(p==='/api/settings'&&req.method==='GET'){return json(res,200,{settings:readDB().settings});}
   if(p==='/api/admin/settings'&&req.method==='PUT'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const b=await getBody(req),db=readDB();if(Number.isFinite(Number(b.platformFeePct)))db.settings.platformFeePct=Math.max(0,Math.min(30,Number(b.platformFeePct)));if(b.defaultCurrency)db.settings.defaultCurrency=String(b.defaultCurrency).slice(0,5);for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail'])if(k in b)db.settings[k]=String(b[k]||'').trim().slice(0,180);await writeDB(db);return json(res,200,{settings:db.settings});}
   if(p==='/api/listings'&&req.method==='GET'){const db=readDB();const listings=db.listings.filter(x=>x.status==='open').sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(x=>publicListing(x,db));return json(res,200,{listings});}
@@ -349,5 +350,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v47 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v48 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});
