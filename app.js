@@ -126,7 +126,7 @@ function translateNodeTree(root=document.body){
   const nodes=[];
   while(walker.nextNode())nodes.push(walker.currentNode);
   for(const n of nodes){
-    if(n.parentElement?.closest('.languageIsolated'))continue;
+    if(n.parentElement?.closest('.userFreeText,[data-user-text="1"]'))continue;
     const current=String(n.nodeValue||'');
     const trimmed=current.trim();
     if(!trimmed)continue;
@@ -298,7 +298,7 @@ async function ownerStatus(){
 }
 async function setupOwner(){try{const j=await api('/api/owner/setup',{method:'POST',body:JSON.stringify({name:$('oname').value,email:$('oemail').value,password:$('opass').value,language:$('lang').value})});me=j.user;if(j.sessionToken)localStorage.setItem('tut_session',j.sessionToken);renderAccount();await ownerStatus();go('adminPane')}catch(e){$('ownerMsg').textContent=tr(e.message)}}
 function roleLabel(r){return tr(({driver:'Driver',truck_owner:'Truck / trailer owner',carrier:'Carrier / transport company',shipper:'Shipper / cargo owner',warehouse_owner:'Warehouse owner',member:'Member',owner:'Owner'})[r]||r.replaceAll('_',' '))}
-function roleIcon(r){return ({driver:'👨‍✈️',truck_owner:'🚛',carrier:'🚚',shipper:'📦',warehouse_owner:'🏭'})[r]||'•'}
+function roleIcon(r){return ''}
 function showAuthMode(mode){
   document.querySelectorAll('.authMode').forEach(x=>x.classList.toggle('hidden',x.dataset.mode!==mode));
   document.querySelectorAll('.authTab').forEach(x=>x.classList.toggle('active',x.dataset.mode===mode));
@@ -318,7 +318,7 @@ function choosePrimaryRole(role){
 }
 function renderAuth(){setTimeout(enforceOwnerPrivacy,0);
  if(me){
-  const roleSummary=(me.roles||[]).map(r=>`${roleIcon(r)} ${roleLabel(r)}`).join(' · ');
+  const roleSummary=(me.roles||[]).map(r=>roleLabel(r)).join(' · ');
   const deletePanel=me.role==='owner'?`<div class="privacyPanel"><h3>${tr('Account & privacy')}</h3><p>${tr('The platform-owner account cannot be deleted from this screen.')}</p></div>`:`<div class="privacyPanel dangerPanel"><h3>${tr('Account & privacy')}</h3><p>${tr('Deleting your account permanently removes your marketplace data. For security, enter your current password.')}</p><input id="deletePassword" type="password" autocomplete="current-password" placeholder="${esc(tr('Current password'))}"><button class="dangerBtn" onclick="deleteMyAccount()">${tr('Delete my account')}</button><div id="deleteMsg" class="msg"></div></div>`;
   $('authArea').innerHTML=`<div class="accountShell"><div class="panel accountProfile"><span class="eyebrow">${tr('SIGNED IN AS')}</span><h3>${esc(me.name)}</h3><p>${esc(me.email)}</p><div class="activeRoleBadge">${esc(roleSummary||roleLabel(me.role))}</div><p>${tr('Verification status')}: <b>${esc(tr(me.verificationStatus||'not_started'))}</b></p></div>${deletePanel}</div>`;
   translateNodeTree($('authArea')); return;
@@ -336,7 +336,7 @@ function renderAuth(){setTimeout(enforceOwnerPrivacy,0);
      <div class="authFields"><input id="rname" placeholder="${esc(tr('Name'))}"><input id="remail" type="email" placeholder="${esc(tr('Email'))}"><input id="rpass" type="password" placeholder="${esc(tr('Password (8+ characters)'))}"></div>
      <label class="roleQuestion">${tr('I am joining as')}</label>
      <input id="rrole" type="hidden" value="">
-     <div class="roleChoiceGrid compactRoles">${roles.map(r=>`<button type="button" class="roleChoice" data-role="${r}" aria-pressed="false" onclick="choosePrimaryRole('${r}')"><span class="roleMark" aria-hidden="true"></span><span class="roleEmoji">${roleIcon(r)}</span><b>${esc(roleLabel(r))}</b></button>`).join('')}</div>
+     <div class="roleChoiceGrid compactRoles">${roles.map(r=>`<button type="button" class="roleChoice" data-role="${r}" aria-pressed="false" onclick="choosePrimaryRole('${r}')"><span class="roleMark" aria-hidden="true"></span><b>${esc(roleLabel(r))}</b></button>`).join('')}</div>
      <div class="marketRow"><span>${tr('Local market')}</span><strong>${esc((detectedMarket.province?detectedMarket.country+' · '+detectedMarket.province:detectedMarket.country))}</strong></div>
      <input id="rcountry" type="hidden" value="${esc(detectedMarket.country)}">
      <button class="goldBtn full" onclick="register()">${tr('Create account')}</button><div id="rmsg" class="msg"></div>
@@ -900,7 +900,7 @@ function formatStoredDateTime(value){
 
 
 function strictTranslateElement(el){
-  if(!el||activeLang==='en')return;
+  if(!el)return;
   const key=el.dataset?.uiKey||el.dataset?.i18n;
   if(key && UI_TRANSLATIONS[activeLang]?.[key]){
     if(['INPUT','TEXTAREA'].includes(el.tagName)) el.placeholder=tr(key);
@@ -926,19 +926,19 @@ function applyStrictSiteLanguage(){
     if(translated!==key || activeLang==='en')el.textContent=translated;
   });
 
-  document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{if(el.closest('.languageIsolated'))return;
+  document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{if(el.closest('.userFreeText,[data-user-text="1"]'))return;
     const raw=el.dataset.canonicalPlaceholder||el.getAttribute('placeholder')||'';
     if(!raw)return;
     if(!el.dataset.canonicalPlaceholder)el.dataset.canonicalPlaceholder=canonicalEnglish(raw);
     el.setAttribute('placeholder',tr(el.dataset.canonicalPlaceholder));
   });
-  document.querySelectorAll('[title]').forEach(el=>{if(el.closest('.languageIsolated'))return;
+  document.querySelectorAll('[title]').forEach(el=>{if(el.closest('.userFreeText,[data-user-text="1"]'))return;
     const raw=el.dataset.canonicalTitle||el.getAttribute('title')||'';
     if(!raw)return;
     if(!el.dataset.canonicalTitle)el.dataset.canonicalTitle=canonicalEnglish(raw);
     el.setAttribute('title',tr(el.dataset.canonicalTitle));
   });
-  document.querySelectorAll('[aria-label]').forEach(el=>{if(el.closest('.languageIsolated'))return;
+  document.querySelectorAll('[aria-label]').forEach(el=>{if(el.closest('.userFreeText,[data-user-text="1"]'))return;
     const raw=el.dataset.canonicalAria||el.getAttribute('aria-label')||'';
     if(!raw)return;
     if(!el.dataset.canonicalAria)el.dataset.canonicalAria=canonicalEnglish(raw);
@@ -1192,6 +1192,59 @@ function updateVerificationRoleFields(){
   });
 }
 
+
+// v50 — clean two-side entry + strict whole-interface language pack
+const V50_TRANSLATIONS={
+ ar:{
+  "START HERE":"ابدأ هنا","What do you need today?":"ماذا تريد اليوم؟","Choose whether you want something or want to offer something, then pick the resource.":"اختر هل تريد شيئًا أم تريد تقديم شيء، ثم اختر المورد.",
+  "I WANT":"أريد","Find what I need":"ابحث عما أحتاجه","I OFFER":"أقدّم","Offer what I have":"اعرض ما لدي","CHOOSE A RESOURCE":"اختر المورد","What are you looking for?":"ما الذي تبحث عنه؟","What would you like to offer?":"ما الذي تريد تقديمه؟",
+  "Driver or driving work":"سائق أو فرصة قيادة","Truck, trailer or vehicle capacity":"شاحنة أو مقطورة أو سعة مركبة","Transport / load":"نقل / حمولة","Cargo movement or unused load space":"نقل حمولة أو مساحة نقل غير مستخدمة","Storage space or storage need":"مساحة تخزين أو احتياج للتخزين",
+  "Publish":"انشر","Tell the market what you have or need.":"أخبر السوق بما لديك أو بما تحتاجه.","Match":"طابق","Compare relevant people and capacity.":"قارن الأشخاص والسعات المناسبة.","Agree":"اتفق","Offer, counter and accept your own terms.":"قدّم عرضًا أو عرضًا مضادًا واتفق على شروطك.","Secure":"أمّن","Verify identities and test the payment flow.":"تحقق من الهوية واستكمل مسار الدفع.",
+  "Create account":"إنشاء حساب","Login":"تسجيل الدخول","NEW ACCOUNT":"حساب جديد","Create your TUT Move account":"أنشئ حسابك على TUT Move","Choose your main role. TUT Move will tailor the forms and matches to you.":"اختر دورك الرئيسي، وسنُظهر لك النماذج والمطابقات المناسبة.","Name":"الاسم","Email":"البريد الإلكتروني","Password (8+ characters)":"كلمة المرور (8 أحرف على الأقل)","I am joining as":"سأنضم بصفتي","Truck / trailer owner":"مالك شاحنة / مقطورة","Carrier / transport company":"شركة نقل","Shipper / cargo owner":"صاحب شحنة / بضائع","Warehouse owner":"صاحب مخزن","Local market":"السوق المحلي","EXISTING ACCOUNT":"حساب موجود","Welcome back":"مرحبًا بعودتك","Sign in to continue where you left off.":"سجّل الدخول لمتابعة ما توقفت عنده.","Password":"كلمة المرور",
+  "Activity":"النشاط","Drivers":"السائقون","Find drivers and driving opportunities":"ابحث عن سائقين وفرص قيادة","Trucks & trailers":"الشاحنات والمقطورات","Available and wanted vehicles":"المركبات المتاحة والمطلوبة","Loads & transport":"الحمولات والنقل","Cargo and transport demand":"الحمولات وطلبات النقل","Warehouses":"المخازن","Storage space and storage needs":"مساحات واحتياجات التخزين","View all market":"عرض السوق بالكامل"
+ },
+ de:{
+  "START HERE":"HIER STARTEN","What do you need today?":"Was brauchen Sie heute?","Choose whether you want something or want to offer something, then pick the resource.":"Wählen Sie, ob Sie etwas suchen oder anbieten, und danach die passende Ressource.",
+  "I WANT":"ICH SUCHE","Find what I need":"Finden, was ich brauche","I OFFER":"ICH BIETE","Offer what I have":"Anbieten, was ich habe","CHOOSE A RESOURCE":"RESSOURCE WÄHLEN","What are you looking for?":"Wonach suchen Sie?","What would you like to offer?":"Was möchten Sie anbieten?",
+  "Driver or driving work":"Fahrer oder Fahrauftrag","Truck, trailer or vehicle capacity":"Lkw, Anhänger oder Fahrzeugkapazität","Transport / load":"Transport / Ladung","Cargo movement or unused load space":"Frachttransport oder freie Ladekapazität","Storage space or storage need":"Lagerfläche oder Lagerbedarf",
+  "Publish":"Veröffentlichen","Tell the market what you have or need.":"Teilen Sie dem Markt mit, was Sie haben oder benötigen.","Match":"Abgleichen","Compare relevant people and capacity.":"Vergleichen Sie passende Personen und Kapazitäten.","Agree":"Vereinbaren","Offer, counter and accept your own terms.":"Angebot, Gegenangebot und Einigung zu Ihren Bedingungen.","Secure":"Absichern","Verify identities and test the payment flow.":"Identitäten prüfen und den Zahlungsablauf testen.",
+  "Create account":"Konto erstellen","Login":"Anmelden","NEW ACCOUNT":"NEUES KONTO","Create your TUT Move account":"Erstellen Sie Ihr TUT Move Konto","Choose your main role. TUT Move will tailor the forms and matches to you.":"Wählen Sie Ihre Hauptrolle. TUT Move passt Formulare und Treffer daran an.","Name":"Name","Email":"E-Mail","Password (8+ characters)":"Passwort (mindestens 8 Zeichen)","I am joining as":"Ich registriere mich als","Driver":"Fahrer","Truck / trailer owner":"Lkw-/Anhängerbesitzer","Carrier / transport company":"Spedition / Transportunternehmen","Shipper / cargo owner":"Versender / Frachteigentümer","Warehouse owner":"Lagerbetreiber","Local market":"Lokaler Markt","EXISTING ACCOUNT":"BESTEHENDES KONTO","Welcome back":"Willkommen zurück","Sign in to continue where you left off.":"Melden Sie sich an, um dort weiterzumachen, wo Sie aufgehört haben.","Password":"Passwort"
+ },
+ fr:{
+  "START HERE":"COMMENCEZ ICI","What do you need today?":"De quoi avez-vous besoin aujourd’hui ?","Choose whether you want something or want to offer something, then pick the resource.":"Choisissez si vous recherchez quelque chose ou si vous voulez proposer quelque chose, puis sélectionnez la ressource.",
+  "I WANT":"JE CHERCHE","Find what I need":"Trouver ce qu’il me faut","I OFFER":"JE PROPOSE","Offer what I have":"Proposer ce que j’ai","CHOOSE A RESOURCE":"CHOISISSEZ UNE RESSOURCE","What are you looking for?":"Que recherchez-vous ?","What would you like to offer?":"Que souhaitez-vous proposer ?",
+  "Driver or driving work":"Chauffeur ou mission de conduite","Truck, trailer or vehicle capacity":"Camion, remorque ou capacité de véhicule","Transport / load":"Transport / chargement","Cargo movement or unused load space":"Transport de fret ou capacité de chargement libre","Storage space or storage need":"Espace ou besoin de stockage",
+  "Create account":"Créer un compte","Login":"Connexion","NEW ACCOUNT":"NOUVEAU COMPTE","Create your TUT Move account":"Créez votre compte TUT Move","Choose your main role. TUT Move will tailor the forms and matches to you.":"Choisissez votre rôle principal. TUT Move adaptera les formulaires et les correspondances.","Name":"Nom","Email":"E-mail","Password (8+ characters)":"Mot de passe (8 caractères minimum)","I am joining as":"Je m’inscris en tant que","Truck / trailer owner":"Propriétaire de camion / remorque","Carrier / transport company":"Transporteur / entreprise de transport","Shipper / cargo owner":"Expéditeur / propriétaire de cargaison","Warehouse owner":"Propriétaire d’entrepôt","Local market":"Marché local","EXISTING ACCOUNT":"COMPTE EXISTANT","Welcome back":"Bon retour","Sign in to continue where you left off.":"Connectez-vous pour reprendre là où vous vous êtes arrêté.","Password":"Mot de passe"
+ },
+ es:{
+  "START HERE":"EMPIEZA AQUÍ","What do you need today?":"¿Qué necesitas hoy?","Choose whether you want something or want to offer something, then pick the resource.":"Elige si buscas algo o quieres ofrecer algo y después selecciona el recurso.",
+  "I WANT":"QUIERO","Find what I need":"Encontrar lo que necesito","I OFFER":"OFREZCO","Offer what I have":"Ofrecer lo que tengo","CHOOSE A RESOURCE":"ELIGE UN RECURSO","What are you looking for?":"¿Qué estás buscando?","What would you like to offer?":"¿Qué te gustaría ofrecer?",
+  "Driver or driving work":"Conductor o trabajo de conducción","Truck, trailer or vehicle capacity":"Camión, remolque o capacidad de vehículo","Transport / load":"Transporte / carga","Cargo movement or unused load space":"Transporte de carga o espacio libre de carga","Storage space or storage need":"Espacio o necesidad de almacenamiento",
+  "Create account":"Crear cuenta","Login":"Iniciar sesión","NEW ACCOUNT":"CUENTA NUEVA","Create your TUT Move account":"Crea tu cuenta de TUT Move","Choose your main role. TUT Move will tailor the forms and matches to you.":"Elige tu función principal. TUT Move adaptará los formularios y las coincidencias.","Name":"Nombre","Email":"Correo electrónico","Password (8+ characters)":"Contraseña (8+ caracteres)","I am joining as":"Me registro como","Truck / trailer owner":"Propietario de camión / remolque","Carrier / transport company":"Transportista / empresa de transporte","Shipper / cargo owner":"Remitente / propietario de carga","Warehouse owner":"Propietario de almacén","Local market":"Mercado local","EXISTING ACCOUNT":"CUENTA EXISTENTE","Welcome back":"Bienvenido de nuevo","Sign in to continue where you left off.":"Inicia sesión para continuar donde lo dejaste.","Password":"Contraseña"
+ },
+ pt:{
+  "START HERE":"COMECE AQUI","What do you need today?":"O que precisa hoje?","Choose whether you want something or want to offer something, then pick the resource.":"Escolha se procura algo ou quer oferecer algo e depois selecione o recurso.",
+  "I WANT":"QUERO","Find what I need":"Encontrar o que preciso","I OFFER":"OFEREÇO","Offer what I have":"Oferecer o que tenho","CHOOSE A RESOURCE":"ESCOLHA UM RECURSO","What are you looking for?":"O que procura?","What would you like to offer?":"O que gostaria de oferecer?",
+  "Driver or driving work":"Motorista ou trabalho de condução","Truck, trailer or vehicle capacity":"Camião, reboque ou capacidade de veículo","Transport / load":"Transporte / carga","Cargo movement or unused load space":"Transporte de carga ou espaço livre de carga","Storage space or storage need":"Espaço ou necessidade de armazenamento",
+  "Create account":"Criar conta","Login":"Iniciar sessão","NEW ACCOUNT":"NOVA CONTA","Create your TUT Move account":"Crie a sua conta TUT Move","Choose your main role. TUT Move will tailor the forms and matches to you.":"Escolha a sua função principal. A TUT Move adaptará os formulários e correspondências.","Name":"Nome","Email":"E-mail","Password (8+ characters)":"Palavra-passe (8+ caracteres)","I am joining as":"Registo-me como","Truck / trailer owner":"Proprietário de camião / reboque","Carrier / transport company":"Transportadora / empresa de transporte","Shipper / cargo owner":"Expedidor / proprietário de carga","Warehouse owner":"Proprietário de armazém","Local market":"Mercado local","EXISTING ACCOUNT":"CONTA EXISTENTE","Welcome back":"Bem-vindo de volta","Sign in to continue where you left off.":"Inicie sessão para continuar onde parou.","Password":"Palavra-passe"
+ }
+};
+for(const [lng,map] of Object.entries(V50_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+TRANSLATION_REVERSE=null;
+
+let HOME_SIDE='need';
+function selectHomeSide(side){
+ HOME_SIDE=side==='have'?'have':'need';
+ const n=$('homeNeedTab'),h=$('homeOfferTab');
+ if(n){n.classList.toggle('active',HOME_SIDE==='need');n.setAttribute('aria-selected',HOME_SIDE==='need'?'true':'false')}
+ if(h){h.classList.toggle('active',HOME_SIDE==='have');h.setAttribute('aria-selected',HOME_SIDE==='have'?'true':'false')}
+ const hint=$('homeSideHint');if(hint){hint.dataset.uiKey=HOME_SIDE==='need'?'What are you looking for?':'What would you like to offer?';hint.textContent=tr(hint.dataset.uiKey)}
+ applyStrictSiteLanguage();
+}
+function homeResource(resource){
+ const routes={need:{driver:'need_driver',truck:'need_truck',load:'move_load',warehouse:'need_warehouse'},have:{driver:'driver_work',truck:'truck_available',load:'unused_space',warehouse:'warehouse_available'}};
+ quickNeed(routes[HOME_SIDE]?.[resource]||'need_driver');
+}
 // v49 — simpler navigation, strict in-place language switching, no session reset
 const V49_TRANSLATIONS={
  ar:{
@@ -1227,12 +1280,16 @@ document.addEventListener('click',e=>{const m=$('marketMenu');if(m&&!m.classList
 
 function manualLanguageOverride(lang){
   const durableToken=localStorage.getItem('tut_session')||'';
-  setLanguage(lang);
+  activeLang=lang;
+  localStorage.setItem('tut_lang',lang);
+  TRANSLATION_REVERSE=buildTranslationReverse();
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
   if($('lang'))$('lang').value=lang;
-  renderHeaderOverrides();
+  try{renderHeaderOverrides()}catch{}
+  try{renderAccount()}catch{}
   try{renderAuth()}catch{}
   try{renderFields()}catch{}
-  try{renderNeedChooser()}catch{}
   try{loadMarket()}catch{}
   try{loadMatches()}catch{}
   try{loadOffers()}catch{}
@@ -1240,5 +1297,6 @@ function manualLanguageOverride(lang){
   try{loadVerification()}catch{}
   try{loadPayments()}catch{}
   if(durableToken)localStorage.setItem('tut_session',durableToken);
-  requestAnimationFrame(()=>{translateNodeTree(document.body);applyStrictSiteLanguage();renderNeedChooser();});
+  startTranslationObserver();
+  requestAnimationFrame(()=>{translateNodeTree(document.body);applyStrictSiteLanguage();selectHomeSide(HOME_SIDE);});
 }

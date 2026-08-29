@@ -90,3 +90,11 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Header navigation is reduced; Market opens resource categories.
 - Home entry is simplified into I NEED / I HAVE with direct resource choices.
 - Payments is removed from primary navigation but the page/logic remains available.
+
+
+## v50 — Clean two-side entry + strict language pass
+- Home entry is reduced to two choices: I WANT / I OFFER, with one shared resource panel below.
+- Registration role cards are single-row, emoji-free choices.
+- Language switching remains in-place and preserves the durable login token.
+- Added a dedicated translation pack for the new home, navigation and registration UI in AR/DE/FR/ES/PT.
+- Market menu layout was corrected so titles and descriptions do not run together.

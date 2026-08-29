@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=48-polished">
+  <link rel="stylesheet" href="/style.css?v=50-clean-language">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -24,10 +24,10 @@
       <div class="navMenu">
         <button type="button" class="navMenuTrigger" onclick="toggleMarketMenu(event)" data-ui-key="Market">Market <span aria-hidden="true">⌄</span></button>
         <div id="marketMenu" class="marketMenu hidden">
-          <button type="button" onclick="openMarketCategory('driver')"><span>👤</span><b data-ui-key="Drivers">Drivers</b><small data-ui-key="Find drivers and driving opportunities">Find drivers and driving opportunities</small></button>
-          <button type="button" onclick="openMarketCategory('truck')"><span>🚛</span><b data-ui-key="Trucks & trailers">Trucks & trailers</b><small data-ui-key="Available and wanted vehicles">Available and wanted vehicles</small></button>
-          <button type="button" onclick="openMarketCategory('load')"><span>📦</span><b data-ui-key="Loads & transport">Loads & transport</b><small data-ui-key="Cargo and transport demand">Cargo and transport demand</small></button>
-          <button type="button" onclick="openMarketCategory('warehouse')"><span>🏭</span><b data-ui-key="Warehouses">Warehouses</b><small data-ui-key="Storage space and storage needs">Storage space and storage needs</small></button>
+          <button type="button" onclick="openMarketCategory('driver')"><span class="menuCode">DR</span><span class="menuCopy"><b data-ui-key="Drivers">Drivers</b><small data-ui-key="Find drivers and driving opportunities">Find drivers and driving opportunities</small></span></button>
+          <button type="button" onclick="openMarketCategory('truck')"><span class="menuCode">TR</span><span class="menuCopy"><b data-ui-key="Trucks & trailers">Trucks & trailers</b><small data-ui-key="Available and wanted vehicles">Available and wanted vehicles</small></span></button>
+          <button type="button" onclick="openMarketCategory('load')"><span class="menuCode">LD</span><span class="menuCopy"><b data-ui-key="Loads & transport">Loads & transport</b><small data-ui-key="Cargo and transport demand">Cargo and transport demand</small></span></button>
+          <button type="button" onclick="openMarketCategory('warehouse')"><span class="menuCode">WH</span><span class="menuCopy"><b data-ui-key="Warehouses">Warehouses</b><small data-ui-key="Storage space and storage needs">Storage space and storage needs</small></span></button>
           <button type="button" class="marketMenuAll" onclick="openMarketCategory('')" data-ui-key="View all market">View all market</button>
         </div>
       </div>
@@ -73,60 +73,57 @@
         </div>
       </div>
 
-      <section class="startChoice" id="startChoice">
+      <section class="startChoice cleanStart" id="startChoice">
         <div class="sectionIntro conciseIntro">
-          <span class="eyebrow" data-ui-key="START WITH ONE CHOICE">START WITH ONE CHOICE</span>
-          <h2 data-ui-key="What are you here to do?">What are you here to do?</h2>
-          <p data-ui-key="Choose a side first. Then choose the exact resource.">Choose a side first. Then choose the exact resource.</p>
+          <span class="eyebrow" data-ui-key="START HERE">START HERE</span>
+          <h2 data-ui-key="What do you need today?">What do you need today?</h2>
+          <p data-ui-key="Choose whether you want something or want to offer something, then pick the resource.">Choose whether you want something or want to offer something, then pick the resource.</p>
         </div>
-        <div class="sideChoiceGrid">
-          <article class="sideChoice">
-            <div class="sideChoiceHead"><span class="sideIcon">⌕</span><div><span class="eyebrow" data-ui-key="I NEED">I NEED</span><h3 data-ui-key="Find something">Find something</h3></div></div>
-            <div class="resourceQuickGrid">
-              <button type="button" onclick="quickNeed('need_driver')"><span>👤</span><b data-ui-key="Driver">Driver</b></button>
-              <button type="button" onclick="quickNeed('need_truck')"><span>🚛</span><b data-ui-key="Truck / trailer">Truck / trailer</b></button>
-              <button type="button" onclick="quickNeed('move_load')"><span>📦</span><b data-ui-key="Transport for a load">Transport for a load</b></button>
-              <button type="button" onclick="quickNeed('need_warehouse')"><span>🏭</span><b data-ui-key="Warehouse space">Warehouse space</b></button>
-            </div>
-          </article>
-          <article class="sideChoice">
-            <div class="sideChoiceHead"><span class="sideIcon">＋</span><div><span class="eyebrow" data-ui-key="I HAVE">I HAVE</span><h3 data-ui-key="Offer something">Offer something</h3></div></div>
-            <div class="resourceQuickGrid">
-              <button type="button" onclick="quickNeed('driver_work')"><span>👤</span><b data-ui-key="I am a driver">I am a driver</b></button>
-              <button type="button" onclick="quickNeed('truck_available')"><span>🚛</span><b data-ui-key="Truck / trailer">Truck / trailer</b></button>
-              <button type="button" onclick="quickNeed('unused_space')"><span>📦</span><b data-ui-key="Unused truck space">Unused truck space</b></button>
-              <button type="button" onclick="quickNeed('warehouse_available')"><span>🏭</span><b data-ui-key="Warehouse space">Warehouse space</b></button>
-            </div>
-          </article>
+        <div class="homeSideTabs" role="tablist" aria-label="Marketplace side">
+          <button id="homeNeedTab" type="button" class="homeSideTab active" aria-selected="true" onclick="selectHomeSide('need')">
+            <small data-ui-key="I WANT">I WANT</small><strong data-ui-key="Find what I need">Find what I need</strong>
+          </button>
+          <button id="homeOfferTab" type="button" class="homeSideTab" aria-selected="false" onclick="selectHomeSide('have')">
+            <small data-ui-key="I OFFER">I OFFER</small><strong data-ui-key="Offer what I have">Offer what I have</strong>
+          </button>
+        </div>
+        <div class="homeResourcePanel">
+          <div class="homeResourceHeader"><span id="homeResourceKicker" class="eyebrow" data-ui-key="CHOOSE A RESOURCE">CHOOSE A RESOURCE</span><p id="homeSideHint" data-ui-key="What are you looking for?">What are you looking for?</p></div>
+          <div class="homeResourceGrid">
+            <button type="button" onclick="homeResource('driver')"><span class="resourceCode">DR</span><b data-ui-key="Driver">Driver</b><small data-ui-key="Driver or driving work">Driver or driving work</small></button>
+            <button type="button" onclick="homeResource('truck')"><span class="resourceCode">TR</span><b data-ui-key="Truck / trailer">Truck / trailer</b><small data-ui-key="Truck, trailer or vehicle capacity">Truck, trailer or vehicle capacity</small></button>
+            <button type="button" onclick="homeResource('load')"><span class="resourceCode">LD</span><b data-ui-key="Transport / load">Transport / load</b><small data-ui-key="Cargo movement or unused load space">Cargo movement or unused load space</small></button>
+            <button type="button" onclick="homeResource('warehouse')"><span class="resourceCode">WH</span><b data-ui-key="Warehouse">Warehouse</b><small data-ui-key="Storage space or storage need">Storage space or storage need</small></button>
+          </div>
         </div>
       </section>
       <section class="confidenceStrip" aria-label="How TUT Move works">
-        <article><span>01</span><div><b>Publish</b><small>Tell the market what you have or need.</small></div></article>
-        <article><span>02</span><div><b>Match</b><small>Compare relevant people and capacity.</small></div></article>
-        <article><span>03</span><div><b>Agree</b><small>Offer, counter and accept your own terms.</small></div></article>
-        <article><span>04</span><div><b>Secure</b><small>Verify identities and test the payment flow.</small></div></article>
+        <article><span>01</span><div><b data-ui-key="Publish">Publish</b><small data-ui-key="Tell the market what you have or need.">Tell the market what you have or need.</small></div></article>
+        <article><span>02</span><div><b data-ui-key="Match">Match</b><small data-ui-key="Compare relevant people and capacity.">Compare relevant people and capacity.</small></div></article>
+        <article><span>03</span><div><b data-ui-key="Agree">Agree</b><small data-ui-key="Offer, counter and accept your own terms.">Offer, counter and accept your own terms.</small></div></article>
+        <article><span>04</span><div><b data-ui-key="Secure">Secure</b><small data-ui-key="Verify identities and test the payment flow.">Verify identities and test the payment flow.</small></div></article>
       </section>
     </section>
 
     <section id="about" class="pane hidden">
       <div class="aboutHero">
-        <span class="eyebrow">WHY TUT MOVE?</span>
-        <h1>Capacity exists. Demand exists.<br><em>The connection is missing.</em></h1>
+        <span class="eyebrow" data-ui-key="WHY TUT MOVE?">WHY TUT MOVE?</span>
+        <h1 data-ui-key="Capacity exists. Demand exists.">Capacity exists. Demand exists.<br><em data-ui-key="The connection is missing.">The connection is missing.</em></h1>
         <p>At the same moment a business is searching for a driver, a driver may have available time. A load may be waiting for a truck while a nearby truck has unused capacity. Warehouse space can sit empty while another business is searching for storage.</p>
         <p class="aboutLead">The problem is not always that the resource does not exist. Sometimes the two sides simply cannot find each other.</p>
       </div>
 
       <section class="aboutGrid">
-        <article><span class="aboutNo">01</span><h2>One market. Multiple sides.</h2><p>TUT Move does not own the trucks, employ the drivers, own the loads or control warehouse capacity. It brings independent supply and demand into one marketplace.</p></article>
-        <article><span class="aboutNo">02</span><h2>AVAILABLE / WANTED</h2><p>Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.</p></article>
-        <article><span class="aboutNo">03</span><h2>The market decides.</h2><p>TUT Move does not dictate the transport price. Users can set a price, request quotes, make offers, counter and agree on their own commercial terms.</p></article>
+        <article><span class="aboutNo">01</span><h2 data-ui-key="One market. Multiple sides.">One market. Multiple sides.</h2><p>TUT Move does not own the trucks, employ the drivers, own the loads or control warehouse capacity. It brings independent supply and demand into one marketplace.</p></article>
+        <article><span class="aboutNo">02</span><h2 data-ui-key="AVAILABLE / WANTED">AVAILABLE / WANTED</h2><p>Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.</p></article>
+        <article><span class="aboutNo">03</span><h2 data-ui-key="The market decides.">The market decides.</h2><p>TUT Move does not dictate the transport price. Users can set a price, request quotes, make offers, counter and agree on their own commercial terms.</p></article>
       </section>
 
       <section class="founderSection">
         <div class="founderPhoto"><img src="/founder-abdelaziz.png" alt="Founder of TUT Move"></div>
         <div class="founderCopy">
-          <span class="eyebrow">FOUNDER</span>
-          <h2>Built from a simple question.</h2>
+          <span class="eyebrow" data-ui-key="FOUNDER">FOUNDER</span>
+          <h2 data-ui-key="Built from a simple question.">Built from a simple question.</h2>
           <h3>Abdelaziz Metwaly</h3>
           <p class="founderRole">Founder, TUT Move</p>
           <blockquote>“I asked myself a simple question: how can one business be searching for a driver while somewhere else a driver is looking for work? How can a truck be empty while a load is searching for a truck? How can warehouse space sit unused while another business needs that exact capacity? The resources and the demand already exist — they are fragmented. TUT Move started with the idea of bringing them into one market.”</blockquote>
@@ -134,8 +131,8 @@
       </section>
 
       <section class="aboutVision">
-        <span class="eyebrow">THE VISION</span>
-        <h2>Turn unused capacity into opportunity.</h2>
+        <span class="eyebrow" data-ui-key="THE VISION">THE VISION</span>
+        <h2 data-ui-key="Turn unused capacity into opportunity.">Turn unused capacity into opportunity.</h2>
         <p>TUT Move is being built as a multi-country, multi-language marketplace connecting transportation and storage capacity with demand — starting with drivers, trucks, loads and warehouses.</p>
         <button class="goldBtn" onclick="go('market')">Explore the Market</button>
       </section>
