@@ -428,3 +428,6 @@ html[dir="rtl"] .needPrimary,html[dir="rtl"] .needSubChoice{text-align:right}
 }
 .brandLockup > span{display:flex;flex-direction:column;align-items:flex-start}
 html[dir="rtl"] .brandLockup > span{align-items:flex-end}
+
+/* v41 adaptive booking workflows */
+.adaptiveBooking .tripTop{align-items:flex-start}.adaptiveBooking .tripTop>div{max-width:72%}.compact{margin:5px 0 0}.singleMoney{grid-template-columns:minmax(220px,420px)}.dealNotice{margin:12px 0 18px;padding:12px 14px;border:1px solid rgba(215,175,69,.28);border-radius:12px;color:#cfc7b6;background:#0c0c0c}.adaptiveFlow{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.adaptiveFlow span{padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:13px}.adaptiveFlow span.done{border-color:#7a662d;color:var(--gold2)}.dealSuccess{margin-top:12px;padding:13px 15px;border:1px solid #415d46;border-radius:12px;color:#aee2b5;background:#0b120c;font-weight:800}@media(max-width:700px){.adaptiveBooking .tripTop>div{max-width:100%}.bookingMoney.singleMoney{grid-template-columns:1fr}}

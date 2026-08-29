@@ -11,11 +11,10 @@ const DBFILE = path.join(ROOT, 'data', 'db.json');
 const UPLOADS = path.join(ROOT, 'data', 'uploads');
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL || '';
-const sessions = new Map();
 let pgPool = null;
 let dbCache = null;
 
-function emptyDB(){return {users:[], listings:[], offers:[], bookings:[], matches:[], verifications:[], settings:{brandName:'TUT Move',siteUrl:'https://tutmove.com',platformFeePct:5,defaultCurrency:'USD',ownerName:'',ownerEmail:'',legalEntity:'',supportEmail:'info@tutmove.com',launchMarkets:['USA','Canada','Europe','Middle East']}};}
+function emptyDB(){return {users:[], sessions:[], listings:[], offers:[], bookings:[], matches:[], verifications:[], settings:{brandName:'TUT Move',siteUrl:'https://tutmove.com',platformFeePct:5,defaultCurrency:'USD',ownerName:'',ownerEmail:'',legalEntity:'',supportEmail:'info@tutmove.com',launchMarkets:['USA','Canada','Europe','Middle East']}};}
 function normalizeDB(d){return {...emptyDB(),...(d||{}),settings:{...emptyDB().settings,...((d&&d.settings)||{})}}}
 function readLocalDB(){
   try{return normalizeDB(JSON.parse(fs.readFileSync(DBFILE,'utf8')))}
@@ -78,7 +77,46 @@ function id(prefix){return prefix+'_'+crypto.randomBytes(6).toString('hex')}
 function json(res,status,obj){const s=JSON.stringify(obj);res.writeHead(status,{'Content-Type':'application/json','Content-Length':Buffer.byteLength(s),'Cache-Control':'no-store'});res.end(s)}
 function getBody(req,limit=8e6){return new Promise((resolve,reject)=>{let b='';req.on('data',c=>{b+=c;if(b.length>limit){reject(new Error('Request too large'));req.destroy()}});req.on('end',()=>{try{resolve(b?JSON.parse(b):{})}catch(e){reject(e)}});req.on('error',reject)});}
 function cookies(req){const out={};(req.headers.cookie||'').split(';').forEach(x=>{const i=x.indexOf('=');if(i>0)out[x.slice(0,i).trim()]=decodeURIComponent(x.slice(i+1))});return out}
-function auth(req){const sid=cookies(req).sid;if(!sid)return null;const uid=sessions.get(sid);if(!uid)return null;return readDB().users.find(u=>u.id===uid)||null}
+function auth(req){
+  const sid=cookies(req).sid;if(!sid)return null;
+  const db=readDB(),now=Date.now();
+  const sess=(db.sessions||[]).find(x=>x.id===sid && (!x.expiresAt || Date.parse(x.expiresAt)>now));
+  if(!sess)return null;
+  return db.users.find(u=>u.id===sess.userId)||null;
+}
+function addSession(db,userId){
+  const sid=id('s'),now=Date.now(),expiresAt=new Date(now+30*24*60*60*1000).toISOString();
+  db.sessions=(db.sessions||[]).filter(x=>!x.expiresAt||Date.parse(x.expiresAt)>now);
+  db.sessions.push({id:sid,userId,createdAt:new Date(now).toISOString(),expiresAt});
+  return sid;
+}
+function sessionCookie(sid){return `sid=${sid}; HttpOnly; SameSite=Lax; Path=/; Max-Age=2592000`}
+function clearSessionCookie(){return 'sid=; HttpOnly; SameSite=Lax; Max-Age=0; Path=/'}
+function dealTypeForListing(listing){
+  if(!listing)return 'transport';
+  if(listing.resource==='driver')return 'driver';
+  if(listing.resource==='warehouse'||listing.resource==='storage')return 'warehouse';
+  if(listing.resource==='truck')return 'truck';
+  if(listing.resource==='equipment')return 'equipment';
+  return 'transport';
+}
+function bookingDealType(b,db){return b.dealType||dealTypeForListing(db.listings.find(x=>x.id===b.listingId))}
+function requiredChecks(type){
+  if(type==='driver')return ['driverVerified','licenceVerified','termsConfirmed'];
+  if(type==='warehouse')return ['warehouseVerified','datesConfirmed'];
+  if(type==='truck')return ['truckVerified','handoverConfirmed'];
+  if(type==='equipment')return ['equipmentVerified','handoverConfirmed'];
+  return ['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed'];
+}
+function normalizeBookingWorkflow(b,db){
+  const type=bookingDealType(b,db);b.dealType=type;b.trip=b.trip||{};
+  if(type==='driver'){
+    b.platformFeePct=0;b.platformFee=0;b.providerNet=Number(b.agreedPrice||0);b.paymentStatus='not_required';b.paymentMode='not_required';
+    if(b.trip.ready||b.status==='ready_for_pickup'||b.status==='payment_tested')b.status='driver_match_confirmed';
+  }else if(type==='warehouse'&&(b.trip.ready||b.status==='ready_for_pickup'))b.status='storage_confirmed';
+  else if((type==='truck'||type==='equipment')&&(b.trip.ready||b.status==='ready_for_pickup'))b.status='vehicle_ready';
+  return b;
+}
 function hashPassword(p,salt=crypto.randomBytes(16).toString('hex')){const h=crypto.scryptSync(p,salt,64).toString('hex');return {salt,hash:h}}
 function safeUser(u){return {id:u.id,name:u.name,email:u.email,role:u.role,roles:u.roles||[u.role],country:u.country||'',region:u.region||'',language:u.language||'en',currency:u.currency||'USD',verified:!!u.verified,verificationStatus:u.verificationStatus||'not_started',createdAt:u.createdAt}}
 function isOwner(u){return !!u&&u.role==='owner'}
@@ -123,7 +161,7 @@ function serveStatic(res,p){const allowed=new Set(['/','/index.html','/app.js','
 const server=http.createServer(async(req,res)=>{
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'40',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'41',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -136,16 +174,16 @@ const server=http.createServer(async(req,res)=>{
     const db=readDB();if(db.users.some(u=>u.role==='owner'))return json(res,409,{error:'Owner account is already configured.'});
     const b=await getBody(req);if(!b.name||!b.email||!b.password||b.password.length<10)return json(res,400,{error:'Name, email and password (10+ chars) required.'});
     if(db.users.some(u=>u.email.toLowerCase()===String(b.email).trim().toLowerCase()))return json(res,409,{error:'Email already registered.'});
-    const hp=hashPassword(b.password);const u={id:id('u'),name:String(b.name).trim(),email:String(b.email).trim().toLowerCase(),role:'owner',roles:['owner'],country:b.country||'',region:b.region||'',language:b.language||'en',currency:b.currency||'USD',verified:true,verificationStatus:'owner',...hp,createdAt:new Date().toISOString()};db.users.push(u);await writeDB(db);const sid=id('s');sessions.set(sid,u.id);res.setHeader('Set-Cookie',`sid=${sid}; HttpOnly; SameSite=Lax; Path=/`);return json(res,201,{user:safeUser(u)});
+    const hp=hashPassword(b.password);const u={id:id('u'),name:String(b.name).trim(),email:String(b.email).trim().toLowerCase(),role:'owner',roles:['owner'],country:b.country||'',region:b.region||'',language:b.language||'en',currency:b.currency||'USD',verified:true,verificationStatus:'owner',...hp,createdAt:new Date().toISOString()};db.users.push(u);const sid=addSession(db,u.id);await writeDB(db);res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,201,{user:safeUser(u)});
   }
   if(p==='/api/register'&&req.method==='POST'){
     const b=await getBody(req);if(!b.name||!b.email||!b.password||b.password.length<8)return json(res,400,{error:'Name, email and password (8+ chars) required.'});const db=readDB();if(db.users.some(u=>u.email.toLowerCase()===String(b.email).toLowerCase()))return json(res,409,{error:'Email already registered.'});
-    const hp=hashPassword(b.password);const roles=Array.isArray(b.roles)&&b.roles.length?b.roles.slice(0,5):['member'];const u={id:id('u'),name:String(b.name).trim(),email:String(b.email).trim().toLowerCase(),role:roles[0],roles,country:b.country||'',region:b.region||'',language:b.language||'en',currency:b.currency||'USD',verified:false,verificationStatus:'not_started',...hp,createdAt:new Date().toISOString()};db.users.push(u);await writeDB(db);const sid=id('s');sessions.set(sid,u.id);res.setHeader('Set-Cookie',`sid=${sid}; HttpOnly; SameSite=Lax; Path=/`);return json(res,201,{user:safeUser(u)});
+    const hp=hashPassword(b.password);const roles=Array.isArray(b.roles)&&b.roles.length?b.roles.slice(0,5):['member'];const u={id:id('u'),name:String(b.name).trim(),email:String(b.email).trim().toLowerCase(),role:roles[0],roles,country:b.country||'',region:b.region||'',language:b.language||'en',currency:b.currency||'USD',verified:false,verificationStatus:'not_started',...hp,createdAt:new Date().toISOString()};db.users.push(u);const sid=addSession(db,u.id);await writeDB(db);res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,201,{user:safeUser(u)});
   }
   if(p==='/api/login'&&req.method==='POST'){
-    const b=await getBody(req),db=readDB(),u=db.users.find(x=>x.email===String(b.email||'').toLowerCase());if(!u)return json(res,401,{error:'Invalid email or password.'});const hp=hashPassword(String(b.password||''),u.salt);if(!crypto.timingSafeEqual(Buffer.from(hp.hash,'hex'),Buffer.from(u.hash,'hex')))return json(res,401,{error:'Invalid email or password.'});const sid=id('s');sessions.set(sid,u.id);res.setHeader('Set-Cookie',`sid=${sid}; HttpOnly; SameSite=Lax; Path=/`);return json(res,200,{user:safeUser(u)});
+    const b=await getBody(req),db=readDB(),u=db.users.find(x=>x.email===String(b.email||'').toLowerCase());if(!u)return json(res,401,{error:'Invalid email or password.'});const hp=hashPassword(String(b.password||''),u.salt);if(!crypto.timingSafeEqual(Buffer.from(hp.hash,'hex'),Buffer.from(u.hash,'hex')))return json(res,401,{error:'Invalid email or password.'});const sid=addSession(db,u.id);await writeDB(db);res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,200,{user:safeUser(u)});
   }
-  if(p==='/api/logout'&&req.method==='POST'){const sid=cookies(req).sid;if(sid)sessions.delete(sid);res.setHeader('Set-Cookie','sid=; Max-Age=0; Path=/');return json(res,200,{ok:true});}
+  if(p==='/api/logout'&&req.method==='POST'){const sid=cookies(req).sid,db=readDB();if(sid)db.sessions=(db.sessions||[]).filter(x=>x.id!==sid);await writeDB(db);res.setHeader('Set-Cookie',clearSessionCookie());return json(res,200,{ok:true});}
 
   if(p==='/api/account'&&req.method==='DELETE'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});
@@ -160,8 +198,8 @@ const server=http.createServer(async(req,res)=>{
     db.verifications=db.verifications.filter(x=>x.userId!==uid);
     db.matches=[];recomputeMatches(db);
     try{if(fs.existsSync(UPLOADS)){for(const name of fs.readdirSync(UPLOADS)){if(name.startsWith(uid+'_')){try{fs.unlinkSync(path.join(UPLOADS,name))}catch{}}}}}catch{}
-    for(const [sid,userId] of sessions.entries())if(userId===uid)sessions.delete(sid);
-    await writeDB(db);res.setHeader('Set-Cookie','sid=; Max-Age=0; Path=/');return json(res,200,{ok:true,message:'Account deleted.'});
+    db.sessions=(db.sessions||[]).filter(x=>x.userId!==uid);
+    await writeDB(db);res.setHeader('Set-Cookie',clearSessionCookie());return json(res,200,{ok:true,message:'Account deleted.'});
   }
 
   if(p==='/api/me'&&req.method==='GET'){const u=auth(req);return json(res,200,{user:u?safeUser(u):null});}
@@ -181,7 +219,7 @@ const server=http.createServer(async(req,res)=>{
   if(/^\/api\/offers\/[^/]+\/(accept|reject|counter)$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const parts=p.split('/'),oid=parts[3],action=parts[4],db=readDB(),o=db.offers.find(x=>x.id===oid);if(!o)return json(res,404,{error:'Offer not found.'});if(o.toUserId!==u.id&&o.fromUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Not allowed.'});
     if(action==='accept'){
-      if(o.toUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only recipient can accept.'});o.status='accepted';const listing=db.listings.find(x=>x.id===o.listingId);if(listing)listing.status='booked';const feePct=Number(db.settings.platformFeePct||0);const fee=+(o.amount*feePct/100).toFixed(2);const booking={id:id('b'),listingId:o.listingId,offerId:o.id,buyerUserId:o.fromUserId,providerUserId:o.toUserId,agreedPrice:o.amount,currency:o.currency,platformFeePct:feePct,platformFee:fee,providerNet:+(o.amount-fee).toFixed(2),paymentStatus:'test_unpaid',paymentMode:'test',payoutStatus:'not_ready',status:'agreed',trip:{driverVerified:false,licenceVerified:false,truckVerified:false,cargoConfirmed:false,pickupConfirmed:false,receiverConfirmed:false,providerReady:false,buyerReady:false,pickupAt:null,deliveredAt:null,updatedAt:new Date().toISOString()},createdAt:new Date().toISOString()};db.bookings.push(booking);recomputeMatches(db);await writeDB(db);return json(res,200,{booking});
+      if(o.toUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only recipient can accept.'});o.status='accepted';const listing=db.listings.find(x=>x.id===o.listingId);if(listing)listing.status='booked';const dealType=dealTypeForListing(listing);const configuredFeePct=Number(db.settings.platformFeePct||0);const feePct=dealType==='driver'?0:configuredFeePct;const fee=+(o.amount*feePct/100).toFixed(2);const booking={id:id('b'),listingId:o.listingId,offerId:o.id,dealType,buyerUserId:o.fromUserId,providerUserId:o.toUserId,agreedPrice:o.amount,currency:o.currency,platformFeePct:feePct,platformFee:fee,providerNet:+(o.amount-fee).toFixed(2),paymentStatus:dealType==='driver'?'not_required':'test_unpaid',paymentMode:dealType==='driver'?'not_required':'test',payoutStatus:'not_ready',status:'agreed',trip:{driverVerified:false,licenceVerified:false,truckVerified:false,cargoConfirmed:false,receiverConfirmed:false,termsConfirmed:false,warehouseVerified:false,datesConfirmed:false,handoverConfirmed:false,equipmentVerified:false,pickupConfirmed:false,providerReady:false,buyerReady:false,pickupAt:null,deliveredAt:null,updatedAt:new Date().toISOString()},createdAt:new Date().toISOString()};db.bookings.push(booking);recomputeMatches(db);await writeDB(db);return json(res,200,{booking});
     }
     if(action==='reject'){o.status='rejected';await writeDB(db);return json(res,200,{offer:o});}
     const b=await getBody(req),amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Counter amount required.'});o.status='countered';const c={id:id('o'),listingId:o.listingId,fromUserId:u.id,toUserId:u.id===o.fromUserId?o.toUserId:o.fromUserId,amount,currency:o.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:o.id,createdAt:new Date().toISOString()};db.offers.push(c);await writeDB(db);return json(res,201,{offer:c});
@@ -205,22 +243,24 @@ const server=http.createServer(async(req,res)=>{
     const uid=p.split('/')[4],db=readDB(),target=db.users.find(x=>x.id===uid);if(!target||!target.verification)return json(res,404,{error:'Verification not found.'});
     target.verification.status=body.status;target.verification.reviewNote=String(body.reviewNote||'');target.verification.reviewedAt=new Date().toISOString();await writeDB(db);return json(res,200,{verification:target.verification});
   }
-  if(p==='/api/bookings'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();const bookings=isOwner(u)?db.bookings:db.bookings.filter(b=>b.buyerUserId===u.id||b.providerUserId===u.id);return json(res,200,{bookings:bookings.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))});}
+  if(p==='/api/bookings'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();db.bookings.forEach(b=>normalizeBookingWorkflow(b,db));const bookings=isOwner(u)?db.bookings:db.bookings.filter(b=>b.buyerUserId===u.id||b.providerUserId===u.id);await writeDB(db);return json(res,200,{bookings:bookings.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))});}
   if(/^\/api\/bookings\/[^/]+\/test-pay$/.test(p)&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(b.buyerUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only the buyer can run the test payment.'});b.paymentMode='test';b.paymentStatus='test_authorized';b.testPaymentAt=new Date().toISOString();b.status='payment_tested';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — no real money was charged.'});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(b.buyerUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only the buyer can run the test payment.'});const dealType=bookingDealType(b,db);if(dealType==='driver')return json(res,400,{error:'Payment is not required for a driver match.'});b.paymentMode='test';b.paymentStatus='test_authorized';b.testPaymentAt=new Date().toISOString();b.status='payment_tested';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — no real money was charged.'});
   }
   if(/^\/api\/bookings\/[^/]+\/trip-check$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],body=await getBody(req),db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});
-    b.trip=b.trip||{};const allowed=['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed'];for(const k of allowed)if(k in body)b.trip[k]=!!body[k];
+    const dealType=bookingDealType(b,db);b.dealType=dealType;b.trip=b.trip||{};
+    const allowed=['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed','termsConfirmed','warehouseVerified','datesConfirmed','handoverConfirmed','equipmentVerified'];for(const k of allowed)if(k in body)b.trip[k]=!!body[k];
     if(u.id===b.providerUserId)b.trip.providerReady=!!body.ready;if(u.id===b.buyerUserId)b.trip.buyerReady=!!body.ready;
-    b.trip.updatedAt=new Date().toISOString();const checks=['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed'];const coreReady=checks.every(k=>b.trip[k]);b.trip.ready=coreReady&&!!b.trip.providerReady&&!!b.trip.buyerReady;
-    if(b.trip.ready&&b.paymentStatus==='test_authorized')b.status='ready_for_pickup';await writeDB(db);return json(res,200,{booking:b});
+    b.trip.updatedAt=new Date().toISOString();const checks=requiredChecks(dealType);const coreReady=checks.every(k=>b.trip[k]);b.trip.ready=coreReady&&!!b.trip.providerReady&&!!b.trip.buyerReady;
+    if(b.trip.ready){if(dealType==='driver')b.status='driver_match_confirmed';else if(dealType==='warehouse')b.status='storage_confirmed';else if(dealType==='truck'||dealType==='equipment')b.status='vehicle_ready';else if(b.paymentStatus==='test_authorized')b.status='ready_for_pickup';else b.status='verified_waiting_payment';}
+    await writeDB(db);return json(res,200,{booking:b});
   }
   if(/^\/api\/bookings\/[^/]+\/pickup$/.test(p)&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(!b.trip?.ready)return json(res,409,{error:'Trip verification is not complete.'});b.trip.pickupConfirmed=true;b.trip.pickupAt=new Date().toISOString();b.status='in_transit';await writeDB(db);return json(res,200,{booking:b});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(bookingDealType(b,db)!=='transport')return json(res,400,{error:'Pickup applies only to transport bookings.'});if(!b.trip?.ready)return json(res,409,{error:'Trip verification is not complete.'});b.trip.pickupConfirmed=true;b.trip.pickupAt=new Date().toISOString();b.status='in_transit';await writeDB(db);return json(res,200,{booking:b});
   }
   if(/^\/api\/bookings\/[^/]+\/deliver$/.test(p)&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(b.status!=='in_transit')return json(res,409,{error:'Pickup must be confirmed first.'});b.trip.receiverConfirmed=true;b.trip.deliveredAt=new Date().toISOString();b.status='completed_test';b.payoutStatus='test_ready';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — payout is simulated; no money moved.'});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(bookingDealType(b,db)!=='transport')return json(res,400,{error:'Delivery applies only to transport bookings.'});if(b.status!=='in_transit')return json(res,409,{error:'Pickup must be confirmed first.'});b.trip.receiverConfirmed=true;b.trip.deliveredAt=new Date().toISOString();b.status='completed_test';b.payoutStatus='test_ready';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — payout is simulated; no money moved.'});
   }
   if(p==='/api/verification'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB(),v=db.verifications.find(x=>x.userId===u.id);return json(res,200,{verification:v||null});}
   if(p==='/api/verification'&&req.method==='POST'){
@@ -234,5 +274,5 @@ const server=http.createServer(async(req,res)=>{
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v39 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v41 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});
