@@ -171,3 +171,9 @@ Upload this ZIP and say:
 - Added “Built for the world.” to the home hero, translated in AR/DE/FR/ES/PT.
 - Removed only the About-page proof/statistics section with 502K / 660.5K / 3→1.
 - Preserved Home, Need Chooser, About founder section, Market, Post, Matches, Offers, Verify, account logic, dates, languages, database, and booking flows.
+
+
+## v51 — Horizontal choice cleanup
+- Home entry now uses two concise side choices: I WANT / I OFFER.
+- Resource choices are four horizontal single-line cards on desktop.
+- Removed resource codes and explanatory text from the cards to prevent crowded/duplicated labels.

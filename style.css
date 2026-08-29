@@ -546,3 +546,19 @@ html[dir="rtl"] .resourceQuickGrid button{text-align:right}
 .compactRoles{grid-template-columns:1fr!important;gap:9px!important}.compactRoles .roleChoice{min-height:56px!important;display:flex!important;align-items:center!important;gap:13px!important;padding:13px 15px!important;text-align:left!important}.compactRoles .roleChoice b{font-size:14px!important;line-height:1.2!important;white-space:nowrap!important}.compactRoles .roleMark{width:14px!important;height:14px!important;flex:0 0 14px!important;border-radius:50%!important;border:1px solid #5a5140!important}.compactRoles .roleChoice.selected .roleMark{background:var(--gold2)!important;box-shadow:inset 0 0 0 3px #17130b!important}.roleEmoji{display:none!important}.authFields{display:grid!important;grid-template-columns:1fr!important;gap:10px!important}.authFields input{min-height:52px!important}
 html[dir="rtl"] .homeSideTab,html[dir="rtl"] .homeResourceGrid button,html[dir="rtl"] .compactRoles .roleChoice{text-align:right!important}.homeSideTabs,.homeResourceGrid{direction:inherit}
 @media(max-width:680px){.cleanStart{padding:44px 0}.homeSideTabs,.homeResourceGrid{grid-template-columns:1fr}.homeSideTab{min-height:78px}.homeResourceHeader{align-items:start;flex-direction:column;gap:7px}.compactRoles .roleChoice b{white-space:normal!important}.marketMenu{width:min(92vw,390px)}}
+
+
+/* v51 — clean horizontal marketplace choice */
+.homeSideTabs{max-width:900px;grid-template-columns:1fr 1fr;gap:12px}
+.homeSideTab{min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center!important;padding:16px 20px}
+.homeSideTab strong{display:block;font-size:18px;line-height:1.1;white-space:nowrap}
+.homeResourcePanel{max-width:1100px;padding:18px}
+.homeResourceHeader{display:block;padding:0 2px 14px;text-align:left}
+.homeResourceGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding-top:12px}
+.homeResourceGrid button{min-height:66px;display:flex;align-items:center;justify-content:center;text-align:center!important;padding:14px 16px}
+.homeResourceGrid b{font-size:15px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.resourceCode,.homeResourceGrid small{display:none!important}
+html[dir="rtl"] .homeResourceHeader{text-align:right}
+html[dir="rtl"] .homeSideTab,html[dir="rtl"] .homeResourceGrid button{text-align:center!important}
+@media(max-width:900px){.homeResourceGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.homeSideTabs{grid-template-columns:1fr 1fr}.homeSideTab{min-height:62px;padding:12px}.homeSideTab strong{font-size:15px}.homeResourceGrid{grid-template-columns:1fr 1fr}.homeResourceGrid button{min-height:58px;padding:12px 8px}.homeResourceGrid b{font-size:13px}}

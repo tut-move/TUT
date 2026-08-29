@@ -81,19 +81,19 @@
         </div>
         <div class="homeSideTabs" role="tablist" aria-label="Marketplace side">
           <button id="homeNeedTab" type="button" class="homeSideTab active" aria-selected="true" onclick="selectHomeSide('need')">
-            <small data-ui-key="I WANT">I WANT</small><strong data-ui-key="Find what I need">Find what I need</strong>
+            <strong data-ui-key="I WANT">I WANT</strong>
           </button>
           <button id="homeOfferTab" type="button" class="homeSideTab" aria-selected="false" onclick="selectHomeSide('have')">
-            <small data-ui-key="I OFFER">I OFFER</small><strong data-ui-key="Offer what I have">Offer what I have</strong>
+            <strong data-ui-key="I OFFER">I OFFER</strong>
           </button>
         </div>
         <div class="homeResourcePanel">
-          <div class="homeResourceHeader"><span id="homeResourceKicker" class="eyebrow" data-ui-key="CHOOSE A RESOURCE">CHOOSE A RESOURCE</span><p id="homeSideHint" data-ui-key="What are you looking for?">What are you looking for?</p></div>
+          <div class="homeResourceHeader"><span id="homeResourceKicker" class="eyebrow" data-ui-key="CHOOSE A RESOURCE">CHOOSE A RESOURCE</span></div>
           <div class="homeResourceGrid">
-            <button type="button" onclick="homeResource('driver')"><span class="resourceCode">DR</span><b data-ui-key="Driver">Driver</b><small data-ui-key="Driver or driving work">Driver or driving work</small></button>
-            <button type="button" onclick="homeResource('truck')"><span class="resourceCode">TR</span><b data-ui-key="Truck / trailer">Truck / trailer</b><small data-ui-key="Truck, trailer or vehicle capacity">Truck, trailer or vehicle capacity</small></button>
-            <button type="button" onclick="homeResource('load')"><span class="resourceCode">LD</span><b data-ui-key="Transport / load">Transport / load</b><small data-ui-key="Cargo movement or unused load space">Cargo movement or unused load space</small></button>
-            <button type="button" onclick="homeResource('warehouse')"><span class="resourceCode">WH</span><b data-ui-key="Warehouse">Warehouse</b><small data-ui-key="Storage space or storage need">Storage space or storage need</small></button>
+            <button type="button" onclick="homeResource('driver')"><b data-ui-key="Driver">Driver</b></button>
+            <button type="button" onclick="homeResource('truck')"><b data-ui-key="Truck / trailer">Truck / trailer</b></button>
+            <button type="button" onclick="homeResource('load')"><b data-ui-key="Transport / load">Transport / load</b></button>
+            <button type="button" onclick="homeResource('warehouse')"><b data-ui-key="Warehouse">Warehouse</b></button>
           </div>
         </div>
       </section>

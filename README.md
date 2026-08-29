@@ -98,3 +98,9 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 - Language switching remains in-place and preserves the durable login token.
 - Added a dedicated translation pack for the new home, navigation and registration UI in AR/DE/FR/ES/PT.
 - Market menu layout was corrected so titles and descriptions do not run together.
+
+
+## v51 — Horizontal choice cleanup
+- Home entry now uses two concise side choices: I WANT / I OFFER.
+- Resource choices are four horizontal single-line cards on desktop.
+- Removed resource codes and explanatory text from the cards to prevent crowded/duplicated labels.
