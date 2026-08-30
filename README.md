@@ -122,3 +122,11 @@ Important: this is still a test build. Do not upload real sensitive production d
 
 ## v59 targeted flow fix
 After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The requester gets a Proceed to payment button that opens the existing TEST MODE payment center; the provider sees that payment is pending. Test payment for truck/equipment agreements is blocked server-side until readiness is complete.
+
+
+## v60 owner fee control fix
+- The owner fee percentage is now authoritative and can be set to 0, 5, or any value from 0 to 30.
+- Saving the fee immediately recalculates existing unpaid TEST MODE agreements.
+- Authorized test payments are not rewritten after payment.
+- New agreements use the exact owner percentage, including 0%.
+- Agreement UI now displays 0% correctly instead of falling back to 5%.
