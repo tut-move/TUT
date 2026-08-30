@@ -602,3 +602,10 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 .mobileMarketBtn{display:none;border:1px solid #65562d;background:transparent;color:var(--gold2);padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer}
 @media(max-width:860px){.mobileMarketBtn{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}.topbar{flex-wrap:wrap}.tools{margin-left:auto}}
 [dir=rtl] .tools{margin-left:0;margin-right:auto}
+
+
+/* v61 — transport journey stage lock only */
+.tripFlow span.locked{opacity:.38;border-style:dashed;cursor:not-allowed}
+.tripFlow span.active{border-color:var(--gold);font-weight:800;box-shadow:0 0 0 1px rgba(212,177,92,.16) inset}
+.transportDeal .tripChecks input:disabled,.transportDeal .readyCheck input:disabled{cursor:not-allowed;opacity:.55}
+.transportDeal button:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}

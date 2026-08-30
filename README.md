@@ -130,3 +130,9 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - Authorized test payments are not rewritten after payment.
 - New agreements use the exact owner percentage, including 0%.
 - Agreement UI now displays 0% correctly instead of falling back to 5%.
+
+
+## v61 targeted fix
+- Transport stages are sequentially locked: Verification → Pickup → In transit → Delivered.
+- Notifications poll every 5 seconds while the app is visible.
+- No other product flow or fee behavior changed.
