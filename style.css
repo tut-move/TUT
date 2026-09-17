@@ -609,3 +609,6 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 .tripFlow span.active{border-color:var(--gold);font-weight:800;box-shadow:0 0 0 1px rgba(212,177,92,.16) inset}
 .transportDeal .tripChecks input:disabled,.transportDeal .readyCheck input:disabled{cursor:not-allowed;opacity:.55}
 .transportDeal button:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+
+/* v62 — legal pages + owner user management only */
+.legalDoc{max-width:980px;margin:0 auto}.legalDoc h2{margin:26px 0 8px;font-size:20px}.legalDoc p{line-height:1.75;color:var(--muted)}.legalLinks{display:flex;gap:14px;flex-wrap:wrap}.legalLinks button,.inlineLegal{border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.legalConsent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 18px;line-height:1.45}.legalConsent input{margin-top:4px}.inlineLegal{color:var(--gold)}.adminUserActions{margin-top:14px}.adminUserActions .dangerBtn{width:auto}.legalPane[dir=rtl],html[dir=rtl] .legalDoc{text-align:right}
