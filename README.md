@@ -142,3 +142,9 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - About page recreated as HTML/CSS from the supplied visual reference.
 - Founder personal photo removed from About; brand emblem used instead.
 - Existing marketplace/backend flows preserved.
+
+
+## v67 — Home reference implementation
+- Built directly from v65.
+- Home page rebuilt in HTML/CSS to match the supplied reference layout while preserving existing marketplace actions and IDs.
+- About page from v65 and backend/business logic are unchanged.
