@@ -612,32 +612,23 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 
 /* v62 — legal pages + owner user management only */
 .legalDoc{max-width:980px;margin:0 auto}.legalDoc h2{margin:26px 0 8px;font-size:20px}.legalDoc p{line-height:1.75;color:var(--muted)}.legalLinks{display:flex;gap:14px;flex-wrap:wrap}.legalLinks button,.inlineLegal{border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.legalConsent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 18px;line-height:1.45}.legalConsent input{margin-top:4px}.inlineLegal{color:var(--gold)}.adminUserActions{margin-top:14px}.adminUserActions .dangerBtn{width:auto}.legalPane[dir=rtl],html[dir=rtl] .legalDoc{text-align:right}
-\n\n/* v63 — About reference layout, calmer home, single-row footer */\n.aboutV63{max-width:1080px;margin:auto}\n.aboutV63 .aboutHero{padding:34px 0 18px;max-width:900px}\n.aboutV63 .aboutHero h1{font-size:clamp(38px,5.2vw,64px);margin:10px 0 18px}\n.aboutV63 .aboutGrid{margin:0 0 24px;gap:14px}.aboutV63 .aboutGrid article{padding:22px;border-radius:14px}\n.founderStatement{display:grid;grid-template-columns:minmax(260px,.78fr) minmax(420px,1.22fr);gap:54px;align-items:center;padding:30px 16px;border-top:1px solid #7a6229;border-bottom:1px solid #7a6229}\n.founderIdentity{text-align:center}.founderIdentity img{width:min(245px,80%);height:auto;display:block;margin:0 auto 8px;filter:drop-shadow(0 15px 35px #000)}\n.founderIdentity h3{font-family:Georgia,serif;color:var(--gold2);font-size:30px;margin:4px 0 4px}.founderIdentity .founderRole{margin:0;color:var(--gold);font-size:17px}.founderIdentity small{font-size:10px;letter-spacing:.16em;color:#d7d2c8}\n.founderDivider{display:flex;align-items:center;gap:9px;max-width:230px;margin:20px auto 16px;color:var(--gold2)}.founderDivider span{height:1px;background:#6d5726;flex:1}.founderDivider b{font-size:11px}\n.founderMessage .eyebrow{display:flex;align-items:center;gap:10px}.founderMessage .eyebrow:after{content:"";height:1px;width:76px;background:#806728}.founderMessage h2{font-family:Georgia,serif;color:var(--gold2);font-size:clamp(25px,3vw,34px);line-height:1.2;margin:10px 0 15px}.founderMessage p{font-size:16px;line-height:1.5;color:#c5c1ba;margin:0 0 10px}.founderMessage>strong{display:block;font-family:Georgia,serif;color:var(--gold2);font-size:22px;margin-top:8px}\n.aboutV63 .aboutVision{padding:30px 18px 38px}.aboutV63 .aboutVision h2{font-size:clamp(30px,4vw,42px);margin:8px 0 10px}.aboutV63 .aboutVision p{font-size:15px;margin-bottom:18px}\n/* Home: same actions and flows, less visual noise. */\n#home .v49Hero{min-height:54vh;gap:24px}#home .v49Hero h1{font-size:clamp(40px,6vw,68px);max-width:760px}#home .v49Hero p{font-size:18px}#home .compactProof{opacity:.82}#home .cleanStart{padding:44px 0 38px}#home .confidenceStrip{margin-top:20px}\n/* Footer remains one continuous horizontal bar on normal desktop widths. */\nfooter{display:flex!important;align-items:center!important;justify-content:center!important;gap:18px!important;flex-direction:row!important;flex-wrap:nowrap!important;padding:18px 4vw!important;font-size:12px}footer>div,footer>p,footer>.legalLinks,footer>span{margin:0!important;white-space:nowrap}.legalLinks{display:flex!important;gap:12px!important;flex-wrap:nowrap!important}\nhtml[dir="rtl"] .founderMessage{text-align:right}\n@media(max-width:900px){.founderStatement{grid-template-columns:1fr;gap:24px;padding:30px 8px}.founderIdentity img{width:min(220px,62vw)}footer{overflow-x:auto!important;justify-content:flex-start!important;padding:16px!important}.aboutV63 .aboutGrid{grid-template-columns:1fr}}\n
-/* v64 — About page matched to supplied reference */
-#about.aboutV63{width:min(1040px,92vw);padding:22px 0 0}
-#about .aboutHero{padding:0 18px 16px;max-width:860px}
-#about .aboutHero .eyebrow{font-size:11px;font-weight:800;letter-spacing:.24em}
-#about .aboutHero h1{font-size:clamp(36px,4.5vw,55px);line-height:.94;letter-spacing:-.035em;margin:10px 0 16px}
-#about .aboutHero>p{font-size:14px;line-height:1.5;max-width:790px;margin:0 0 13px}
-#about .aboutHero .aboutLead{font-size:15px;line-height:1.35;font-weight:750;padding-left:18px;margin:12px 0 0;max-width:780px}
-#about .aboutGrid{grid-template-columns:repeat(3,1fr);gap:16px;margin:0 18px 22px}
-#about .aboutGrid article{min-height:205px;padding:20px 22px;background:linear-gradient(145deg,#111413,#090b0b);border-color:#2b2b26;border-radius:13px}
-#about .aboutGrid .aboutNo{font-size:10px;font-weight:800}
-#about .aboutGrid h2{font-size:20px;line-height:1.08;margin:18px 0 12px}
-#about .aboutGrid p{font-size:13px;line-height:1.48;margin:0}
-#about .founderStatement{grid-template-columns:310px 1fr;gap:44px;padding:24px 36px 25px;margin:0;border-top:1px solid #82682a;border-bottom:1px solid #82682a}
-#about .founderIdentity img{width:205px;margin:0 auto 2px}
-#about .founderIdentity h3{font-size:27px;line-height:1.05;margin:2px 0 7px}
-#about .founderIdentity .founderRole{font-size:16px}
-#about .founderDivider{max-width:220px;margin:18px auto 14px}
-#about .founderIdentity small{font-size:9px;letter-spacing:.14em;white-space:nowrap}
-#about .founderMessage .eyebrow{font-size:10px;font-weight:800}
-#about .founderMessage h2{font-size:24px;line-height:1.15;margin:9px 0 12px}
-#about .founderMessage p{font-size:14px;line-height:1.38;margin:0 0 8px}
-#about .founderMessage>strong{font-size:20px;margin-top:4px}
-#about .aboutVision{padding:20px 18px 25px;max-width:850px}
-#about .aboutVision .eyebrow{font-size:10px}
-#about .aboutVision h2{font-size:26px;line-height:1.1;margin:7px 0 8px}
-#about .aboutVision p{font-size:13px;line-height:1.45;max-width:760px;margin:0 auto 14px}
-#about .aboutVision .goldBtn{padding:10px 24px;border-radius:8px;font-size:13px}
-@media(max-width:800px){#about.aboutV63{width:min(100% - 28px,1040px);padding-top:24px}#about .aboutHero{padding-left:0;padding-right:0}#about .aboutGrid{grid-template-columns:1fr;margin-left:0;margin-right:0}#about .aboutGrid article{min-height:auto}#about .founderStatement{grid-template-columns:1fr;padding:28px 10px;gap:26px}#about .founderMessage{text-align:start}#about .founderIdentity small{white-space:normal}}
+
+/* v65 — About page coded to supplied visual reference */
+.aboutReference{max-width:1000px;margin:0 auto;padding-top:22px!important;padding-bottom:20px!important}
+.aboutReference .aboutHero{padding:0 18px 14px;max-width:780px}
+.aboutReference .aboutHero .eyebrow{font-size:10px;font-weight:800;letter-spacing:.24em}
+.aboutReference .aboutHero h1{font-size:clamp(31px,3.5vw,44px);line-height:1.02;letter-spacing:-.035em;margin:9px 0 12px;font-weight:850}
+.aboutReference .aboutHero h1 em{display:inline;color:#e2b643;font-style:normal}
+.aboutReference .aboutHero>p{font-size:13px;line-height:1.5;color:#b8b8b8;margin:0 0 11px;max-width:730px}
+.aboutReference .aboutHero .aboutLead{font-size:14px;line-height:1.35;font-weight:750;color:#eee;border-left:3px solid #d7af45;padding:2px 0 2px 16px;margin-top:12px;max-width:690px}
+.aboutReference .aboutGrid{grid-template-columns:repeat(3,1fr);gap:14px;margin:0 18px 20px}
+.aboutReference .aboutGrid article{min-height:190px;border-radius:12px;padding:18px 20px;background:linear-gradient(145deg,#101212,#0b0c0c);border:1px solid #292a27}
+.aboutReference .aboutNo{font-size:9px;font-weight:900;letter-spacing:.12em}
+.aboutReference .aboutGrid h2{font-size:19px;line-height:1.05;margin:15px 0 13px}
+.aboutReference .aboutGrid p{font-size:12px;line-height:1.55;margin:0;color:#aaa}
+.founderReference{border-top:1px solid #8b6c24;border-bottom:1px solid #8b6c24;margin:0 0 0;padding:20px 18px 22px;display:grid;grid-template-columns:34% 66%;gap:30px;align-items:center}
+.founderIdentity{text-align:center;padding:0 14px}.founderIdentity img{display:block;width:min(220px,85%);height:155px;object-fit:contain;margin:0 auto 2px}.founderIdentity h3{font-family:Georgia,serif;color:#e3b94f;font-size:25px;font-weight:500;margin:0 0 5px}.founderIdentity>p{color:#d6aa3f;font-size:14px;margin:0}.founderRule{height:30px;display:flex;align-items:center;justify-content:center;color:#e2b643}.founderRule:before,.founderRule:after{content:"";height:1px;background:#80651f;width:90px}.founderRule span{font-size:11px;margin:0 10px}.founderValues{display:flex;justify-content:center;align-items:center;gap:9px;color:#d6d6d6;font-size:8px;font-weight:800;letter-spacing:.15em;white-space:nowrap}.founderValues i{height:14px;width:1px;background:#d7af45}
+.founderStory{padding:4px 6px 0}.founderLabel{display:flex;align-items:center;gap:9px;color:#d7af45;font-size:9px;font-weight:800;letter-spacing:.2em}.founderLabel i{display:block;width:72px;height:1px;background:#8b6c24}.founderStory h2{font-family:Georgia,serif;color:#e5bd57;font-size:23px;line-height:1.15;font-weight:500;margin:10px 0 12px}.founderStory p{font-size:13px;line-height:1.38;color:#bdbdbd;margin:0 0 8px}.founderStory strong{display:block;font-family:Georgia,serif;color:#e5bd57;font-size:21px;font-weight:500;margin-top:6px}
+.aboutReference .aboutVision{text-align:center;padding:16px 18px 8px;max-width:780px}.aboutReference .aboutVision .eyebrow{font-size:9px}.aboutReference .aboutVision h2{font-size:23px;margin:6px 0 8px}.aboutReference .aboutVision p{font-size:12px;line-height:1.45;margin-bottom:13px}.aboutReference .aboutVision .goldBtn{font-size:12px;padding:10px 24px}
+@media(max-width:800px){.aboutReference{padding-top:28px!important}.aboutReference .aboutGrid{grid-template-columns:1fr}.founderReference{grid-template-columns:1fr;padding-top:28px}.founderIdentity img{height:175px}.founderStory{padding:0}.founderStory h2{font-size:22px}}
+html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right:3px solid #d7af45;padding-left:0;padding-right:16px}

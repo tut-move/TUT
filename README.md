@@ -137,7 +137,8 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - Notifications poll every 5 seconds while the app is visible.
 - No other product flow or fee behavior changed.
 
-## v64 — About reference match
-- About page tightened to match the supplied reference composition: compact intro, three cards, emblem-only founder block, founder statement, and centered vision CTA.
-- Founder portrait remains removed; only the TUT emblem is used.
-- Existing marketplace/application behavior is unchanged.
+
+## v65 — About reference implemented in code
+- About page recreated as HTML/CSS from the supplied visual reference.
+- Founder personal photo removed from About; brand emblem used instead.
+- Existing marketplace/backend flows preserved.
