@@ -613,12 +613,50 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 /* v62 — legal pages + owner user management only */
 .legalDoc{max-width:980px;margin:0 auto}.legalDoc h2{margin:26px 0 8px;font-size:20px}.legalDoc p{line-height:1.75;color:var(--muted)}.legalLinks{display:flex;gap:14px;flex-wrap:wrap}.legalLinks button,.inlineLegal{border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.legalConsent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 18px;line-height:1.45}.legalConsent input{margin-top:4px}.inlineLegal{color:var(--gold)}.adminUserActions{margin-top:14px}.adminUserActions .dangerBtn{width:auto}.legalPane[dir=rtl],html[dir=rtl] .legalDoc{text-align:right}
 
-/* v63 — footer presentation only */
-footer.footerSingleRow{display:flex;align-items:center;justify-content:space-between;gap:22px;flex-direction:row;flex-wrap:nowrap;padding:26px 4vw;color:#8e8778;font-size:13px;line-height:1.35}
-.footerSingleRow .footerBrand{display:flex;align-items:center;gap:9px;white-space:nowrap}
-.footerSingleRow .footerBrand strong{margin:0;color:var(--gold)}
-.footerSingleRow .footerCopyright,.footerSingleRow .footerEmail{white-space:nowrap}
-.footerSingleRow .legalLinks{display:flex;align-items:center;gap:14px;white-space:nowrap}
-.footerSingleRow .legalLinks button{border:0;background:none;color:#d7d1c4;padding:0;text-decoration:underline;cursor:pointer;font:inherit;white-space:nowrap}
-.footerSingleRow .legalLinks button:hover{color:var(--gold2)}
-@media(max-width:860px){footer.footerSingleRow{flex-direction:row;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;padding:22px 16px}.footerSingleRow>*{flex:0 0 auto}}
+/* v63 — founder statement only. Keeps the rest of About and site flows unchanged. */
+.founderStatementSection{
+  position:relative;
+  grid-template-columns:minmax(300px,.72fr) minmax(0,1.48fr);
+  gap:58px;
+  align-items:center;
+  padding:82px 0 70px;
+  border-top:1px solid rgba(215,175,69,.18);
+  border-bottom:1px solid rgba(215,175,69,.18);
+}
+.founderStatementSection:before,.founderStatementSection:after{
+  content:"";position:absolute;pointer-events:none;opacity:.38
+}
+.founderStatementSection:before{inset:0 auto 0 -4vw;width:1px;background:linear-gradient(transparent,var(--gold),transparent)}
+.founderStatementSection:after{right:-8vw;top:10%;width:280px;height:280px;border:1px solid rgba(215,175,69,.16);border-left:0;border-bottom:0;border-radius:0 100% 0 0;transform:rotate(20deg)}
+.founderIdentity{text-align:center;position:relative;padding:18px 18px 8px;min-width:0}
+.founderEmblemWrap{width:min(270px,82%);aspect-ratio:1/1;margin:0 auto 22px;display:grid;place-items:center;position:relative}
+.founderEmblemWrap:after{content:"";position:absolute;left:14%;right:14%;bottom:2%;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.founderEmblem{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 18px 34px rgba(215,175,69,.13))}
+.founderIdentity h3{font-family:Georgia,'Times New Roman',serif;font-size:clamp(26px,2.3vw,36px);font-weight:500;letter-spacing:.01em;margin:2px 0 8px;color:#f3eee2}
+.founderIdentity .founderRole{margin:0;color:#d9b24f;font-size:18px;letter-spacing:.01em}
+.founderDivider{display:flex;align-items:center;justify-content:center;gap:10px;margin:24px auto 22px;max-width:250px}
+.founderDivider:before,.founderDivider:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#9b7626)}
+.founderDivider:after{background:linear-gradient(90deg,#9b7626,transparent)}
+.founderDivider span{width:9px;height:9px;background:#d7af45;transform:rotate(45deg);box-shadow:0 0 16px rgba(215,175,69,.28)}
+.founderMotto{margin:0;color:#aaa397;font-size:9px;letter-spacing:.25em;white-space:nowrap}
+.founderMotto i{display:inline-block;width:1px;height:12px;background:#b58b2f;margin:0 11px -2px}
+.founderStatementCopy{min-width:0;position:relative;z-index:1}
+.founderLabel{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+.founderLabel>span:last-child{height:1px;width:120px;background:linear-gradient(90deg,#d7af45,transparent)}
+.founderStatementCopy .founderStatementTitle{font-family:Georgia,'Times New Roman',serif;color:#e4b84f;font-size:clamp(25px,2.15vw,34px);font-weight:600;line-height:1.15;letter-spacing:-.015em;margin:0 0 30px;max-width:none}
+.founderArticle{max-width:760px}
+.founderArticle p{font-size:18px;line-height:1.55;color:#d8d8d8;margin:0 0 20px}
+.founderArticle .founderClosing{font-family:Georgia,'Times New Roman',serif;color:#e4b84f;font-size:24px;font-weight:700;margin-top:26px;margin-bottom:0}
+@media(min-width:1050px){.founderStatementCopy .founderStatementTitle{white-space:nowrap;font-size:clamp(24px,2.05vw,32px)}}
+@media(max-width:1049px){.founderStatementSection{grid-template-columns:minmax(260px,.75fr) minmax(0,1.25fr);gap:36px}.founderMotto{white-space:normal;line-height:1.8}.founderArticle p{font-size:17px}}
+@media(max-width:800px){
+  .founderStatementSection{grid-template-columns:1fr;gap:44px;padding:58px 0 54px}
+  .founderIdentity{max-width:430px;margin:auto;width:100%}
+  .founderEmblemWrap{width:min(240px,72vw)}
+  .founderStatementCopy .founderStatementTitle{font-size:clamp(31px,8vw,46px);line-height:1.08;white-space:normal}
+  .founderArticle{max-width:none}.founderArticle p{font-size:17px;line-height:1.62}
+  .founderLabel>span:last-child{width:90px}
+}
+@media(max-width:480px){.founderIdentity h3{font-size:27px}.founderIdentity .founderRole{font-size:16px}.founderMotto{font-size:8px;letter-spacing:.16em}.founderArticle .founderClosing{font-size:22px}}
+html[dir="rtl"] .founderLabel{flex-direction:row-reverse;justify-content:flex-end}
+html[dir="rtl"] .founderArticle{text-align:right}
