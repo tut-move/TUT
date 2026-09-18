@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=63-about-redesign">
+  <link rel="stylesheet" href="/style.css?v=62-legal-users">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -107,44 +107,35 @@
       </section>
     </section>
 
-    <section id="about" class="pane hidden aboutV63">
-      <section class="about63Intro">
+    <section id="about" class="pane hidden">
+      <div class="aboutHero">
         <span class="eyebrow" data-ui-key="WHY TUT MOVE?">WHY TUT MOVE?</span>
-        <h1><span>Capacity exists.</span><span>Demand exists.</span><em>The connection is missing.</em></h1>
+        <h1 data-ui-key="Capacity exists. Demand exists.">Capacity exists. Demand exists.<br><em data-ui-key="The connection is missing.">The connection is missing.</em></h1>
         <p>At the same moment a business is searching for a driver, a driver may have available time. A load may be waiting for a truck while a nearby truck has unused capacity. Warehouse space can sit empty while another business is searching for storage.</p>
-        <p class="about63Lead">The problem is not always that the resource does not exist.<br>Sometimes the two sides simply cannot find each other.</p>
+        <p class="aboutLead">The problem is not always that the resource does not exist. Sometimes the two sides simply cannot find each other.</p>
+      </div>
+
+      <section class="aboutGrid">
+        <article><span class="aboutNo">01</span><h2 data-ui-key="One market. Multiple sides.">One market. Multiple sides.</h2><p>TUT Move does not own the trucks, employ the drivers, own the loads or control warehouse capacity. It brings independent supply and demand into one marketplace.</p></article>
+        <article><span class="aboutNo">02</span><h2 data-ui-key="AVAILABLE / WANTED">AVAILABLE / WANTED</h2><p>Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.</p></article>
+        <article><span class="aboutNo">03</span><h2 data-ui-key="The market decides.">The market decides.</h2><p>TUT Move does not dictate the transport price. Users can set a price, request quotes, make offers, counter and agree on their own commercial terms.</p></article>
       </section>
 
-      <section class="about63Cards">
-        <article><span class="about63No">01</span><h2>One market. Multiple<br>sides.</h2><p>TUT Move does not own the trucks, employ the drivers, own the loads or control warehouse capacity. It brings independent supply and demand into one marketplace.</p></article>
-        <article><span class="about63No">02</span><h2>AVAILABLE /<br>WANTED</h2><p>Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.</p></article>
-        <article><span class="about63No">03</span><h2>The market decides.</h2><p>TUT Move does not dictate the transport price. Users can set a price, request quotes, make offers, counter and agree on their own commercial terms.</p></article>
-      </section>
-
-      <section class="about63Founder">
-        <div class="about63FounderBrand">
-          <img src="/tut-emblem.png" alt="TUT Move emblem" loading="lazy" decoding="async">
-          <h2>Abdelaziz Metwaly</h2>
-          <p>Founder, TUT Move</p>
-          <div class="about63FounderRule"><span></span><i></i><span></span></div>
-          <small>PEOPLE <b>|</b> OPPORTUNITIES <b>|</b> A FAIRER WORLD</small>
-        </div>
-        <div class="about63FounderCopy">
-          <div class="about63FounderKicker"><span>FOUNDER</span><i></i></div>
-          <h2>Negotiate with the world — like you’re its only choice.</h2>
-          <p>TUT Move doesn’t decide what your opportunity is worth. You do.</p>
-          <p>Compare. Negotiate. Decide. Walk away. Come back whenever you choose. The choice remains yours.</p>
-          <p>If you have something to offer, let the world find you. If you’re looking for something, let the world compete for your decision.</p>
-          <p>Why settle for what’s placed in front of you when a wider market could be within reach?</p>
-          <p>And why let anyone else decide which opportunities reach you, what choices you get to see, or what you have to pay simply to access the market?</p>
-          <strong>The choice should be yours.</strong>
+      <section class="founderSection">
+        <div class="founderPhoto"><img src="/founder-abdelaziz.png" alt="Founder of TUT Move" loading="lazy" decoding="async"></div>
+        <div class="founderCopy">
+          <span class="eyebrow" data-ui-key="FOUNDER">FOUNDER</span>
+          <h2 data-ui-key="Built from a simple question.">Built from a simple question.</h2>
+          <h3>Abdelaziz Metwaly</h3>
+          <p class="founderRole">Founder, TUT Move</p>
+          <blockquote>“I asked myself a simple question: how can one business be searching for a driver while somewhere else a driver is looking for work? How can a truck be empty while a load is searching for a truck? How can warehouse space sit unused while another business needs that exact capacity? The resources and the demand already exist — they are fragmented. TUT Move started with the idea of bringing them into one market.”</blockquote>
         </div>
       </section>
 
-      <section class="about63Vision">
+      <section class="aboutVision">
         <span class="eyebrow" data-ui-key="THE VISION">THE VISION</span>
-        <h2>Turn unused capacity into opportunity.</h2>
-        <p>TUT Move is being built as a multi-country, multi-language marketplace connecting<br class="desktopOnly"> transportation and storage capacity with demand — starting with drivers, trucks, loads and warehouses.</p>
+        <h2 data-ui-key="Turn unused capacity into opportunity.">Turn unused capacity into opportunity.</h2>
+        <p>TUT Move is being built as a multi-country, multi-language marketplace connecting transportation and storage capacity with demand — starting with drivers, trucks, loads and warehouses.</p>
         <button class="goldBtn" onclick="go('market')">Explore the Market</button>
       </section>
     </section>
@@ -352,6 +343,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=63-about-redesign"></script>
+<script defer src="/app.js?v=62-legal-users"></script>
 </body>
 </html>
