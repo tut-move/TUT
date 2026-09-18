@@ -1386,6 +1386,3 @@ Object.assign(UI_TRANSLATIONS.de,{"Terms of Service":"Nutzungsbedingungen","Priv
 Object.assign(UI_TRANSLATIONS.fr,{"Terms of Service":"Conditions d’utilisation","Privacy Policy":"Politique de confidentialité","Cancellation & Refund":"Annulation et remboursement","Disputes & Claims":"Litiges et réclamations","I agree to the":"J’accepte les","and":"et","Registered":"Inscrit","Delete account":"Supprimer le compte"});
 Object.assign(UI_TRANSLATIONS.es,{"Terms of Service":"Términos de servicio","Privacy Policy":"Política de privacidad","Cancellation & Refund":"Cancelación y reembolso","Disputes & Claims":"Disputas y reclamaciones","I agree to the":"Acepto los","and":"y","Registered":"Registrado","Delete account":"Eliminar cuenta"});
 Object.assign(UI_TRANSLATIONS.pt,{"Terms of Service":"Termos de Serviço","Privacy Policy":"Política de Privacidade","Cancellation & Refund":"Cancelamento e reembolso","Disputes & Claims":"Disputas e reclamações","I agree to the":"Aceito os","and":"e","Registered":"Registado","Delete account":"Eliminar conta"});
-
-// v68: keep footer copyright year current without affecting app flows.
-document.addEventListener('DOMContentLoaded',()=>{const el=document.getElementById('copyrightYear');if(el)el.textContent=`© ${new Date().getFullYear()} TUT Move`;});
