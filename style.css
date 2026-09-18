@@ -614,18 +614,30 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 .legalDoc{max-width:980px;margin:0 auto}.legalDoc h2{margin:26px 0 8px;font-size:20px}.legalDoc p{line-height:1.75;color:var(--muted)}.legalLinks{display:flex;gap:14px;flex-wrap:wrap}.legalLinks button,.inlineLegal{border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.legalConsent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 18px;line-height:1.45}.legalConsent input{margin-top:4px}.inlineLegal{color:var(--gold)}.adminUserActions{margin-top:14px}.adminUserActions .dangerBtn{width:auto}.legalPane[dir=rtl],html[dir=rtl] .legalDoc{text-align:right}
 
 /* v63 — About page redesign only */
-.aboutV63{max-width:1180px;margin:0 auto}
-.aboutV63 .aboutHero{padding:58px 18px 18px;max-width:940px}
-.aboutV63 .aboutHero h1{font-size:clamp(34px,4.2vw,58px);line-height:1.02;letter-spacing:-.035em;margin:10px 0 18px}
-.aboutV63 .aboutHero>p{font-size:16px;line-height:1.55;max-width:900px}
-.aboutV63 .aboutHero .aboutLead{font-size:17px;line-height:1.45;margin-top:16px}
-.aboutV63 .aboutGrid{gap:18px;margin:12px 18px 26px}
-.aboutV63 .aboutGrid article{min-height:230px;border-radius:12px;padding:22px;background:linear-gradient(145deg,#111414,#090b0b);border-color:#262b2b}
-.aboutV63 .aboutGrid h2{font-size:23px;line-height:1.05;margin:18px 0 14px}
-.aboutV63 .aboutGrid p{font-size:14px;line-height:1.55}
-.aboutV63 .founderStatement{margin:0 18px;border-top:1px solid #8f6b20;border-bottom:1px solid #8f6b20;padding:34px 12px;grid-template-columns:minmax(280px,.82fr) minmax(420px,1.18fr);gap:54px}
-.founderBrandCard{text-align:center;padding:0 10px}.founderBrandCard img{width:min(270px,78%);height:220px;object-fit:contain;filter:drop-shadow(0 8px 28px rgba(214,173,75,.08))}.founderBrandCard h2{font-family:Georgia,serif;color:#dcb653;font-size:30px;margin:8px 0 4px}.founderBrandCard p{color:#dcb653;font-size:18px;margin:0}.founderRule{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px auto 14px;max-width:250px}.founderRule span{height:1px;background:#9c7625;flex:1}.founderRule i{width:10px;height:10px;background:#e3b84f;transform:rotate(45deg)}.founderBrandCard small{font-size:10px;letter-spacing:.18em;color:#ddd;white-space:nowrap}.founderBrandCard small b{color:#d6ad4b;margin:0 8px}
-.aboutV63 .founderCopy h2.founderQuote{font-family:Georgia,serif;color:#dcb653;font-size:clamp(25px,3vw,38px);line-height:1.12;margin:10px 0 16px}.aboutV63 .founderCopy p{color:#b8b8b8;font-size:16px;line-height:1.48;margin:0 0 10px}.choiceYours{display:block;font-family:Georgia,serif;color:#dcb653;font-size:25px;margin-top:10px}
-.aboutV63 .aboutVision{padding:38px 18px 46px}.aboutV63 .aboutVision h2{font-size:clamp(27px,3.5vw,42px);margin:8px 0 12px}.aboutV63 .aboutVision p{font-size:15px;line-height:1.55;margin-bottom:20px}.aboutV63 .aboutVision .goldBtn{min-width:190px}
-@media(max-width:800px){.aboutV63 .aboutHero{padding-top:34px}.aboutV63 .aboutGrid{grid-template-columns:1fr;margin-inline:0}.aboutV63 .aboutGrid article{min-height:auto}.aboutV63 .founderStatement{grid-template-columns:1fr;margin-inline:0;padding:34px 0;gap:30px}.founderBrandCard img{height:180px}.founderBrandCard h2{font-size:27px}.founderBrandCard small{font-size:8px}.aboutV63 .founderCopy{text-align:left}.aboutV63 .founderCopy p{font-size:15px}}
-html[dir="rtl"] .aboutV63 .founderCopy{text-align:right}
+.aboutV63{max-width:1180px;margin:0 auto;padding:0 18px 12px}
+.about63Intro{padding:48px 0 20px;max-width:900px}
+.about63Intro h1{margin:10px 0 14px;font-size:clamp(38px,4.7vw,64px);line-height:.96;letter-spacing:-.045em}
+.about63Intro h1 span,.about63Intro h1 em{display:block;font-style:normal}
+.about63Intro h1 em{color:#e8b845}
+.about63Intro>p{max-width:850px;color:#b9b9bd;font-size:16px;line-height:1.55;margin:0 0 16px}
+.about63Lead{border-left:3px solid #e8b845;padding-left:18px!important;color:#f1f1f1!important;font-weight:750;line-height:1.35!important}
+.about63Cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:0 0 26px;border-bottom:1px solid #8a6b27}
+.about63Cards article{min-height:245px;padding:24px 24px 22px;border:1px solid #25282b;border-radius:13px;background:linear-gradient(145deg,#111315,#0a0b0c)}
+.about63No{display:block;color:#e8b845;font-size:11px;font-weight:850;letter-spacing:.15em;margin-bottom:18px}
+.about63Cards h2{font-size:25px;line-height:1.05;margin:0 0 18px;color:#f3f3f3;letter-spacing:-.02em}
+.about63Cards p{font-size:14px;line-height:1.55;color:#aeb0b4;margin:0}
+.about63Founder{display:grid;grid-template-columns:minmax(300px,.82fr) minmax(0,1.18fr);gap:58px;align-items:center;padding:30px 28px 34px;border-bottom:1px solid #8a6b27}
+.about63FounderBrand{text-align:center;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.about63FounderBrand img{width:min(300px,90%);height:210px;object-fit:contain;object-position:center;filter:drop-shadow(0 12px 28px rgba(225,174,61,.12))}
+.about63FounderBrand h2{font-family:Georgia,'Times New Roman',serif;color:#e8b845;font-size:30px;line-height:1.05;margin:2px 0 4px;font-weight:600}
+.about63FounderBrand>p{margin:0;color:#e8b845;font-size:18px}
+.about63FounderRule{display:flex;align-items:center;justify-content:center;gap:10px;width:220px;margin:18px auto 12px}
+.about63FounderRule span{height:1px;flex:1;background:#9b7627}.about63FounderRule i{width:10px;height:10px;background:#e8b845;transform:rotate(45deg);display:block}
+.about63FounderBrand small{font-size:9px;letter-spacing:.18em;color:#d5d5d7;font-weight:800;white-space:nowrap}.about63FounderBrand small b{color:#e8b845;padding:0 8px}
+.about63FounderKicker{display:flex;align-items:center;gap:12px;color:#e8b845;font-size:11px;letter-spacing:.18em;font-weight:800;margin-bottom:10px}.about63FounderKicker i{width:75px;height:1px;background:#9b7627}
+.about63FounderCopy h2{font-family:Georgia,'Times New Roman',serif;color:#e8b845;font-size:clamp(25px,2.6vw,36px);line-height:1.12;margin:0 0 16px;font-weight:600}
+.about63FounderCopy p{color:#b9b9bd;font-size:16px;line-height:1.45;margin:0 0 10px}
+.about63FounderCopy strong{display:block;font-family:Georgia,'Times New Roman',serif;color:#e8b845;font-size:27px;line-height:1.1;margin-top:12px}
+.about63Vision{text-align:center;padding:28px 18px 10px}.about63Vision h2{font-size:31px;line-height:1.1;margin:8px 0 10px}.about63Vision p{color:#b9b9bd;font-size:15px;line-height:1.5;margin:0 auto 18px;max-width:850px}.about63Vision .goldBtn{min-width:190px}
+html[dir="rtl"] .about63Lead{border-left:0;border-right:3px solid #e8b845;padding-left:0!important;padding-right:18px!important}
+@media(max-width:800px){.aboutV63{padding:0 16px}.about63Intro{padding-top:34px}.about63Cards{grid-template-columns:1fr}.about63Cards article{min-height:0}.about63Founder{grid-template-columns:1fr;gap:28px;padding:34px 4px}.about63FounderBrand img{height:190px}.about63FounderCopy{text-align:left}.about63Vision{padding:30px 0 8px}.desktopOnly{display:none}}
