@@ -136,7 +136,3 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - Transport stages are sequentially locked: Verification → Pickup → In transit → Delivered.
 - Notifications poll every 5 seconds while the app is visible.
 - No other product flow or fee behavior changed.
-
-
-## v63 Founder/About update
-Only the founder statement section in About was redesigned: no personal portrait, TUT emblem + founder identity on the left, the new founder article on the right, and the desktop headline kept on one line. No marketplace, payment, owner, notification, legal, or journey-flow logic was changed.
