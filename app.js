@@ -1386,3 +1386,64 @@ Object.assign(UI_TRANSLATIONS.de,{"Terms of Service":"Nutzungsbedingungen","Priv
 Object.assign(UI_TRANSLATIONS.fr,{"Terms of Service":"Conditions d’utilisation","Privacy Policy":"Politique de confidentialité","Cancellation & Refund":"Annulation et remboursement","Disputes & Claims":"Litiges et réclamations","I agree to the":"J’accepte les","and":"et","Registered":"Inscrit","Delete account":"Supprimer le compte"});
 Object.assign(UI_TRANSLATIONS.es,{"Terms of Service":"Términos de servicio","Privacy Policy":"Política de privacidad","Cancellation & Refund":"Cancelación y reembolso","Disputes & Claims":"Disputas y reclamaciones","I agree to the":"Acepto los","and":"y","Registered":"Registrado","Delete account":"Eliminar cuenta"});
 Object.assign(UI_TRANSLATIONS.pt,{"Terms of Service":"Termos de Serviço","Privacy Policy":"Política de Privacidade","Cancellation & Refund":"Cancelamento e reembolso","Disputes & Claims":"Disputas e reclamações","I agree to the":"Aceito os","and":"e","Registered":"Registado","Delete account":"Eliminar conta"});
+
+/* v63 — complete language coverage for the redesigned About page. */
+const V63_TRANSLATIONS={
+ ar:{
+  "Capacity exists.":"السعة موجودة.","Demand exists.":"الطلب موجود.",
+  "PEOPLE · OPPORTUNITIES · A FAIRER WORLD":"الناس · الفرص · عالم أكثر عدلاً",
+  "Negotiate with the world — like you’re its only choice.":"تفاوض مع العالم — وكأنك خياره الوحيد.",
+  "TUT Move doesn’t decide what your opportunity is worth. You do.":"TUT Move لا تقرر قيمة فرصتك. أنت من يقرر.",
+  "Compare. Negotiate. Decide. Walk away. Come back whenever you choose. The choice remains yours.":"قارن. تفاوض. قرر. انسحب. وعد متى شئت. القرار يظل قرارك.",
+  "If you have something to offer, let the world find you. If you’re looking for something, let the world compete for your decision.":"إذا كان لديك ما تعرضه، دع العالم يجدك. وإذا كنت تبحث عن شيء، دع العالم يتنافس على قرارك.",
+  "Why settle for what’s placed in front of you when a wider market could be within reach?":"لماذا تكتفي بما يوضع أمامك بينما يمكن أن يكون سوق أوسع في متناولك؟",
+  "And why let anyone else decide which opportunities reach you, what choices you get to see, or what you have to pay simply to access the market?":"ولماذا تدع أي شخص آخر يقرر أي الفرص تصل إليك، وما الخيارات التي تراها، أو ما الذي تدفعه لمجرد الوصول إلى السوق؟",
+  "The choice should be yours.":"يجب أن يكون الاختيار لك.","Explore the Market":"استكشف السوق"
+ },
+ de:{
+  "Capacity exists.":"Kapazität ist vorhanden.","Demand exists.":"Nachfrage ist vorhanden.",
+  "PEOPLE · OPPORTUNITIES · A FAIRER WORLD":"MENSCHEN · CHANCEN · EINE FAIRERE WELT",
+  "Negotiate with the world — like you’re its only choice.":"Verhandle mit der Welt — als wärst du ihre einzige Wahl.",
+  "TUT Move doesn’t decide what your opportunity is worth. You do.":"TUT Move entscheidet nicht, was deine Chance wert ist. Das entscheidest du.",
+  "Compare. Negotiate. Decide. Walk away. Come back whenever you choose. The choice remains yours.":"Vergleiche. Verhandle. Entscheide. Geh weiter. Komm zurück, wann du willst. Die Wahl bleibt bei dir.",
+  "If you have something to offer, let the world find you. If you’re looking for something, let the world compete for your decision.":"Wenn du etwas anzubieten hast, lass die Welt dich finden. Wenn du etwas suchst, lass den Markt um deine Entscheidung konkurrieren.",
+  "Why settle for what’s placed in front of you when a wider market could be within reach?":"Warum dich mit dem zufriedengeben, was vor dir liegt, wenn ein größerer Markt erreichbar sein kann?",
+  "And why let anyone else decide which opportunities reach you, what choices you get to see, or what you have to pay simply to access the market?":"Und warum sollte jemand anderes entscheiden, welche Chancen dich erreichen, welche Auswahl du siehst oder was du allein für den Marktzugang zahlen musst?",
+  "The choice should be yours.":"Die Wahl sollte bei dir liegen.","Explore the Market":"Markt entdecken"
+ },
+ fr:{
+  "Capacity exists.":"La capacité existe.","Demand exists.":"La demande existe.",
+  "PEOPLE · OPPORTUNITIES · A FAIRER WORLD":"PERSONNES · OPPORTUNITÉS · UN MONDE PLUS ÉQUITABLE",
+  "Negotiate with the world — like you’re its only choice.":"Négociez avec le monde — comme si vous étiez son seul choix.",
+  "TUT Move doesn’t decide what your opportunity is worth. You do.":"TUT Move ne décide pas de la valeur de votre opportunité. C’est vous qui décidez.",
+  "Compare. Negotiate. Decide. Walk away. Come back whenever you choose. The choice remains yours.":"Comparez. Négociez. Décidez. Partez. Revenez quand vous le souhaitez. Le choix reste le vôtre.",
+  "If you have something to offer, let the world find you. If you’re looking for something, let the world compete for your decision.":"Si vous avez quelque chose à offrir, laissez le monde vous trouver. Si vous cherchez quelque chose, laissez le marché concourir pour votre décision.",
+  "Why settle for what’s placed in front of you when a wider market could be within reach?":"Pourquoi vous contenter de ce qui est devant vous lorsqu’un marché plus vaste peut être à portée de main ?",
+  "And why let anyone else decide which opportunities reach you, what choices you get to see, or what you have to pay simply to access the market?":"Et pourquoi laisser quelqu’un d’autre décider des opportunités qui vous parviennent, des choix que vous voyez ou de ce que vous devez payer simplement pour accéder au marché ?",
+  "The choice should be yours.":"Le choix doit être le vôtre.","Explore the Market":"Explorer le marché"
+ },
+ es:{
+  "Capacity exists.":"La capacidad existe.","Demand exists.":"La demanda existe.",
+  "PEOPLE · OPPORTUNITIES · A FAIRER WORLD":"PERSONAS · OPORTUNIDADES · UN MUNDO MÁS JUSTO",
+  "Negotiate with the world — like you’re its only choice.":"Negocia con el mundo — como si fueras su única opción.",
+  "TUT Move doesn’t decide what your opportunity is worth. You do.":"TUT Move no decide cuánto vale tu oportunidad. Tú decides.",
+  "Compare. Negotiate. Decide. Walk away. Come back whenever you choose. The choice remains yours.":"Compara. Negocia. Decide. Aléjate. Vuelve cuando quieras. La elección sigue siendo tuya.",
+  "If you have something to offer, let the world find you. If you’re looking for something, let the world compete for your decision.":"Si tienes algo que ofrecer, deja que el mundo te encuentre. Si buscas algo, deja que el mercado compita por tu decisión.",
+  "Why settle for what’s placed in front of you when a wider market could be within reach?":"¿Por qué conformarte con lo que tienes delante cuando un mercado más amplio puede estar a tu alcance?",
+  "And why let anyone else decide which opportunities reach you, what choices you get to see, or what you have to pay simply to access the market?":"¿Y por qué dejar que otra persona decida qué oportunidades te llegan, qué opciones ves o qué debes pagar simplemente para acceder al mercado?",
+  "The choice should be yours.":"La elección debe ser tuya.","Explore the Market":"Explorar el mercado"
+ },
+ pt:{
+  "Capacity exists.":"A capacidade existe.","Demand exists.":"A procura existe.",
+  "PEOPLE · OPPORTUNITIES · A FAIRER WORLD":"PESSOAS · OPORTUNIDADES · UM MUNDO MAIS JUSTO",
+  "Negotiate with the world — like you’re its only choice.":"Negocie com o mundo — como se fosse a única escolha dele.",
+  "TUT Move doesn’t decide what your opportunity is worth. You do.":"A TUT Move não decide quanto vale a sua oportunidade. Você decide.",
+  "Compare. Negotiate. Decide. Walk away. Come back whenever you choose. The choice remains yours.":"Compare. Negocie. Decida. Afaste-se. Volte quando quiser. A escolha continua a ser sua.",
+  "If you have something to offer, let the world find you. If you’re looking for something, let the world compete for your decision.":"Se tem algo para oferecer, deixe o mundo encontrá-lo. Se procura algo, deixe o mercado competir pela sua decisão.",
+  "Why settle for what’s placed in front of you when a wider market could be within reach?":"Por que aceitar apenas o que está à sua frente quando um mercado mais amplo pode estar ao seu alcance?",
+  "And why let anyone else decide which opportunities reach you, what choices you get to see, or what you have to pay simply to access the market?":"E por que deixar outra pessoa decidir que oportunidades chegam até si, que opções pode ver ou quanto tem de pagar apenas para aceder ao mercado?",
+  "The choice should be yours.":"A escolha deve ser sua.","Explore the Market":"Explorar o mercado"
+ }
+};
+for(const [lng,map] of Object.entries(V63_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+TRANSLATION_REVERSE=null;
