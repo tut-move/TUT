@@ -657,3 +657,13 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 @media(max-width:900px){.homeV67Hero{grid-template-columns:1fr;min-height:560px}.homeV67Copy{padding-top:42px}.homeV67Globe{opacity:.5;right:-250px;top:130px}.homeV67Chooser{grid-template-columns:1fr;margin-top:0}.homeV67Intent{padding-right:0;padding-bottom:22px;border-right:0;border-bottom:1px solid #66552b}.homeV67 .homeResourceGrid{grid-template-columns:repeat(2,1fr)}.homeV67Trust{padding:0;grid-template-columns:1fr}.homeV67Trust article{border-right:0;border-bottom:1px solid #302a1d;padding:16px 8px}}
 @media(max-width:560px){.homeV67Copy h1{font-size:40px}.homeV67Copy p{font-size:16px}.homeV67Globe{right:-330px}.homeV67Chooser{padding:18px 14px}.homeV67 .homeSideTabs{grid-template-columns:1fr 1fr}.homeV67 .homeResourceGrid{grid-template-columns:1fr 1fr}.homeV67Copy .goldBtn,.homeV67Copy .outlineBtn{min-width:0;flex:1}.homeV67Copy .heroActions{display:grid;grid-template-columns:1fr 1fr}}
 html[dir="rtl"] .homeV67Globe{right:auto;left:-85px;transform:scaleX(-1)}html[dir="rtl"] .homeV67Intent{padding-right:0;padding-left:28px;border-right:0;border-left:1px solid #66552b}html[dir="rtl"] .homeV67Trust article{border-right:0;border-left:1px solid #554727}html[dir="rtl"] .homeV67Trust article:last-child{border-left:0}
+
+/* v68 — single-line footer: no duplicate rows on desktop */
+footer{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:nowrap;padding:20px 4vw;white-space:nowrap}
+footer>div{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+footer>div strong{margin:0}
+footer>p{margin:0;flex:0 0 auto}
+footer .legalLinks{display:flex;align-items:center;gap:14px;flex-wrap:nowrap;flex:0 0 auto}
+footer>span:last-child{flex:0 0 auto}
+@media(max-width:980px){footer{gap:11px;padding-left:14px;padding-right:14px;font-size:11px}footer .legalLinks{gap:9px}footer>div{gap:6px}}
+@media(max-width:720px){footer{overflow-x:auto;justify-content:flex-start;flex-direction:row;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}footer>*{flex:none!important}}
