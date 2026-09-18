@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=67-home-reference">
+  <link rel="stylesheet" href="/style.css?v=65-about-code">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -54,30 +54,44 @@
   </div>
 
   <main>
-    <section id="home" class="pane homeV67">
-      <div class="homeV67Hero">
-        <div class="homeV67Copy">
+    <section id="home" class="pane homeReferenceV68">
+      <div class="homeHeroV68">
+        <div class="homeHeroCopyV68">
           <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
-          <h1><span data-ui-key="Find what you need.">Find what you need.</span><br><em data-ui-key="Put what you have to work.">Put what you have to work.</em></h1>
+          <h1><span data-ui-key="Find what you need.">Find what you need.</span><strong data-ui-key="Put what you have to work.">Put what you have to work.</strong></h1>
           <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.">Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.</p>
-          <div class="heroActions">
-            <button class="goldBtn homeStartBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})"><span data-ui-key="Start now">Start now</span><b aria-hidden="true">→</b></button>
+          <div class="heroActions homeHeroActionsV68">
+            <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})"><span data-ui-key="Start now">Start now</span><span aria-hidden="true">→</span></button>
             <button class="outlineBtn" onclick="openMarketCategory('')" data-ui-key="Browse market">Browse market</button>
           </div>
         </div>
-        <div class="homeV67Globe" aria-hidden="true"><div class="globeOrb"><span class="globeGlow"></span><span class="globeLines"></span></div></div>
+        <div class="worldStageV68" aria-hidden="true">
+          <div class="worldGlowV68"></div>
+          <svg class="worldV68" viewBox="0 0 600 600" role="presentation">
+            <defs><radialGradient id="oceanV68" cx="32%" cy="28%" r="72%"><stop offset="0" stop-color="#26313a"/><stop offset=".52" stop-color="#111820"/><stop offset="1" stop-color="#020304"/></radialGradient><filter id="glowV68"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+            <circle cx="300" cy="300" r="282" fill="url(#oceanV68)" stroke="#c8942f" stroke-width="2"/>
+            <g fill="#1a1d18" stroke="#e0aa42" stroke-width="2.2" filter="url(#glowV68)" opacity=".96">
+              <path d="M251 91l-30 24-27 5-20 25 6 30 30 13 15 35 31 15 19-19 27 3 20-20-9-29-31-13-6-25z"/>
+              <path d="M302 176l-20 24-1 39 19 25-8 33 20 44 20 61 29 42 25-17 8-54 29-34-8-41-26-20-8-42-35-22-13-34z"/>
+              <path d="M370 118l25-15 42 8 23 21 43 8 20 25-17 19-42-2-26 18-30-6-18-27-32-16z"/>
+              <path d="M430 225l33-10 30 16 22 29-13 21-32-8-21 19-27-12-9-29z"/>
+              <path d="M465 376l24-6 31 18-8 27-37 4-21-18z"/>
+            </g>
+            <g fill="#ffd15b" filter="url(#glowV68)"><circle cx="239" cy="168" r="3"/><circle cx="278" cy="201" r="4"/><circle cx="317" cy="227" r="3"/><circle cx="348" cy="250" r="4"/><circle cx="386" cy="214" r="3"/><circle cx="417" cy="180" r="4"/><circle cx="451" cy="173" r="3"/><circle cx="466" cy="233" r="4"/><circle cx="378" cy="305" r="3"/><circle cx="347" cy="330" r="4"/></g>
+          </svg>
+        </div>
       </div>
 
-      <section class="homeV67Chooser" id="startChoice">
-        <div class="homeV67Intent">
+      <section class="startChoice homeChoiceV68" id="startChoice">
+        <div class="homeIntentV68">
           <span class="eyebrow" data-ui-key="I WANT TO">I WANT TO</span>
           <div class="homeSideTabs" role="tablist" aria-label="Marketplace side">
             <button id="homeNeedTab" type="button" class="homeSideTab active" aria-selected="true" onclick="selectHomeSide('need')"><strong data-ui-key="Find capacity">Find capacity</strong></button>
             <button id="homeOfferTab" type="button" class="homeSideTab" aria-selected="false" onclick="selectHomeSide('have')"><strong data-ui-key="Offer capacity">Offer capacity</strong></button>
           </div>
         </div>
-        <div class="homeV67Resources">
-          <span id="homeResourceKicker" class="eyebrow" data-ui-key="CHOOSE A RESOURCE">CHOOSE A RESOURCE</span>
+        <div class="homeResourcesV68">
+          <span class="eyebrow" data-ui-key="CHOOSE A RESOURCE">CHOOSE A RESOURCE</span>
           <div class="homeResourceGrid">
             <button type="button" onclick="homeResource('driver')"><b data-ui-key="Driver">Driver</b></button>
             <button type="button" onclick="homeResource('truck')"><b data-ui-key="Truck / trailer">Truck / trailer</b></button>
@@ -87,7 +101,7 @@
         </div>
       </section>
 
-      <section class="homeV67Trust" aria-label="TUT Move marketplace benefits">
+      <section class="homeTrustV68">
         <article><b data-ui-key="Global marketplace">Global marketplace</b><span data-ui-key="Real people. Real opportunities.">Real people. Real opportunities.</span></article>
         <article><b data-ui-key="Multiple countries">Multiple countries</b><span data-ui-key="Built for a connected world.">Built for a connected world.</span></article>
         <article><b data-ui-key="Trusted by professionals">Trusted by professionals</b><span data-ui-key="Verify. Trade. Move forward.">Verify. Trade. Move forward.</span></article>
@@ -335,6 +349,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=67-home-reference"></script>
+<script defer src="/app.js?v=68-home-exact"></script>
 </body>
 </html>
