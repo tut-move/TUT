@@ -612,32 +612,20 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 
 /* v62 — legal pages + owner user management only */
 .legalDoc{max-width:980px;margin:0 auto}.legalDoc h2{margin:26px 0 8px;font-size:20px}.legalDoc p{line-height:1.75;color:var(--muted)}.legalLinks{display:flex;gap:14px;flex-wrap:wrap}.legalLinks button,.inlineLegal{border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.legalConsent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 18px;line-height:1.45}.legalConsent input{margin-top:4px}.inlineLegal{color:var(--gold)}.adminUserActions{margin-top:14px}.adminUserActions .dangerBtn{width:auto}.legalPane[dir=rtl],html[dir=rtl] .legalDoc{text-align:right}
-\n\n/* v64 — About founder block only. All other About sections remain unchanged. */\n#about .founderStatement{\n  grid-template-columns:minmax(280px,.78fr) minmax(420px,1.22fr);\n  gap:64px;\n  align-items:center;\n  border-top:1px solid rgba(214,173,75,.22);\n  border-bottom:1px solid rgba(214,173,75,.22);\n  padding:56px 0;\n}\n#about .founderIdentity{text-align:center;min-width:0}\n#about .founderMark{width:min(100%,310px);height:auto;display:block;margin:0 auto 20px;object-fit:contain}\n#about .founderIdentity h3{margin:0;color:#d6ad4b;font-family:Georgia,'Times New Roman',serif;font-size:clamp(30px,3vw,43px);font-weight:500;line-height:1.08}\n#about .founderIdentity .founderRole{margin:10px 0 18px;color:#d6ad4b;font-size:19px}\n#about .founderRule{display:flex;align-items:center;justify-content:center;gap:12px;max-width:310px;margin:0 auto 18px}\n#about .founderRule span{height:1px;background:rgba(214,173,75,.7);flex:1}\n#about .founderRule i{display:block;width:11px;height:11px;background:#d6ad4b;transform:rotate(45deg)}\n#about .founderValues{margin:0;color:#bdbdbd;font-size:10px;letter-spacing:.22em;white-space:nowrap}\n#about .founderValues b{color:#d6ad4b;font-weight:400;margin:0 10px}\n#about .founderCopy .eyebrow{display:flex;align-items:center;gap:14px;color:#d6ad4b}\n#about .founderCopy .eyebrow:after{content:'';display:block;width:130px;max-width:28%;height:1px;background:#d6ad4b}\n#about .founderCopy .founderHeadline{margin:18px 0 24px;color:#d6ad4b;font-family:Georgia,'Times New Roman',serif;font-size:clamp(31px,3.2vw,48px);font-weight:600;line-height:1.12}\n#about .founderEssay p{margin:0 0 18px;color:#d2d2d2;font-size:18px;line-height:1.55}\n#about .founderClosing{display:block;margin-top:4px;color:#d6ad4b;font-family:Georgia,'Times New Roman',serif;font-size:clamp(30px,3vw,44px);line-height:1.12}\n@media(max-width:800px){\n  #about .founderStatement{grid-template-columns:1fr;gap:44px;padding:52px 0}\n  #about .founderIdentity{order:1}\n  #about .founderCopy{order:2}\n  #about .founderMark{width:min(72vw,300px)}\n  #about .founderIdentity h3{font-size:34px}\n  #about .founderIdentity .founderRole{font-size:18px}\n  #about .founderValues{font-size:9px;letter-spacing:.16em;white-space:normal;line-height:1.8}\n  #about .founderValues b{margin:0 7px}\n  #about .founderCopy .founderHeadline{font-size:clamp(38px,10vw,52px);line-height:1.18}\n  #about .founderEssay p{font-size:17px;line-height:1.65;margin-bottom:20px}\n  #about .founderClosing{font-size:clamp(36px,9vw,48px)}\n}\n
-/* v65 — About page desktop composition only; functionality and other pages untouched. */
-@media (min-width: 861px){
-  #about{padding-top:18px;padding-bottom:28px}
-  #about .aboutHero{padding:18px 0 14px;max-width:720px}
-  #about .aboutHero h1{font-size:42px;line-height:1.02;margin:8px 0 12px;letter-spacing:-.035em}
-  #about .aboutHero>p{max-width:700px;font-size:13px;line-height:1.5;margin:8px 0}
-  #about .aboutHero .aboutLead{font-size:14px;line-height:1.45;padding-left:14px;margin-top:10px}
-  #about .aboutGrid{gap:14px;margin:10px 0 20px}
-  #about .aboutGrid article{min-height:194px;padding:20px;border-radius:13px}
-  #about .aboutGrid h2{font-size:18px;line-height:1.14;margin:18px 0 10px}
-  #about .aboutGrid p{font-size:12px;line-height:1.5;margin:0}
-  #about .founderStatement{grid-template-columns:minmax(260px,.78fr) minmax(420px,1.22fr);gap:48px;padding:22px 0;border-top:1px solid rgba(214,173,75,.45);border-bottom:1px solid rgba(214,173,75,.45)}
-  #about .founderMark{width:210px;margin:0 auto 10px}
-  #about .founderIdentity h3{font-size:25px}
-  #about .founderIdentity .founderRole{font-size:14px;margin:7px 0 12px}
-  #about .founderRule{max-width:230px;margin-bottom:12px}
-  #about .founderValues{font-size:8px;letter-spacing:.18em}
-  #about .founderCopy .eyebrow{font-size:10px}
-  #about .founderCopy .eyebrow:after{width:78px}
-  #about .founderCopy .founderHeadline{font-size:25px;line-height:1.15;margin:10px 0 12px}
-  #about .founderEssay p{font-size:13px;line-height:1.42;margin:0 0 8px}
-  #about .founderClosing{font-size:22px;line-height:1.12;margin-top:2px}
-  #about .aboutVision{padding:18px 18px 20px;max-width:760px}
-  #about .aboutVision .eyebrow{font-size:10px}
-  #about .aboutVision h2{font-size:25px;margin:7px 0 8px}
-  #about .aboutVision p{font-size:12px;line-height:1.5;max-width:700px;margin-bottom:12px}
-  #about .aboutVision .goldBtn{padding:10px 18px;font-size:12px}
-}
+
+/* v63 — About page redesign only */
+.aboutV63{max-width:1180px;margin:0 auto}
+.aboutV63 .aboutHero{padding:58px 18px 18px;max-width:940px}
+.aboutV63 .aboutHero h1{font-size:clamp(34px,4.2vw,58px);line-height:1.02;letter-spacing:-.035em;margin:10px 0 18px}
+.aboutV63 .aboutHero>p{font-size:16px;line-height:1.55;max-width:900px}
+.aboutV63 .aboutHero .aboutLead{font-size:17px;line-height:1.45;margin-top:16px}
+.aboutV63 .aboutGrid{gap:18px;margin:12px 18px 26px}
+.aboutV63 .aboutGrid article{min-height:230px;border-radius:12px;padding:22px;background:linear-gradient(145deg,#111414,#090b0b);border-color:#262b2b}
+.aboutV63 .aboutGrid h2{font-size:23px;line-height:1.05;margin:18px 0 14px}
+.aboutV63 .aboutGrid p{font-size:14px;line-height:1.55}
+.aboutV63 .founderStatement{margin:0 18px;border-top:1px solid #8f6b20;border-bottom:1px solid #8f6b20;padding:34px 12px;grid-template-columns:minmax(280px,.82fr) minmax(420px,1.18fr);gap:54px}
+.founderBrandCard{text-align:center;padding:0 10px}.founderBrandCard img{width:min(270px,78%);height:220px;object-fit:contain;filter:drop-shadow(0 8px 28px rgba(214,173,75,.08))}.founderBrandCard h2{font-family:Georgia,serif;color:#dcb653;font-size:30px;margin:8px 0 4px}.founderBrandCard p{color:#dcb653;font-size:18px;margin:0}.founderRule{display:flex;align-items:center;justify-content:center;gap:10px;margin:22px auto 14px;max-width:250px}.founderRule span{height:1px;background:#9c7625;flex:1}.founderRule i{width:10px;height:10px;background:#e3b84f;transform:rotate(45deg)}.founderBrandCard small{font-size:10px;letter-spacing:.18em;color:#ddd;white-space:nowrap}.founderBrandCard small b{color:#d6ad4b;margin:0 8px}
+.aboutV63 .founderCopy h2.founderQuote{font-family:Georgia,serif;color:#dcb653;font-size:clamp(25px,3vw,38px);line-height:1.12;margin:10px 0 16px}.aboutV63 .founderCopy p{color:#b8b8b8;font-size:16px;line-height:1.48;margin:0 0 10px}.choiceYours{display:block;font-family:Georgia,serif;color:#dcb653;font-size:25px;margin-top:10px}
+.aboutV63 .aboutVision{padding:38px 18px 46px}.aboutV63 .aboutVision h2{font-size:clamp(27px,3.5vw,42px);margin:8px 0 12px}.aboutV63 .aboutVision p{font-size:15px;line-height:1.55;margin-bottom:20px}.aboutV63 .aboutVision .goldBtn{min-width:190px}
+@media(max-width:800px){.aboutV63 .aboutHero{padding-top:34px}.aboutV63 .aboutGrid{grid-template-columns:1fr;margin-inline:0}.aboutV63 .aboutGrid article{min-height:auto}.aboutV63 .founderStatement{grid-template-columns:1fr;margin-inline:0;padding:34px 0;gap:30px}.founderBrandCard img{height:180px}.founderBrandCard h2{font-size:27px}.founderBrandCard small{font-size:8px}.aboutV63 .founderCopy{text-align:left}.aboutV63 .founderCopy p{font-size:15px}}
+html[dir="rtl"] .aboutV63 .founderCopy{text-align:right}
