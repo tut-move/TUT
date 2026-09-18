@@ -1307,6 +1307,17 @@ const V49_TRANSLATIONS={
 };
 for(const [lng,map] of Object.entries(V49_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 TRANSLATION_REVERSE=null;
+// v69-safe — translations for the coded v67 home + footer labels only
+const V69_SAFE_TRANSLATIONS={
+ ar:{"Find what you need.":"اعثر على ما تحتاجه.","Put what you have to work.":"حوّل ما لديك إلى فرصة عمل.","I WANT TO":"أريد أن","Find capacity":"ابحث عن سعة","Offer capacity":"اعرض سعة","CHOOSE A RESOURCE":"اختر موردًا","Global marketplace":"سوق عالمي","Real people. Real opportunities.":"أشخاص حقيقيون. فرص حقيقية.","Multiple countries":"دول متعددة","Built for a connected world.":"مصمم لعالم مترابط.","Trusted by professionals":"موثوق لدى المحترفين","Verify. Trade. Move forward.":"تحقق. تعامل. وتقدم."},
+ de:{"Find what you need.":"Finden Sie, was Sie brauchen.","Put what you have to work.":"Nutzen Sie, was Sie haben.","I WANT TO":"ICH MÖCHTE","Find capacity":"Kapazität finden","Offer capacity":"Kapazität anbieten","CHOOSE A RESOURCE":"RESSOURCE WÄHLEN","Global marketplace":"Globaler Marktplatz","Real people. Real opportunities.":"Echte Menschen. Echte Chancen.","Multiple countries":"Mehrere Länder","Built for a connected world.":"Für eine vernetzte Welt entwickelt.","Trusted by professionals":"Von Profis genutzt","Verify. Trade. Move forward.":"Verifizieren. Handeln. Weiterkommen."},
+ fr:{"Find what you need.":"Trouvez ce dont vous avez besoin.","Put what you have to work.":"Mettez ce que vous avez au travail.","I WANT TO":"JE VEUX","Find capacity":"Trouver une capacité","Offer capacity":"Proposer une capacité","CHOOSE A RESOURCE":"CHOISISSEZ UNE RESSOURCE","Global marketplace":"Marché mondial","Real people. Real opportunities.":"De vraies personnes. De vraies opportunités.","Multiple countries":"Plusieurs pays","Built for a connected world.":"Conçu pour un monde connecté.","Trusted by professionals":"Utilisé par des professionnels","Verify. Trade. Move forward.":"Vérifiez. Échangez. Avancez."},
+ es:{"Find what you need.":"Encuentra lo que necesitas.","Put what you have to work.":"Pon a trabajar lo que tienes.","I WANT TO":"QUIERO","Find capacity":"Encontrar capacidad","Offer capacity":"Ofrecer capacidad","CHOOSE A RESOURCE":"ELIGE UN RECURSO","Global marketplace":"Mercado global","Real people. Real opportunities.":"Personas reales. Oportunidades reales.","Multiple countries":"Múltiples países","Built for a connected world.":"Creado para un mundo conectado.","Trusted by professionals":"Utilizado por profesionales","Verify. Trade. Move forward.":"Verifica. Negocia. Avanza."},
+ pt:{"Find what you need.":"Encontre o que precisa.","Put what you have to work.":"Ponha o que tem a trabalhar.","I WANT TO":"QUERO","Find capacity":"Encontrar capacidade","Offer capacity":"Oferecer capacidade","CHOOSE A RESOURCE":"ESCOLHA UM RECURSO","Global marketplace":"Mercado global","Real people. Real opportunities.":"Pessoas reais. Oportunidades reais.","Multiple countries":"Vários países","Built for a connected world.":"Criado para um mundo conectado.","Trusted by professionals":"Usado por profissionais","Verify. Trade. Move forward.":"Verifique. Negocie. Avance."}
+};
+for(const [lng,map] of Object.entries(V69_SAFE_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+TRANSLATION_REVERSE=null;
+
 
 function toggleMarketMenu(ev){
   ev?.stopPropagation();
