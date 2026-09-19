@@ -632,3 +632,15 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 .aboutReference .aboutVision{text-align:center;padding:16px 18px 8px;max-width:780px}.aboutReference .aboutVision .eyebrow{font-size:9px}.aboutReference .aboutVision h2{font-size:23px;margin:6px 0 8px}.aboutReference .aboutVision p{font-size:12px;line-height:1.45;margin-bottom:13px}.aboutReference .aboutVision .goldBtn{font-size:12px;padding:10px 24px}
 @media(max-width:800px){.aboutReference{padding-top:28px!important}.aboutReference .aboutGrid{grid-template-columns:1fr}.founderReference{grid-template-columns:1fr;padding-top:28px}.founderIdentity img{height:175px}.founderStory{padding:0}.founderStory h2{font-size:22px}}
 html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right:3px solid #d7af45;padding-left:0;padding-right:16px}
+
+/* v66: requested home image + single-line footer only */
+.homeEarthStage{padding:0;background:#070707;border-color:#28231b;}
+.homeEarthStage:before{display:none;}
+.v49Hero .homeEarthStage img{display:block;width:100%;max-width:none;aspect-ratio:16/9;object-fit:cover;border-radius:29px;filter:none;}
+.singleLineFooter{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:nowrap;white-space:nowrap;}
+.singleLineFooter strong{margin-right:0;}
+.singleLineFooter .legalLinks{display:flex;align-items:center;gap:0;}
+.singleLineFooter .legalLinks button{border:0;background:none;color:#b8b4aa;padding:0 10px;cursor:pointer;text-decoration:none;}
+.singleLineFooter .legalLinks button+button{border-left:1px solid #6d5b2b;}
+.singleLineFooter .footerDivider{width:1px;height:18px;background:#6d5b2b;flex:0 0 1px;}
+@media(max-width:980px){.singleLineFooter{flex-wrap:wrap;white-space:normal;justify-content:flex-start}.singleLineFooter .legalLinks{flex-wrap:wrap}.v49Hero .homeEarthStage{max-width:620px}.v49Hero .homeEarthStage img{max-width:none}}
