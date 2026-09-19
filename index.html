@@ -54,41 +54,35 @@
   </div>
 
   <main>
-    <section id="home" class="pane">
-      <div class="hero resourceHero v49Hero">
+    <section id="home" class="pane homeReferenceV66">
+      <div class="hero resourceHero v49Hero referenceHero">
         <div class="heroCopy">
           <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
-          <h1 data-ui-key="Find what you need. Put what you have to work.">Find what you need. Put what you have to work.</h1>
-          <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.">Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.</p>
+          <h1><span data-ui-key="Find what you need.">Find what you need.</span><br><em data-ui-key="Put what you have to work.">Put what you have to work.</em></h1>
+          <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.">Drivers, trucks, trailers, loads and warehouse space —<br>connected in one marketplace.</p>
           <div class="heroActions">
-            <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})" data-ui-key="Start now">Start now</button>
+            <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})"><span data-ui-key="Start now">Start now</span><span aria-hidden="true">→</span></button>
             <button class="outlineBtn" onclick="openMarketCategory('')" data-ui-key="Browse market">Browse market</button>
           </div>
-          <div class="heroProof compactProof">
-            <div><strong data-ui-key="FIND">FIND</strong><span data-ui-key="People and capacity">People and capacity</span></div>
-            <div><strong data-ui-key="OFFER">OFFER</strong><span data-ui-key="Unused resources">Unused resources</span></div>
-            <div><strong data-ui-key="AGREE">AGREE</strong><span data-ui-key="On your own terms">On your own terms</span></div>
-          </div>
         </div>
-        <div class="heroVisual brandStage">
-          <img src="/tut-emblem.png" alt="TUT Move emblem">
+        <div class="heroVisual globeStage" aria-hidden="true">
+          <div class="codeGlobe">
+            <i class="globeGlow"></i><i class="globeGrid gridA"></i><i class="globeGrid gridB"></i>
+            <span class="land land1"></span><span class="land land2"></span><span class="land land3"></span><span class="land land4"></span><span class="land land5"></span>
+            <span class="city c1"></span><span class="city c2"></span><span class="city c3"></span><span class="city c4"></span><span class="city c5"></span><span class="city c6"></span><span class="city c7"></span>
+          </div>
         </div>
       </div>
 
-      <section class="startChoice cleanStart" id="startChoice">
-        <div class="sectionIntro conciseIntro">
-          <span class="eyebrow" data-ui-key="START HERE">START HERE</span>
-          <h2 data-ui-key="What do you need today?">What do you need today?</h2>
-          <p data-ui-key="Choose whether you want something or want to offer something, then pick the resource.">Choose whether you want something or want to offer something, then pick the resource.</p>
+      <section class="startChoice cleanStart referenceChooser" id="startChoice">
+        <div class="choiceSide">
+          <span class="eyebrow" data-ui-key="I WANT TO">I WANT TO</span>
+          <div class="homeSideTabs" role="tablist" aria-label="Marketplace side">
+            <button id="homeNeedTab" type="button" class="homeSideTab active" aria-selected="true" onclick="selectHomeSide('need')"><strong data-ui-key="Find capacity">Find capacity</strong></button>
+            <button id="homeOfferTab" type="button" class="homeSideTab" aria-selected="false" onclick="selectHomeSide('have')"><strong data-ui-key="Offer capacity">Offer capacity</strong></button>
+          </div>
         </div>
-        <div class="homeSideTabs" role="tablist" aria-label="Marketplace side">
-          <button id="homeNeedTab" type="button" class="homeSideTab active" aria-selected="true" onclick="selectHomeSide('need')">
-            <strong data-ui-key="I WANT">I WANT</strong>
-          </button>
-          <button id="homeOfferTab" type="button" class="homeSideTab" aria-selected="false" onclick="selectHomeSide('have')">
-            <strong data-ui-key="I OFFER">I OFFER</strong>
-          </button>
-        </div>
+        <div class="choiceDivider"></div>
         <div class="homeResourcePanel">
           <div class="homeResourceHeader"><span id="homeResourceKicker" class="eyebrow" data-ui-key="CHOOSE A RESOURCE">CHOOSE A RESOURCE</span></div>
           <div class="homeResourceGrid">
@@ -99,11 +93,11 @@
           </div>
         </div>
       </section>
-      <section class="confidenceStrip" aria-label="How TUT Move works">
-        <article><span>01</span><div><b data-ui-key="Publish">Publish</b><small data-ui-key="Tell the market what you have or need.">Tell the market what you have or need.</small></div></article>
-        <article><span>02</span><div><b data-ui-key="Match">Match</b><small data-ui-key="Compare relevant people and capacity.">Compare relevant people and capacity.</small></div></article>
-        <article><span>03</span><div><b data-ui-key="Agree">Agree</b><small data-ui-key="Offer, counter and accept your own terms.">Offer, counter and accept your own terms.</small></div></article>
-        <article><span>04</span><div><b data-ui-key="Secure">Secure</b><small data-ui-key="Verify identities and test the payment flow.">Verify identities and test the payment flow.</small></div></article>
+
+      <section class="referenceTrust" aria-label="TUT Move marketplace benefits">
+        <article><b data-ui-key="Global marketplace">Global marketplace</b><span data-ui-key="Real people. Real opportunities.">Real people. Real opportunities.</span></article>
+        <article><b data-ui-key="Multiple countries">Multiple countries</b><span data-ui-key="Built for a connected world.">Built for a connected world.</span></article>
+        <article><b data-ui-key="Trusted by professionals">Trusted by professionals</b><span data-ui-key="Verify. Trade. Move forward.">Verify. Trade. Move forward.</span></article>
       </section>
     </section>
 
