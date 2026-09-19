@@ -708,3 +708,58 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
     filter:none;
   }
 }
+
+/* v69 — requested hero correction only: smaller copy + large borderless Earth */
+@media (min-width:981px){
+  .v49Hero{
+    grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);
+    gap:18px;
+    overflow:visible;
+  }
+  .v49Hero .heroNewHeadline{
+    font-size:clamp(31px,2.75vw,44px)!important;
+    line-height:1.08!important;
+    max-width:570px!important;
+    letter-spacing:-.025em!important;
+  }
+  .v49Hero .heroNewCopy{
+    font-size:16px!important;
+    line-height:1.48!important;
+    max-width:560px!important;
+  }
+  .v49Hero .homeEarthStage{
+    align-self:stretch;
+    min-height:560px;
+    width:calc(100% + 12vw);
+    margin:0 -12vw 0 -2vw!important;
+    padding:0!important;
+    border:0!important;
+    outline:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    background:transparent!important;
+    overflow:hidden!important;
+    position:relative;
+  }
+  .v49Hero .homeEarthStage:before{display:none!important;content:none!important;}
+  .v49Hero .homeEarthStage img{
+    position:absolute;
+    inset:0;
+    width:100%!important;
+    height:100%!important;
+    max-width:none!important;
+    object-fit:cover!important;
+    object-position:center center!important;
+    transform:scale(1.42)!important;
+    transform-origin:center center;
+    border:0!important;
+    outline:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    filter:none!important;
+  }
+}
+@media (max-width:980px){
+  .v49Hero .homeEarthStage{overflow:hidden!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;}
+  .v49Hero .homeEarthStage img{width:100%!important;max-width:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;}
+}
