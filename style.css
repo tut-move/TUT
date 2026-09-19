@@ -647,3 +647,22 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 @media(max-width:980px){
   #marketMenu{max-height:min(360px,55vh);overflow-y:auto;box-shadow:0 22px 60px rgba(0,0,0,.72)}
 }
+
+/* v68 — hero-only restoration. Everything outside #home .v49Hero remains untouched. */
+@media (min-width:861px){
+  #home .v49Hero{position:relative;isolation:isolate;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);min-height:66vh;overflow:hidden;border-radius:0;gap:18px}
+  #home .v49Hero::before{content:"";position:absolute;z-index:-2;inset:0 0 0 34%;background:url('/earth-hero.png?v=68') center right/cover no-repeat}
+  #home .v49Hero::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,#070707 0%,#070707 29%,rgba(7,7,7,.88) 39%,rgba(7,7,7,.28) 58%,rgba(7,7,7,0) 76%)}
+  #home .v49Hero .heroCopy{position:relative;z-index:1;padding:24px 0}
+  #home .v49Hero .heroVisual{visibility:hidden;pointer-events:none}
+  #home .v49Hero .earthHeroTitle{font-size:clamp(42px,4.65vw,68px);line-height:1.02;margin:12px 0 20px;max-width:780px}
+  #home .v49Hero .earthHeroTitle span{color:var(--gold2)}
+  #home .v49Hero .earthHeroLead,#home .v49Hero .earthHeroArticle{font-size:16px;line-height:1.45;color:#f0eee7;max-width:520px;margin:0 0 18px}
+  #home .v49Hero .earthHeroArticle{margin-top:6px}
+  #home .v49Hero .heroActions{margin-top:18px}
+}
+@media (max-width:860px){
+  #home .v49Hero .earthHeroTitle span{color:var(--gold2)}
+  #home .v49Hero .earthHeroLead br,#home .v49Hero .earthHeroArticle br{display:none}
+  #home .v49Hero .earthHeroArticle{font-size:16px;line-height:1.5;color:#c4bdad;margin:10px 0 0}
+}
