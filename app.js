@@ -234,37 +234,6 @@ function startTranslationObserver(){
   });
   TUT_TRANSLATION_OBSERVER.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['placeholder','title']});
 }
-const HOME_HERO_COPY={
- en:{line1:'The World Has More to Move.',line2:'We Make It Happen.',intro1:'Drivers, trucks, trailers, loads and warehouse space —',intro2:'one marketplace built for all of logistics.',msg1:'Find what you need. Offer what you have.',msg2:'Connect. Agree. Move.'},
- de:{line1:'Die Welt hat mehr zu bewegen.',line2:'Wir machen es möglich.',intro1:'Fahrer, Lkw, Anhänger, Ladungen und Lagerflächen —',intro2:'ein Marktplatz für die gesamte Logistik.',msg1:'Finden Sie, was Sie brauchen. Bieten Sie an, was Sie haben.',msg2:'Vernetzen. Vereinbaren. Bewegen.'},
- fr:{line1:'Le monde a encore plus à déplacer.',line2:'Nous le rendons possible.',intro1:'Chauffeurs, camions, remorques, chargements et espaces d’entreposage —',intro2:'une place de marché conçue pour toute la logistique.',msg1:'Trouvez ce dont vous avez besoin. Proposez ce que vous avez.',msg2:'Connectez. Convenez. Déplacez.'},
- es:{line1:'El mundo tiene más por mover.',line2:'Nosotros lo hacemos posible.',intro1:'Conductores, camiones, remolques, cargas y espacio de almacén —',intro2:'un mercado creado para toda la logística.',msg1:'Encuentra lo que necesitas. Ofrece lo que tienes.',msg2:'Conecta. Acuerda. Mueve.'},
- pt:{line1:'O mundo tem mais para mover.',line2:'Nós tornamos isso possível.',intro1:'Motoristas, camiões, reboques, cargas e espaço de armazém —',intro2:'um mercado criado para toda a logística.',msg1:'Encontre o que precisa. Ofereça o que tem.',msg2:'Ligue. Acorde. Mova.'},
- ar:{line1:'العالم لديه المزيد ليتحرك.',line2:'ونحن نجعل ذلك يحدث.',intro1:'السائقون والشاحنات والمقطورات والحمولات ومساحات التخزين —',intro2:'سوق واحد صُمم لكل الخدمات اللوجستية.',msg1:'اعثر على ما تحتاجه. واعرض ما لديك.',msg2:'تواصل. اتفق. تحرّك.'}
-};
-// v81: register hero copy with the main translation engine. This prevents the
-// MutationObserver from treating freshly localized hero text as unknown text
-// and replacing it with canonical English.
-for(const [lng,c] of Object.entries(HOME_HERO_COPY)){
-  if(lng==='en')continue;
-  const map=UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={});
-  map[HOME_HERO_COPY.en.line1]=c.line1;
-  map[HOME_HERO_COPY.en.line2]=c.line2;
-  map[HOME_HERO_COPY.en.intro1]=c.intro1;
-  map[HOME_HERO_COPY.en.intro2]=c.intro2;
-  map[HOME_HERO_COPY.en.msg1]=c.msg1;
-  map[HOME_HERO_COPY.en.msg2]=c.msg2;
-}
-function localizeHomeHero(lang){
- const c=HOME_HERO_COPY[lang]||HOME_HERO_COPY.en;
- const h=document.querySelector('#home .heroHeadline');
- const intro=document.querySelector('#home .heroIntro');
- const msg=document.querySelector('#home .heroMessage');
- if(h){h.innerHTML=`<span>${esc(c.line1)}</span><span>${esc(c.line2)}</span>`;h.setAttribute('dir',lang==='ar'?'rtl':'ltr');}
- if(intro)intro.innerHTML=`${esc(c.intro1)}<br><strong>${esc(c.intro2)}</strong>`;
- if(msg)msg.innerHTML=`${esc(c.msg1)}<br><strong>${esc(c.msg2)}</strong>`;
-}
-
 function setLanguage(lang){
   activeLang=lang;
   localStorage.setItem('tut_lang',lang);
@@ -278,7 +247,6 @@ function setLanguage(lang){
   // changing language must preserve login, typed values and the current verification step.
   translateNodeTree(document.body);
   applyStrictSiteLanguage();
-  localizeHomeHero(lang);
   document.querySelectorAll('option').forEach(o=>{
     const c=o.dataset.tutCanonical||canonicalEnglish(o.textContent);
     o.dataset.tutCanonical=c;
@@ -853,7 +821,7 @@ const V47_TRANSLATIONS={
  pt:{"Pickup / start address is required.":"A morada de recolha / início é obrigatória.","Delivery / end address is required.":"A morada de entrega / destino é obrigatória.","Verify your real details.":"Verifique os seus dados reais.","Enter the identity and licence information that the other party needs to trust before an agreement.":"Introduza os dados de identidade e licença necessários à outra parte antes do acordo.","YOUR DETAILS":"OS SEUS DADOS","Identity and qualification":"Identidade e qualificação","Full legal name":"Nome legal completo","Government ID number":"Número de identificação oficial","Government ID document":"Documento de identificação","Selfie / profile photo":"Selfie / foto de perfil","Driving licence":"Carta de condução","Licence number":"Número da carta","Licence expiry":"Validade da carta","Driving licence document":"Documento da carta","Vehicle / business details":"Dados do veículo / negócio","Business details":"Dados do negócio","Business / registration number":"Número da empresa / registo","Truck / trailer / equipment owner":"Proprietário de camião / reboque / equipamento","Pickup and delivery":"Recolha e entrega","Every listing must include where it starts and where it ends.":"Cada anúncio deve incluir o ponto de início e de fim.","Pickup / start address":"Morada de recolha / início","Delivery / end address":"Morada de entrega / destino","Required pickup / start address":"Morada de recolha necessária","Required delivery / end address":"Morada de entrega necessária","Storage / pickup address":"Morada de armazenamento / recolha","Delivery / release address":"Morada de entrega / saída","Required pickup / storage address":"Morada de armazenamento necessária","Required delivery / release address":"Morada de entrega necessária","Street, building number, city, postcode":"Rua, número, cidade, código postal","Choose at least one licence class.":"Escolha pelo menos uma categoria de carta.","Licence class":"Categoria da carta","Could not read file.":"Não foi possível ler o ficheiro."},
  en:{}
 };for(const [lg,map] of Object.entries(V47_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lg]||(UI_TRANSLATIONS[lg]={}),map);
-// init moved to end of file so every translation pack is loaded first.
+// v82: initialize only after every translation pack is registered.
 setInterval(()=>{if(me&&!document.hidden)loadNotifications(false)},5000);
 setInterval(()=>{try{if(me&&!document.hidden&&!$('offers')?.classList.contains('hidden')){loadBookings();loadOffers()}}catch{}},5000);
 
@@ -1005,8 +973,8 @@ function strictTranslateElement(el){
 function applyStrictSiteLanguage(){
   const root=document.documentElement;
   root.lang=activeLang;
-  root.dir=activeLang==='ar'?'rtl':'ltr';
-  document.body?.setAttribute('dir','ltr');
+  root.dir='ltr';
+  document.body?.setAttribute('dir',root.dir);
 
   document.querySelectorAll('[data-ui-key],[data-i18n]').forEach(strictTranslateElement);
 
@@ -1444,16 +1412,15 @@ Object.assign(UI_TRANSLATIONS.fr,{"Terms of Service":"Conditions d’utilisation
 Object.assign(UI_TRANSLATIONS.es,{"Terms of Service":"Términos de servicio","Privacy Policy":"Política de privacidad","Cancellation & Refund":"Cancelación y reembolso","Disputes & Claims":"Disputas y reclamaciones","I agree to the":"Acepto los","and":"y","Registered":"Registrado","Delete account":"Eliminar cuenta"});
 Object.assign(UI_TRANSLATIONS.pt,{"Terms of Service":"Termos de Serviço","Privacy Policy":"Política de Privacidade","Cancellation & Refund":"Cancelamento e reembolso","Disputes & Claims":"Disputas e reclamações","I agree to the":"Aceito os","and":"e","Registered":"Registado","Delete account":"Eliminar conta"});
 
-/* v79 — hero fragments + initialize only after every translation pack is registered. */
-const V79_TRANSLATIONS={
- ar:{"The World Has More to":"العالم لديه المزيد ليتحرك","Move.":".","We Make It":"ونحن نجعل ذلك","Happen.":"يحدث."},
+/* v82 — language fix only. Original v78 HTML/CSS/assets are preserved exactly. */
+const V82_HERO_TRANSLATIONS={
+ ar:{"The World Has More to":"العالم لديه المزيد ليتحرك","Move.":"","We Make It":"ونحن نجعل ذلك","Happen.":"يحدث."},
  de:{"The World Has More to":"Die Welt hat mehr zu","Move.":"bewegen.","We Make It":"Wir machen es","Happen.":"möglich."},
  fr:{"The World Has More to":"Le monde a encore plus à","Move.":"déplacer.","We Make It":"Nous le rendons","Happen.":"possible."},
  es:{"The World Has More to":"El mundo tiene más por","Move.":"mover.","We Make It":"Nosotros lo hacemos","Happen.":"posible."},
  pt:{"The World Has More to":"O mundo tem mais para","Move.":"mover.","We Make It":"Nós tornamos isso","Happen.":"possível."}
 };
-for(const [lng,map] of Object.entries(V79_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+for(const [lng,map] of Object.entries(V82_HERO_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 TRANSLATION_REVERSE=null;
-
 init();
 
