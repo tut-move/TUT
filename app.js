@@ -177,22 +177,13 @@ function manualCurrencyOverride(cur){
   if($('currencyDisplay'))$('currencyDisplay').textContent=cur;
   if($('priceCurrencyBadge'))$('priceCurrencyBadge').textContent=currencyLabel(cur);
 }
-function manualLanguageOverride(lang){localStorage.setItem('tut_lang',lang);setLanguage(lang);if($('lang'))$('lang').value=lang;renderHeaderOverrides();try{renderAuth()}catch{}try{renderFields()}catch{}try{renderNeedChooser()}catch{}try{loadMarket()}catch{}try{loadMatches()}catch{}try{loadOffers()}catch{}try{loadBookings()}catch{}try{loadVerification()}catch{}setTimeout(()=>{translateNodeTree(document.body);renderNeedChooser()},0)}
-async function detectCountryByIP(){
-  if(manualMarketCountry||me?.country)return;
-  try{
-    const r=await fetch('https://ipapi.co/json/',{headers:{Accept:'application/json'}});
-    if(!r.ok)return;
-    const j=await r.json();
-    const map={'US':'United States','CA':'Canada','DE':'Germany','FR':'France','NL':'Netherlands','BE':'Belgium','ES':'Spain','IT':'Italy','PL':'Poland','AT':'Austria','CH':'Switzerland','GB':'United Kingdom','IE':'Ireland','SE':'Sweden','NO':'Norway','DK':'Denmark','FI':'Finland','CZ':'Czechia','PT':'Portugal','GR':'Greece','RO':'Romania','AE':'United Arab Emirates','SA':'Saudi Arabia','QA':'Qatar','KW':'Kuwait','BH':'Bahrain','OM':'Oman','JO':'Jordan','EG':'Egypt'};
-    if(map[j.country_code]){detectedMarket.country=map[j.country_code];detectLocalMarket();renderHeaderOverrides();renderAuth();renderFields();}
-  }catch(e){}
-  try{loadMarket()}catch{}
-  try{loadMatches()}catch{}
-  try{loadOffers()}catch{}
-  try{loadBookings()}catch{}
-  try{renderFields()}catch{}
-  setTimeout(applyStrictSiteLanguage,0);
+function manualLanguageOverride(lang){
+  const supported=['en','ar','de','fr','es','pt'];
+  const next=supported.includes(lang)?lang:'en';
+  setLanguage(next);
+  renderHeaderOverrides();
+  renderAccount();
+  renderAuth();
 }
 
 
@@ -240,13 +231,34 @@ function startTranslationObserver(){
   });
   TUT_TRANSLATION_OBSERVER.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['placeholder','title']});
 }
+const TUT_HERO_COPY={
+ en:{line1:'The World Has More to <em>Move.</em>',line2:'We Make It <em>Happen.</em>',intro:'Drivers, trucks, trailers, loads and warehouse space —<br><strong>one marketplace built for all of logistics.</strong>',message:'Find what you need. Offer what you have.<br><strong>Connect. Agree. Move.</strong>'},
+ ar:{line1:'العالم لديه المزيد <em>ليتحرك.</em>',line2:'<em>ونحن</em> نجعل ذلك يحدث.',intro:'السائقون والشاحنات والمقطورات والحمولات ومساحات التخزين —<br><strong>سوق واحد صُمم لكل الخدمات اللوجستية.</strong>',message:'اعثر على ما تحتاجه. واعرض ما لديك.<br><strong>تواصل. اتفق. تحرّك.</strong>'},
+ de:{line1:'Die Welt hat mehr zu <em>bewegen.</em>',line2:'Wir machen es <em>möglich.</em>',intro:'Fahrer, Lkw, Anhänger, Ladungen und Lagerflächen —<br><strong>ein Marktplatz für die gesamte Logistik.</strong>',message:'Finden Sie, was Sie brauchen. Bieten Sie an, was Sie haben.<br><strong>Vernetzen. Vereinbaren. Bewegen.</strong>'},
+ fr:{line1:'Le monde a encore plus à <em>déplacer.</em>',line2:'Nous le rendons <em>possible.</em>',intro:'Chauffeurs, camions, remorques, chargements et espaces d’entreposage —<br><strong>une place de marché conçue pour toute la logistique.</strong>',message:'Trouvez ce dont vous avez besoin. Proposez ce que vous avez.<br><strong>Connectez. Convenez. Déplacez.</strong>'},
+ es:{line1:'El mundo tiene más por <em>mover.</em>',line2:'Nosotros lo hacemos <em>posible.</em>',intro:'Conductores, camiones, remolques, cargas y espacio de almacén —<br><strong>un mercado creado para toda la logística.</strong>',message:'Encuentra lo que necesitas. Ofrece lo que tienes.<br><strong>Conecta. Acuerda. Mueve.</strong>'},
+ pt:{line1:'O mundo tem mais para <em>mover.</em>',line2:'Nós tornamos isso <em>possível.</em>',intro:'Motoristas, camiões, reboques, cargas e espaço de armazém —<br><strong>um mercado criado para toda a logística.</strong>',message:'Encontre o que precisa. Ofereça o que tem.<br><strong>Ligue. Acorde. Mova.</strong>'}
+};
+function renderStableHeroLanguage(lang){
+  const c=TUT_HERO_COPY[lang]||TUT_HERO_COPY.en;
+  const h=document.querySelector('#home .heroHeadline');
+  const intro=document.querySelector('#home .heroIntro');
+  const msg=document.querySelector('#home .heroMessage');
+  if(h)h.innerHTML=`<span>${c.line1}</span><span>${c.line2}</span>`;
+  if(intro)intro.innerHTML=c.intro;
+  if(msg)msg.innerHTML=c.message;
+  // Arabic text reads RTL, while the original page geometry stays untouched.
+  [h,intro,msg].forEach(el=>{if(el){el.dir=lang==='ar'?'rtl':'ltr';}});
+}
+
 function setLanguage(lang){
   activeLang=lang;
   localStorage.setItem('tut_lang',lang);
   TRANSLATION_REVERSE=buildTranslationReverse();
   document.documentElement.lang=lang;
-  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
-  document.body?.setAttribute('dir',lang==='ar'?'rtl':'ltr');
+  // Keep the original site layout fixed for every language.
+  document.documentElement.dir='ltr';
+  document.body?.setAttribute('dir','ltr');
   const sel=document.getElementById('lang');if(sel)sel.value=lang;
   startTranslationObserver();
   // Translate the existing DOM in place. Do not rebuild forms or authentication UI:
@@ -258,6 +270,7 @@ function setLanguage(lang){
     o.dataset.tutCanonical=c;
     o.textContent=tr(c);
   });
+  renderStableHeroLanguage(lang);
 }
 
 const V46_TRANSLATIONS={
@@ -268,6 +281,43 @@ const V46_TRANSLATIONS={
  pt:{'Pickup / handover location':'Local de recolha / entrega','Return / delivery location':'Local de devolução / entrega','Where you need to receive it':'Onde precisa de receber o camião ou reboque','Where you will return or deliver it':'Onde irá devolver ou entregar o camião ou reboque','Choose one role to continue.':'Escolha uma função para continuar.'}
 };
 for(const [lng,map] of Object.entries(V46_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+
+
+// v78 — full-site language switch: current hero copy + remaining primary static chrome.
+const V78_TRANSLATIONS={
+ ar:{
+  "The World Has More to Move.":"العالم لديه المزيد ليتحرك.","We Make It Happen.":"ونحن نجعل ذلك يحدث.",
+  "Drivers, trucks, trailers, loads and warehouse space —":"السائقون والشاحنات والمقطورات والحمولات ومساحات التخزين —",
+  "one marketplace built for all of logistics.":"سوق واحد صُمم لكل الخدمات اللوجستية.","Find what you need. Offer what you have.":"اعثر على ما تحتاجه. واعرض ما لديك.","Connect. Agree. Move.":"تواصل. اتفق. تحرّك.",
+  "LIVE MARKET":"السوق المباشر","Search all open supply and demand.":"ابحث في جميع عروض وطلبات السوق المفتوحة.","MATCHING ENGINE":"محرك المطابقة","Refresh":"تحديث","Login / Join":"تسجيل الدخول / الانضمام","Logout":"تسجيل الخروج"
+ },
+ de:{
+  "The World Has More to Move.":"Die Welt hat mehr zu bewegen.","We Make It Happen.":"Wir machen es möglich.",
+  "Drivers, trucks, trailers, loads and warehouse space —":"Fahrer, Lkw, Anhänger, Ladungen und Lagerflächen —",
+  "one marketplace built for all of logistics.":"ein Marktplatz für die gesamte Logistik.","Find what you need. Offer what you have.":"Finden Sie, was Sie brauchen. Bieten Sie an, was Sie haben.","Connect. Agree. Move.":"Vernetzen. Vereinbaren. Bewegen.",
+  "LIVE MARKET":"LIVE-MARKT","Search all open supply and demand.":"Durchsuchen Sie alle offenen Angebote und Nachfragen.","MATCHING ENGINE":"MATCHING-ENGINE","Refresh":"Aktualisieren","Login / Join":"Anmelden / Registrieren","Logout":"Abmelden"
+ },
+ fr:{
+  "The World Has More to Move.":"Le monde a encore plus à déplacer.","We Make It Happen.":"Nous le rendons possible.",
+  "Drivers, trucks, trailers, loads and warehouse space —":"Chauffeurs, camions, remorques, chargements et espaces d’entreposage —",
+  "one marketplace built for all of logistics.":"une place de marché conçue pour toute la logistique.","Find what you need. Offer what you have.":"Trouvez ce dont vous avez besoin. Proposez ce que vous avez.","Connect. Agree. Move.":"Connectez. Convenez. Déplacez.",
+  "LIVE MARKET":"MARCHÉ EN DIRECT","Search all open supply and demand.":"Recherchez toutes les offres et demandes ouvertes.","MATCHING ENGINE":"MOTEUR DE MISE EN RELATION","Refresh":"Actualiser","Login / Join":"Connexion / Inscription","Logout":"Déconnexion"
+ },
+ es:{
+  "The World Has More to Move.":"El mundo tiene más por mover.","We Make It Happen.":"Nosotros lo hacemos posible.",
+  "Drivers, trucks, trailers, loads and warehouse space —":"Conductores, camiones, remolques, cargas y espacio de almacén —",
+  "one marketplace built for all of logistics.":"un mercado creado para toda la logística.","Find what you need. Offer what you have.":"Encuentra lo que necesitas. Ofrece lo que tienes.","Connect. Agree. Move.":"Conecta. Acuerda. Mueve.",
+  "LIVE MARKET":"MERCADO EN VIVO","Search all open supply and demand.":"Busca toda la oferta y demanda abierta.","MATCHING ENGINE":"MOTOR DE COINCIDENCIAS","Refresh":"Actualizar","Login / Join":"Entrar / Registrarse","Logout":"Cerrar sesión"
+ },
+ pt:{
+  "The World Has More to Move.":"O mundo tem mais para mover.","We Make It Happen.":"Nós tornamos isso possível.",
+  "Drivers, trucks, trailers, loads and warehouse space —":"Motoristas, camiões, reboques, cargas e espaço de armazém —",
+  "one marketplace built for all of logistics.":"um mercado criado para toda a logística.","Find what you need. Offer what you have.":"Encontre o que precisa. Ofereça o que tem.","Connect. Agree. Move.":"Ligue. Acorde. Mova.",
+  "LIVE MARKET":"MERCADO AO VIVO","Search all open supply and demand.":"Pesquise toda a oferta e procura em aberto.","MATCHING ENGINE":"MOTOR DE CORRESPONDÊNCIA","Refresh":"Atualizar","Login / Join":"Entrar / Registar","Logout":"Terminar sessão"
+ }
+};
+for(const [lng,map] of Object.entries(V78_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+TRANSLATION_REVERSE=null;
 
 function fillCountries(){ detectLocalMarket(); }
 async function init(){startTranslationObserver();
@@ -1321,21 +1371,12 @@ function openMarketCategory(resource=''){
 document.addEventListener('click',e=>{const m=$('marketMenu');if(m&&!m.classList.contains('hidden')&&!e.target.closest('.navMenu'))m.classList.add('hidden')});
 
 function manualLanguageOverride(lang){
-  const durableToken=localStorage.getItem('tut_session')||'';
-  const focused=document.activeElement;
-  setLanguage(lang);
-  try{renderHeaderOverrides()}catch{}
-  // Refresh read-only marketplace/activity views only. Never rebuild account, post or verification forms.
-  try{if(!$('market')?.classList.contains('hidden'))loadMarket()}catch{}
-  try{if(!$('matches')?.classList.contains('hidden'))loadMatches()}catch{}
-  try{if(!$('offers')?.classList.contains('hidden')){loadOffers();loadBookings()}}catch{}
-  try{renderAccount()}catch{}
-  if(durableToken)localStorage.setItem('tut_session',durableToken);
-  requestAnimationFrame(()=>{
-    translateNodeTree(document.body);
-    applyStrictSiteLanguage();
-    if(focused&&document.contains(focused))try{focused.focus({preventScroll:true})}catch{}
-  });
+  const supported=['en','ar','de','fr','es','pt'];
+  const next=supported.includes(lang)?lang:'en';
+  setLanguage(next);
+  renderHeaderOverrides();
+  renderAccount();
+  renderAuth();
 }
 
 
