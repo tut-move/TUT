@@ -679,3 +679,71 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
  #home .v49Hero p.earthHeroLead,#home .v49Hero p.earthHeroSub{font-size:15px}
  #home .v49Hero .compactProof{grid-template-columns:repeat(3,1fr);gap:8px}
 }
+
+/* v70 — HERO RESPONSIVE/FULL-BLEED ONLY. No other page component changed. */
+#home .v49Hero{
+  width:100vw;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+  padding-left:max(4vw,calc((100vw - min(1180px,92vw))/2));
+  padding-right:max(4vw,calc((100vw - min(1180px,92vw))/2));
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  min-height:650px;
+  background-color:#050b11;
+  background-position:right center;
+  background-size:auto 100%;
+}
+#home .v49Hero::after{content:none!important}
+#home .v49Hero .heroCopy{max-width:660px}
+
+/* Keep the following START HERE section in the normal page flow; no hero frame/box. */
+#home .v49Hero + .startChoice{margin-top:0}
+
+@media (min-width:981px){
+  #home .v49Hero{padding-top:82px;padding-bottom:66px}
+  #home .v49Hero h1.earthHeroTitle{font-size:clamp(46px,4vw,62px);line-height:.98}
+}
+
+@media (max-width:980px){
+  #home .v49Hero{
+    width:100vw;
+    margin-left:calc(50% - 50vw);
+    margin-right:calc(50% - 50vw);
+    min-height:auto;
+    padding:64px 4vw 54px;
+    background-position:68% center;
+    background-size:auto 100%;
+  }
+  #home .v49Hero::before{
+    background:linear-gradient(90deg,rgba(3,8,12,.97) 0%,rgba(3,8,12,.91) 52%,rgba(3,8,12,.58) 100%);
+  }
+}
+
+@media (max-width:600px){
+  #home .v49Hero{
+    padding:58px 4vw 48px;
+    background-position:70% center;
+    background-size:auto 100%;
+  }
+  #home .v49Hero::before{
+    background:linear-gradient(180deg,rgba(3,7,10,.78) 0%,rgba(3,7,10,.88) 42%,rgba(3,7,10,.98) 100%);
+  }
+  #home .v49Hero .heroCopy{width:100%;max-width:none;padding:0}
+  #home .v49Hero h1.earthHeroTitle{
+    font-size:clamp(42px,11.6vw,56px);
+    line-height:1.02;
+    letter-spacing:-.045em;
+    max-width:100%;
+    margin:18px 0 28px;
+  }
+  #home .earthHeroTitle>span{display:block;white-space:normal}
+  #home .v49Hero p.earthHeroLead,
+  #home .v49Hero p.earthHeroSub{font-size:17px;line-height:1.55;max-width:100%}
+  #home .v49Hero .heroActions{display:grid;grid-template-columns:1fr;gap:12px}
+  #home .v49Hero .heroActions .goldBtn,
+  #home .v49Hero .heroActions .outlineBtn{width:100%;min-height:58px}
+  #home .v49Hero .compactProof{grid-template-columns:1fr;margin-top:44px;gap:0;max-width:none}
+  #home .v49Hero .compactProof>div{padding:18px 0;border-top:1px solid #393329}
+}
