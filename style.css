@@ -657,3 +657,13 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   .v49Hero .legacyHeroLead{font-size:15px;margin-top:16px}
   .desktopOnlyBreak{display:none}
 }
+
+
+/* v69 — keep each hero sentence intact and remove redundant home copy */
+.v49Hero .legacyHeroTitle{font-size:clamp(30px,4.15vw,64px);line-height:1.08;letter-spacing:-.045em;max-width:none}
+.v49Hero .legacyHeroTitle .heroSentence{display:block;white-space:nowrap;color:var(--text)}
+.v49Hero .legacyHeroTitle .heroSentence em{font-style:normal;color:var(--gold2)}
+@media(max-width:600px){
+  .v49Hero .legacyHeroTitle{font-size:clamp(24px,7.25vw,34px);line-height:1.16;letter-spacing:-.04em}
+  .v49Hero .legacyHeroTitle .heroSentence{white-space:nowrap}
+}
