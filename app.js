@@ -1459,3 +1459,15 @@ const V74_HOME_TRANSLATIONS={
 };
 for(const [lng,map] of Object.entries(V74_HOME_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
 TRANSLATION_REVERSE=null;
+
+/* v75 HOME CLEAN: explicit homepage keys. This avoids relying on whitespace/text-node guessing. */
+const V75_HOME_TRANSLATIONS={
+ en:{'The World Has More to':'The World Has More to','Move.':'Move.','We Make It':'We Make It','Happen.':'Happen.','Drivers, trucks, trailers, loads and warehouse space —':'Drivers, trucks, trailers, loads and warehouse space —','one marketplace built for all of logistics.':'one marketplace built for all of logistics.'},
+ ar:{'The World Has More to':'العالم لديه المزيد مما يجب','Move.':'نقله.','We Make It':'ونحن نجعل ذلك','Happen.':'يحدث.','Drivers, trucks, trailers, loads and warehouse space —':'السائقون والشاحنات والمقطورات والحمولات ومساحات التخزين —','one marketplace built for all of logistics.':'سوق واحد مصمم لكل الخدمات اللوجستية.'},
+ de:{'The World Has More to':'Die Welt hat mehr zu','Move.':'bewegen.','We Make It':'Wir machen es','Happen.':'möglich.','Drivers, trucks, trailers, loads and warehouse space —':'Fahrer, Lkw, Anhänger, Ladungen und Lagerfläche —','one marketplace built for all of logistics.':'ein Marktplatz für die gesamte Logistik.'},
+ fr:{'The World Has More to':'Le monde a davantage à','Move.':'transporter.','We Make It':'Nous le rendons','Happen.':'possible.','Drivers, trucks, trailers, loads and warehouse space —':'Chauffeurs, camions, remorques, chargements et espaces d’entreposage —','one marketplace built for all of logistics.':'une place de marché conçue pour toute la logistique.'},
+ es:{'The World Has More to':'El mundo tiene más por','Move.':'mover.','We Make It':'Nosotros lo hacemos','Happen.':'realidad.','Drivers, trucks, trailers, loads and warehouse space —':'Conductores, camiones, remolques, cargas y espacio de almacén —','one marketplace built for all of logistics.':'un mercado creado para toda la logística.'},
+ pt:{'The World Has More to':'O mundo tem mais para','Move.':'mover.','We Make It':'Nós fazemos','Happen.':'acontecer.','Drivers, trucks, trailers, loads and warehouse space —':'Motoristas, camiões, reboques, cargas e espaço de armazém —','one marketplace built for all of logistics.':'um mercado criado para toda a logística.'}
+};
+for(const [lng,map] of Object.entries(V75_HOME_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+TRANSLATION_REVERSE=null;

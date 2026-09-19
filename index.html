@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=74-language-footer-fix">
+  <link rel="stylesheet" href="/style.css?v=75-home-clean">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 
 </head>
@@ -55,10 +55,14 @@
   <main>
     <section id="home" class="pane">
       <div class="hero resourceHero v49Hero">
+        <div class="homeEarthVisual" aria-hidden="true"></div>
         <div class="heroCopy">
           <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
-          <h1 class="earthHeroTitle"><span>The World Has More to <em>Move.</em></span><span>We Make It <em>Happen.</em></span></h1>
-          <p class="earthHeroLead">Drivers, trucks, trailers, loads and warehouse space —<br>one marketplace built for all of logistics.</p>
+          <h1 class="earthHeroTitle">
+            <span><span data-ui-key="The World Has More to">The World Has More to</span> <em data-ui-key="Move.">Move.</em></span>
+            <span><span data-ui-key="We Make It">We Make It</span> <em data-ui-key="Happen.">Happen.</em></span>
+          </h1>
+          <p class="earthHeroLead"><span data-ui-key="Drivers, trucks, trailers, loads and warehouse space —">Drivers, trucks, trailers, loads and warehouse space —</span><br><span data-ui-key="one marketplace built for all of logistics.">one marketplace built for all of logistics.</span></p>
           <div class="heroActions">
             <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})" data-ui-key="Start now">Start now</button>
             <button class="outlineBtn" onclick="openMarketCategory('')" data-ui-key="Browse market">Browse market</button>
@@ -340,6 +344,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=71-final-home"></script>
+<script defer src="/app.js?v=75-home-clean"></script>
 </body>
 </html>

@@ -860,3 +860,38 @@ html,body{max-width:100%;overflow-x:hidden}
   }
   #home .v49Hero::before{background:linear-gradient(180deg,rgba(5,11,17,.05) 0%,rgba(5,11,17,.25) 34%,#050b11 58%,#050b11 100%)!important}
 }
+
+/* v75 HOME CLEAN: one Earth renderer only. Legacy hero image declarations are neutralized here. */
+#home .v49Hero{
+  position:relative!important;
+  isolation:isolate!important;
+  overflow:hidden!important;
+  min-height:520px!important;
+  padding:68px 0 46px!important;
+  background:#050b11!important;
+}
+#home .v49Hero::after{content:none!important;background:none!important;mask-image:none!important;-webkit-mask-image:none!important}
+#home .v49Hero::before{
+  content:""!important;position:absolute!important;inset:0!important;z-index:1!important;pointer-events:none!important;
+  background:linear-gradient(90deg,#050b11 0%,#050b11 35%,rgba(5,11,17,.88) 49%,rgba(5,11,17,.25) 69%,rgba(5,11,17,0) 86%)!important;
+}
+#home .homeEarthVisual{
+  position:absolute;z-index:0;pointer-events:none;top:0;right:0;bottom:0;width:min(62vw,980px);
+  background-image:url('/earth-hero.webp');background-repeat:no-repeat;background-position:right center;background-size:auto 100%;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.12) 8%,#000 34%);
+  mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.12) 8%,#000 34%);
+}
+#home .v49Hero .heroCopy{position:relative!important;z-index:2!important;width:min(650px,48vw)!important;padding-left:4px}
+#home .earthHeroTitle>span{display:block}
+@media(max-width:980px){
+  #home .v49Hero{min-height:auto!important;padding:54px 4vw 44px!important}
+  #home .homeEarthVisual{width:72vw;opacity:.9;background-position:right center}
+  #home .v49Hero::before{background:linear-gradient(90deg,#050b11 0%,rgba(5,11,17,.96) 48%,rgba(5,11,17,.45) 100%)!important}
+  #home .v49Hero .heroCopy{width:min(680px,100%)!important}
+}
+@media(max-width:600px){
+  #home .v49Hero{padding:270px 4vw 42px!important}
+  #home .homeEarthVisual{top:0;left:0;right:0;bottom:auto;width:100%;height:300px;opacity:1;background-position:center top;background-size:auto 100%;-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 100%)}
+  #home .v49Hero::before{background:linear-gradient(180deg,rgba(5,11,17,.05) 0%,rgba(5,11,17,.25) 34%,#050b11 58%,#050b11 100%)!important}
+  #home .v49Hero .heroCopy{width:100%!important;padding-left:0}
+}
