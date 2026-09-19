@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=70-responsive-hero">
+  <link rel="stylesheet" href="/style.css?v=71-final-home">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 
 </head>
@@ -44,7 +44,6 @@
       <select id="lang" onchange="manualLanguageOverride(this.value)" aria-label="Language">
         <option value="en">EN</option><option value="ar">AR</option><option value="de">DE</option><option value="fr">FR</option><option value="es">ES</option><option value="pt">PT</option>
       </select>
-      <button id="notificationBtn" class="notificationBtn hidden" type="button" onclick="go('offers');setTimeout(loadNotifications,0)" aria-label="Notifications">🔔<span id="notificationCount" class="notificationCount hidden">0</span></button>
       <div id="account"></div>
     </div>
   </header>
@@ -60,15 +59,9 @@
           <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
           <h1 class="earthHeroTitle"><span>The World Has More to <em>Move.</em></span><span>We Make It <em>Happen.</em></span></h1>
           <p class="earthHeroLead">Drivers, trucks, trailers, loads and warehouse space —<br>one marketplace built for all of logistics.</p>
-          <p class="earthHeroSub">Find what you need. Offer what you have.<br><strong>Connect. Agree. Move.</strong></p>
           <div class="heroActions">
             <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})" data-ui-key="Start now">Start now</button>
             <button class="outlineBtn" onclick="openMarketCategory('')" data-ui-key="Browse market">Browse market</button>
-          </div>
-          <div class="heroProof compactProof">
-            <div><strong data-ui-key="FIND">FIND</strong><span data-ui-key="People and capacity">People and capacity</span></div>
-            <div><strong data-ui-key="OFFER">OFFER</strong><span data-ui-key="Unused resources">Unused resources</span></div>
-            <div><strong data-ui-key="AGREE">AGREE</strong><span data-ui-key="On your own terms">On your own terms</span></div>
           </div>
         </div>
 
@@ -347,6 +340,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=70-responsive-hero"></script>
+<script defer src="/app.js?v=71-final-home"></script>
 </body>
 </html>

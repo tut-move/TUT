@@ -747,3 +747,46 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   #home .v49Hero .compactProof{grid-template-columns:1fr;margin-top:44px;gap:0;max-width:none}
   #home .v49Hero .compactProof>div{padding:18px 0;border-top:1px solid #393329}
 }
+
+
+/* v71 approved home composition: full-bleed Earth hero + restored Start Here + workflow. */
+#home{padding-top:0}
+#home .v49Hero{
+  min-height:540px;
+  padding-top:72px;
+  padding-bottom:58px;
+  background-image:url('/earth-hero.webp?v=71');
+  background-position:right center;
+  background-size:auto 100%;
+}
+#home .v49Hero::before{
+  background:linear-gradient(90deg,#03090e 0%,rgba(3,9,14,.98) 28%,rgba(3,9,14,.82) 47%,rgba(3,9,14,.18) 70%,rgba(3,9,14,0) 88%);
+}
+#home .v49Hero .heroCopy{width:min(650px,48vw)}
+#home .v49Hero h1.earthHeroTitle{font-size:clamp(42px,3.8vw,60px);line-height:1.02;margin:18px 0 24px}
+#home .v49Hero p.earthHeroLead{font-size:17px;line-height:1.5;margin-bottom:28px}
+#home .v49Hero .heroActions{gap:14px}
+#home .v49Hero .heroActions button{min-width:190px;min-height:54px}
+#home .cleanStart{padding:54px 0 28px;border-top:1px solid #24221e}
+#home .cleanStart .sectionIntro{margin-bottom:22px}
+#home .cleanStart .sectionIntro h2{font-size:clamp(38px,4.5vw,56px)}
+#home .homeSideTabs{max-width:900px;margin-top:24px}
+#home .homeResourcePanel{max-width:1100px}
+#home .confidenceStrip{margin-top:30px;margin-bottom:0}
+footer{align-items:center;flex-wrap:wrap}
+footer .legalLinks{display:flex;gap:14px;flex-wrap:wrap}
+footer .legalLinks button{background:none;border:0;padding:0;color:#8e8778;text-decoration:underline;cursor:pointer}
+footer a{color:var(--gold2)}
+@media(max-width:980px){
+  #home .v49Hero{min-height:auto;padding-top:58px;padding-bottom:50px;background-position:72% center}
+  #home .v49Hero .heroCopy{width:min(680px,100%)}
+}
+@media(max-width:600px){
+  #home .v49Hero{padding:50px 4vw 44px;background-position:72% center;background-size:auto 100%}
+  #home .v49Hero::before{background:linear-gradient(180deg,rgba(2,7,10,.62) 0%,rgba(2,7,10,.86) 44%,#050707 100%)}
+  #home .v49Hero h1.earthHeroTitle{font-size:clamp(40px,11vw,54px);line-height:1.04}
+  #home .v49Hero .heroActions{grid-template-columns:1fr}
+  #home .cleanStart{padding-top:48px}
+  #home .cleanStart .sectionIntro h2{font-size:clamp(38px,10vw,52px)}
+  #home .confidenceStrip{margin-top:38px}
+}
