@@ -234,6 +234,24 @@ function startTranslationObserver(){
   });
   TUT_TRANSLATION_OBSERVER.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['placeholder','title']});
 }
+const HOME_HERO_COPY={
+ en:{line1:'The World Has More to Move.',line2:'We Make It Happen.',intro1:'Drivers, trucks, trailers, loads and warehouse space —',intro2:'one marketplace built for all of logistics.',msg1:'Find what you need. Offer what you have.',msg2:'Connect. Agree. Move.'},
+ de:{line1:'Die Welt hat mehr zu bewegen.',line2:'Wir machen es möglich.',intro1:'Fahrer, Lkw, Anhänger, Ladungen und Lagerflächen —',intro2:'ein Marktplatz für die gesamte Logistik.',msg1:'Finden Sie, was Sie brauchen. Bieten Sie an, was Sie haben.',msg2:'Vernetzen. Vereinbaren. Bewegen.'},
+ fr:{line1:'Le monde a encore plus à déplacer.',line2:'Nous le rendons possible.',intro1:'Chauffeurs, camions, remorques, chargements et espaces d’entreposage —',intro2:'une place de marché conçue pour toute la logistique.',msg1:'Trouvez ce dont vous avez besoin. Proposez ce que vous avez.',msg2:'Connectez. Convenez. Déplacez.'},
+ es:{line1:'El mundo tiene más por mover.',line2:'Nosotros lo hacemos posible.',intro1:'Conductores, camiones, remolques, cargas y espacio de almacén —',intro2:'un mercado creado para toda la logística.',msg1:'Encuentra lo que necesitas. Ofrece lo que tienes.',msg2:'Conecta. Acuerda. Mueve.'},
+ pt:{line1:'O mundo tem mais para mover.',line2:'Nós tornamos isso possível.',intro1:'Motoristas, camiões, reboques, cargas e espaço de armazém —',intro2:'um mercado criado para toda a logística.',msg1:'Encontre o que precisa. Ofereça o que tem.',msg2:'Ligue. Acorde. Mova.'},
+ ar:{line1:'العالم لديه المزيد ليتحرك.',line2:'ونحن نجعل ذلك يحدث.',intro1:'السائقون والشاحنات والمقطورات والحمولات ومساحات التخزين —',intro2:'سوق واحد صُمم لكل الخدمات اللوجستية.',msg1:'اعثر على ما تحتاجه. واعرض ما لديك.',msg2:'تواصل. اتفق. تحرّك.'}
+};
+function localizeHomeHero(lang){
+ const c=HOME_HERO_COPY[lang]||HOME_HERO_COPY.en;
+ const h=document.querySelector('#home .heroHeadline');
+ const intro=document.querySelector('#home .heroIntro');
+ const msg=document.querySelector('#home .heroMessage');
+ if(h){h.innerHTML=`<span>${esc(c.line1)}</span><span>${esc(c.line2)}</span>`;h.setAttribute('dir',lang==='ar'?'rtl':'ltr');}
+ if(intro)intro.innerHTML=`${esc(c.intro1)}<br><strong>${esc(c.intro2)}</strong>`;
+ if(msg)msg.innerHTML=`${esc(c.msg1)}<br><strong>${esc(c.msg2)}</strong>`;
+}
+
 function setLanguage(lang){
   activeLang=lang;
   localStorage.setItem('tut_lang',lang);
@@ -247,6 +265,7 @@ function setLanguage(lang){
   // changing language must preserve login, typed values and the current verification step.
   translateNodeTree(document.body);
   applyStrictSiteLanguage();
+  localizeHomeHero(lang);
   document.querySelectorAll('option').forEach(o=>{
     const c=o.dataset.tutCanonical||canonicalEnglish(o.textContent);
     o.dataset.tutCanonical=c;
