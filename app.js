@@ -150,7 +150,7 @@ function translateNodeTree(root=document.body){
 }
 function refreshLanguage(){
   document.documentElement.lang=activeLang;
-  document.documentElement.dir='ltr';
+  document.documentElement.dir=activeLang==='ar'?'rtl':'ltr';
   translateNodeTree(document.body);
   const sel=document.getElementById('lang'); if(sel) sel.value=activeLang;
 }
@@ -182,7 +182,7 @@ function manualLanguageOverride(lang){
   const next=supported.includes(lang)?lang:'en';
   localStorage.setItem('tut_lang',next);
   document.documentElement.lang=next;
-  document.documentElement.dir='ltr';
+  document.documentElement.dir=next==='ar'?'rtl':'ltr';
   // Reload from the canonical English source so no text from the previous
   // language survives in the DOM. init() immediately applies the selected
   // language to the complete static + dynamic interface.
@@ -239,8 +239,8 @@ function setLanguage(lang){
   localStorage.setItem('tut_lang',lang);
   TRANSLATION_REVERSE=buildTranslationReverse();
   document.documentElement.lang=lang;
-  document.documentElement.dir='ltr';
-  document.body?.setAttribute('dir','ltr');
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+  document.body?.setAttribute('dir',lang==='ar'?'rtl':'ltr');
   const sel=document.getElementById('lang');if(sel)sel.value=lang;
   startTranslationObserver();
   // Translate the existing DOM in place. Do not rebuild forms or authentication UI:
@@ -821,7 +821,7 @@ const V47_TRANSLATIONS={
  pt:{"Pickup / start address is required.":"A morada de recolha / início é obrigatória.","Delivery / end address is required.":"A morada de entrega / destino é obrigatória.","Verify your real details.":"Verifique os seus dados reais.","Enter the identity and licence information that the other party needs to trust before an agreement.":"Introduza os dados de identidade e licença necessários à outra parte antes do acordo.","YOUR DETAILS":"OS SEUS DADOS","Identity and qualification":"Identidade e qualificação","Full legal name":"Nome legal completo","Government ID number":"Número de identificação oficial","Government ID document":"Documento de identificação","Selfie / profile photo":"Selfie / foto de perfil","Driving licence":"Carta de condução","Licence number":"Número da carta","Licence expiry":"Validade da carta","Driving licence document":"Documento da carta","Vehicle / business details":"Dados do veículo / negócio","Business details":"Dados do negócio","Business / registration number":"Número da empresa / registo","Truck / trailer / equipment owner":"Proprietário de camião / reboque / equipamento","Pickup and delivery":"Recolha e entrega","Every listing must include where it starts and where it ends.":"Cada anúncio deve incluir o ponto de início e de fim.","Pickup / start address":"Morada de recolha / início","Delivery / end address":"Morada de entrega / destino","Required pickup / start address":"Morada de recolha necessária","Required delivery / end address":"Morada de entrega necessária","Storage / pickup address":"Morada de armazenamento / recolha","Delivery / release address":"Morada de entrega / saída","Required pickup / storage address":"Morada de armazenamento necessária","Required delivery / release address":"Morada de entrega necessária","Street, building number, city, postcode":"Rua, número, cidade, código postal","Choose at least one licence class.":"Escolha pelo menos uma categoria de carta.","Licence class":"Categoria da carta","Could not read file.":"Não foi possível ler o ficheiro."},
  en:{}
 };for(const [lg,map] of Object.entries(V47_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lg]||(UI_TRANSLATIONS[lg]={}),map);
-// v82: initialize only after every translation pack is registered.
+init();
 setInterval(()=>{if(me&&!document.hidden)loadNotifications(false)},5000);
 setInterval(()=>{try{if(me&&!document.hidden&&!$('offers')?.classList.contains('hidden')){loadBookings();loadOffers()}}catch{}},5000);
 
@@ -973,7 +973,7 @@ function strictTranslateElement(el){
 function applyStrictSiteLanguage(){
   const root=document.documentElement;
   root.lang=activeLang;
-  root.dir='ltr';
+  root.dir=activeLang==='ar'?'rtl':'ltr';
   document.body?.setAttribute('dir',root.dir);
 
   document.querySelectorAll('[data-ui-key],[data-i18n]').forEach(strictTranslateElement);
@@ -1356,7 +1356,7 @@ function manualLanguageOverride(lang){
   const next=supported.includes(lang)?lang:'en';
   localStorage.setItem('tut_lang',next);
   document.documentElement.lang=next;
-  document.documentElement.dir='ltr';
+  document.documentElement.dir=next==='ar'?'rtl':'ltr';
   // Reload from the canonical English source so no text from the previous
   // language survives in the DOM. init() immediately applies the selected
   // language to the complete static + dynamic interface.
@@ -1411,16 +1411,3 @@ Object.assign(UI_TRANSLATIONS.de,{"Terms of Service":"Nutzungsbedingungen","Priv
 Object.assign(UI_TRANSLATIONS.fr,{"Terms of Service":"Conditions d’utilisation","Privacy Policy":"Politique de confidentialité","Cancellation & Refund":"Annulation et remboursement","Disputes & Claims":"Litiges et réclamations","I agree to the":"J’accepte les","and":"et","Registered":"Inscrit","Delete account":"Supprimer le compte"});
 Object.assign(UI_TRANSLATIONS.es,{"Terms of Service":"Términos de servicio","Privacy Policy":"Política de privacidad","Cancellation & Refund":"Cancelación y reembolso","Disputes & Claims":"Disputas y reclamaciones","I agree to the":"Acepto los","and":"y","Registered":"Registrado","Delete account":"Eliminar cuenta"});
 Object.assign(UI_TRANSLATIONS.pt,{"Terms of Service":"Termos de Serviço","Privacy Policy":"Política de Privacidade","Cancellation & Refund":"Cancelamento e reembolso","Disputes & Claims":"Disputas e reclamações","I agree to the":"Aceito os","and":"e","Registered":"Registado","Delete account":"Eliminar conta"});
-
-/* v82 — language fix only. Original v78 HTML/CSS/assets are preserved exactly. */
-const V82_HERO_TRANSLATIONS={
- ar:{"The World Has More to":"العالم لديه المزيد ليتحرك","Move.":"","We Make It":"ونحن نجعل ذلك","Happen.":"يحدث."},
- de:{"The World Has More to":"Die Welt hat mehr zu","Move.":"bewegen.","We Make It":"Wir machen es","Happen.":"möglich."},
- fr:{"The World Has More to":"Le monde a encore plus à","Move.":"déplacer.","We Make It":"Nous le rendons","Happen.":"possible."},
- es:{"The World Has More to":"El mundo tiene más por","Move.":"mover.","We Make It":"Nosotros lo hacemos","Happen.":"posible."},
- pt:{"The World Has More to":"O mundo tem mais para","Move.":"mover.","We Make It":"Nós tornamos isso","Happen.":"possível."}
-};
-for(const [lng,map] of Object.entries(V82_HERO_TRANSLATIONS)) Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
-TRANSLATION_REVERSE=null;
-init();
-
