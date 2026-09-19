@@ -641,3 +641,9 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   .mobileMarketMenu{left:auto;right:0;top:calc(100% + 10px);width:min(320px,88vw);z-index:100}
 }
 @media(min-width:981px){.mobileMarketWrap{display:none!important}}
+
+/* v67: single Market control on mobile; dropdown escapes the horizontal nav scroller */
+.mobileMarketWrap{display:none!important}
+@media(max-width:980px){
+  #marketMenu{max-height:min(360px,55vh);overflow-y:auto;box-shadow:0 22px 60px rgba(0,0,0,.72)}
+}

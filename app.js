@@ -1310,7 +1310,23 @@ TRANSLATION_REVERSE=null;
 
 function toggleMarketMenu(ev){
   ev?.stopPropagation();
-  const m=$('marketMenu'); if(!m)return; m.classList.toggle('hidden');
+  const m=$('marketMenu'); if(!m)return;
+  const opening=m.classList.contains('hidden');
+  if(opening && window.innerWidth<=980){
+    const btn=ev?.currentTarget;
+    const r=btn?.getBoundingClientRect();
+    if(r){
+      m.style.position='fixed';
+      m.style.top=(r.bottom+8)+'px';
+      m.style.left=Math.max(12,Math.min(r.left,window.innerWidth-Math.min(320,window.innerWidth-24)-12))+'px';
+      m.style.right='auto';
+      m.style.width=Math.min(320,window.innerWidth-24)+'px';
+      m.style.zIndex='10000';
+    }
+  } else if(window.innerWidth>980){
+    m.style.position='';m.style.top='';m.style.left='';m.style.right='';m.style.width='';m.style.zIndex='';
+  }
+  m.classList.toggle('hidden');
 }
 function toggleMobileMarketMenu(ev){
   ev?.stopPropagation();

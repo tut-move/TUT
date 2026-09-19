@@ -11,8 +11,9 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=65-about-code">
+  <link rel="stylesheet" href="/style.css?v=67-single-mobile-market">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
+
 </head>
 <body>
 <div class="shell">
@@ -37,16 +38,6 @@
       <button onclick="go('about')" data-ui-key="About">About</button>
       <button id="adminNav" class="hidden" onclick="go('adminPane')" data-ui-key="Owner">Owner</button>
     </nav>
-    <div class="mobileMarketWrap navMenu">
-      <button type="button" class="mobileMarketBtn" onclick="toggleMobileMarketMenu(event)" data-ui-key="Market" aria-label="Open market menu" aria-expanded="false">Market <span aria-hidden="true">⌄</span></button>
-      <div id="mobileMarketMenu" class="marketMenu mobileMarketMenu hidden">
-        <button type="button" onclick="openMarketCategory('driver')"><b data-ui-key="Drivers">Drivers</b></button>
-        <button type="button" onclick="openMarketCategory('truck')"><b data-ui-key="Trucks & trailers">Trucks & trailers</b></button>
-        <button type="button" onclick="openMarketCategory('load')"><b data-ui-key="Loads & transport">Loads & transport</b></button>
-        <button type="button" onclick="openMarketCategory('warehouse')"><b data-ui-key="Warehouses">Warehouses</b></button>
-        <button type="button" class="marketMenuAll" onclick="openMarketCategory('')" data-ui-key="View all market">View all market</button>
-      </div>
-    </div>
     <div class="tools">
       <select id="headerCountry" onchange="manualCountryOverride(this.value)" aria-label="Country / market"></select>
       <select id="headerCurrency" onchange="manualCurrencyOverride(this.value)" aria-label="Currency"></select>
@@ -357,6 +348,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=65-about-code"></script>
+<script defer src="/app.js?v=67-single-mobile-market"></script>
 </body>
 </html>
