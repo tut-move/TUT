@@ -790,3 +790,22 @@ footer a{color:var(--gold2)}
   #home .cleanStart .sectionIntro h2{font-size:clamp(38px,10vw,52px)}
   #home .confidenceStrip{margin-top:38px}
 }
+
+/* v72 corrective patch: clean Earth asset, no duplicate baked text, no horizontal overflow. */
+html,body{max-width:100%;overflow-x:hidden}
+#home .v49Hero{
+  width:auto;
+  margin-left:calc(50% - 50vw);
+  margin-right:calc(50% - 50vw);
+  background-image:url('/earth-hero.webp?v=72');
+  background-repeat:no-repeat;
+  background-position:right center;
+  background-size:auto 100%;
+}
+@media(max-width:980px){
+  #home .v49Hero{width:auto;background-position:76% center}
+}
+@media(max-width:600px){
+  #home .v49Hero{width:auto;background-position:70% top;background-size:auto 52%;padding-top:300px}
+  #home .v49Hero::before{background:linear-gradient(180deg,rgba(2,7,10,.18) 0%,rgba(2,7,10,.70) 27%,#050707 48%,#050707 100%)}
+}
