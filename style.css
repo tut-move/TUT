@@ -732,3 +732,33 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
     filter:brightness(1.14) contrast(1.12) saturate(1.16);
   }
 }
+
+/* v76 — locked final hero: left copy + brighter cyan Earth. Home hero only. */
+@media (min-width:981px){
+  #home .v49Hero{
+    grid-template-columns:minmax(0,600px) minmax(0,1fr);
+    column-gap:18px;
+    min-height:650px;
+    padding:58px 0 44px;
+  }
+  #home .v49Hero .heroCopy{
+    width:600px;
+    max-width:600px;
+    transform:translateX(-72px);
+  }
+  #home .v49Hero .heroHeadline{
+    width:760px;
+    max-width:760px;
+    font-size:clamp(40px,3.15vw,49px);
+    line-height:1.06;
+  }
+  #home .v49Hero .heroHeadline span{display:block;white-space:nowrap}
+  #home .v49Hero .earthStage{
+    min-height:610px;
+    margin-left:0;
+  }
+  #home .v49Hero .earthStage img{
+    object-position:43% center;
+    filter:brightness(1.13) contrast(1.08) saturate(1.16);
+  }
+}
