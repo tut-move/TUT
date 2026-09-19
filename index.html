@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=67-home-match">
+  <link rel="stylesheet" href="/style.css?v=68-home-reference">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -54,29 +54,29 @@
   </div>
 
   <main>
-    <section id="home" class="pane homeReference">
-      <div class="hero resourceHero v67Hero">
+    <section id="home" class="pane tutHomeReference">
+      <div class="hero resourceHero v49Hero tutHero">
         <div class="heroCopy">
           <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
-          <h1><span data-ui-key="Find what you need.">Find what you need.</span><br><span class="goldText" data-ui-key="Put what you have to work.">Put what you have to work.</span></h1>
+          <h1 data-ui-key="Find what you need. Put what you have to work."><span>Find what you need.</span><span class="tutGoldLine">Put what you have to work.</span></h1>
           <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.">Drivers, trucks, trailers, loads and warehouse space —<br>connected in one marketplace.</p>
           <div class="heroActions">
             <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})" data-ui-key="Start now">Start now <span aria-hidden="true">→</span></button>
             <button class="outlineBtn" onclick="openMarketCategory('')" data-ui-key="Browse market">Browse market</button>
           </div>
         </div>
-        <div class="heroVisual v67Earth" aria-hidden="true"></div>
+        <div class="heroVisual tutEarth" aria-hidden="true"><img src="/earth-hero.png" alt=""></div>
       </div>
 
-      <section class="startChoice v67Choice" id="startChoice">
-        <div class="choiceIntent">
+      <section class="startChoice cleanStart tutChooser" id="startChoice">
+        <div class="tutIntentBlock">
           <span class="eyebrow">I WANT TO</span>
           <div class="homeSideTabs" role="tablist" aria-label="Marketplace side">
             <button id="homeNeedTab" type="button" class="homeSideTab active" aria-selected="true" onclick="selectHomeSide('need')"><strong>Find capacity</strong></button>
             <button id="homeOfferTab" type="button" class="homeSideTab" aria-selected="false" onclick="selectHomeSide('have')"><strong>Offer capacity</strong></button>
           </div>
         </div>
-        <div class="choiceDivider" aria-hidden="true"></div>
+        <div class="tutChooserDivider"></div>
         <div class="homeResourcePanel">
           <div class="homeResourceHeader"><span id="homeResourceKicker" class="eyebrow" data-ui-key="CHOOSE A RESOURCE">CHOOSE A RESOURCE</span></div>
           <div class="homeResourceGrid">
@@ -87,11 +87,10 @@
           </div>
         </div>
       </section>
-
-      <section class="v67Benefits" aria-label="Marketplace benefits">
-        <article><span class="benefitIcon">◎</span><div><b>Global marketplace</b><small>Real people. Real opportunities.</small></div></article>
-        <article><span class="benefitIcon">⌘</span><div><b>Multiple countries</b><small>Built for a connected world.</small></div></article>
-        <article><span class="benefitIcon">◇</span><div><b>Trusted by professionals</b><small>Verify. Trade. Move forward.</small></div></article>
+      <section class="confidenceStrip tutBenefits" aria-label="TUT Move marketplace benefits">
+        <article><div><b>Global marketplace</b><small>Real people. Real opportunities.</small></div></article>
+        <article><div><b>Multiple countries</b><small>Built for a connected world.</small></div></article>
+        <article><div><b>Trusted by professionals</b><small>Verify. Trade. Move forward.</small></div></article>
       </section>
     </section>
     <section id="about" class="pane hidden aboutReference">

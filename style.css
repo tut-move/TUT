@@ -633,40 +633,52 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 @media(max-width:800px){.aboutReference{padding-top:28px!important}.aboutReference .aboutGrid{grid-template-columns:1fr}.founderReference{grid-template-columns:1fr;padding-top:28px}.founderIdentity img{height:175px}.founderStory{padding:0}.founderStory h2{font-size:22px}}
 html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right:3px solid #d7af45;padding-left:0;padding-right:16px}
 
-/* v67 — homepage visual match only. Existing marketplace logic is unchanged. */
-#home.homeReference{padding:0 0 28px;max-width:none}
-#home.homeReference .v67Hero{position:relative;min-height:410px;grid-template-columns:1.03fr .97fr;gap:0;align-items:center;padding:48px 16px 22px;overflow:hidden}
-#home.homeReference .v67Hero .heroCopy{position:relative;z-index:2;padding-left:0}
-#home.homeReference .v67Hero .eyebrow{font-size:12px;font-weight:800;letter-spacing:.24em}
-#home.homeReference .v67Hero h1{font-size:clamp(42px,4.4vw,64px);line-height:1.02;letter-spacing:-.045em;margin:17px 0 13px;max-width:760px}
-#home.homeReference .v67Hero h1 .goldText{color:#e4b94f}
-#home.homeReference .v67Hero p{font-size:18px;line-height:1.38;color:#c4c2bd;margin:0;max-width:650px}
-#home.homeReference .heroActions{margin-top:18px;gap:14px}
-#home.homeReference .heroActions button{height:54px;min-width:188px;border-radius:10px;font-size:15px}
-#home.homeReference .heroActions .goldBtn{display:flex;align-items:center;justify-content:center;gap:24px;background:linear-gradient(135deg,#f4d477,#d9a93e);box-shadow:0 0 26px rgba(222,174,63,.12)}
-#home.homeReference .heroActions .outlineBtn{border-color:#9b7730;background:rgba(5,5,5,.4)}
-#home.homeReference .v67Earth{align-self:stretch;min-height:390px;background:url('/earth-hero.png') center right/cover no-repeat;filter:saturate(.9) contrast(1.05);margin-right:-5vw;position:relative}
-#home.homeReference .v67Earth:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#070707 0%,rgba(7,7,7,.6) 12%,transparent 42%)}
-#home.homeReference .v67Choice{position:relative;z-index:3;margin:-8px 0 0;border:1px solid #514528;border-radius:17px;background:linear-gradient(100deg,rgba(20,19,15,.96),rgba(9,10,10,.97));padding:22px 26px;display:grid;grid-template-columns:minmax(360px,.9fr) 1px minmax(620px,1.5fr);gap:28px;align-items:center}
-#home.homeReference .choiceIntent>.eyebrow,#home.homeReference .homeResourceHeader .eyebrow{display:block;margin-bottom:14px;font-weight:800}
-#home.homeReference .choiceDivider{height:94px;background:#8c7133;opacity:.75}
-#home.homeReference .homeSideTabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:none;margin:0}
-#home.homeReference .homeSideTab{min-height:58px;border-radius:10px;padding:10px 16px;background:#0c0d0d;border:1px solid #292a29}
-#home.homeReference .homeSideTab strong{font-size:15px}
-#home.homeReference .homeSideTab.active{color:#111;border-color:#d6aa43;background:linear-gradient(135deg,#f4d477,#d9a93e);box-shadow:none}
-#home.homeReference .homeResourcePanel{max-width:none;margin:0;border:0;border-radius:0;background:transparent;padding:0}
-#home.homeReference .homeResourceHeader{padding:0;border:0;text-align:left}
-#home.homeReference .homeResourceGrid{grid-template-columns:repeat(4,minmax(120px,1fr));gap:10px;padding:0}
-#home.homeReference .homeResourceGrid button{min-height:58px;border-radius:10px;background:#0c0d0d;border:1px solid #292a29;padding:10px 12px}
-#home.homeReference .homeResourceGrid b{font-size:14px;overflow:visible;text-overflow:clip}
-#home.homeReference .v67Benefits{display:grid;grid-template-columns:repeat(3,1fr);margin:24px 0 0;padding:0 36px}
-#home.homeReference .v67Benefits article{display:flex;align-items:center;justify-content:center;gap:18px;min-height:82px;padding:8px 34px;border-right:1px solid #554829}
-#home.homeReference .v67Benefits article:last-child{border-right:0}
-#home.homeReference .benefitIcon{font-size:29px;color:#e2b84e;line-height:1}
-#home.homeReference .v67Benefits b,#home.homeReference .v67Benefits small{display:block}
-#home.homeReference .v67Benefits b{font-size:15px;margin-bottom:6px}
-#home.homeReference .v67Benefits small{font-size:12px;color:#9d9a93}
-@media(min-width:1200px){main{width:min(1360px,88vw)}}
-@media(max-width:1100px){#home.homeReference .v67Choice{grid-template-columns:1fr;gap:18px}.choiceDivider{display:none!important}#home.homeReference .homeResourceGrid{grid-template-columns:repeat(4,1fr)}}
-@media(max-width:860px){#home.homeReference .v67Hero{grid-template-columns:1fr;min-height:auto;padding-top:36px}#home.homeReference .v67Earth{order:2;min-height:280px;margin:10px -4vw 0;background-position:center}#home.homeReference .v67Earth:after{background:linear-gradient(180deg,#070707 0%,transparent 35%)}#home.homeReference .v67Choice{margin-top:0;padding:18px}#home.homeReference .v67Benefits{grid-template-columns:1fr;padding:10px 0}#home.homeReference .v67Benefits article{border-right:0;border-bottom:1px solid #332c20;justify-content:flex-start}#home.homeReference .v67Benefits article:last-child{border-bottom:0}}
-@media(max-width:620px){#home.homeReference .v67Hero h1{font-size:clamp(38px,11vw,52px)}#home.homeReference .v67Hero p br{display:none}#home.homeReference .heroActions{display:grid;grid-template-columns:1fr 1fr}#home.homeReference .heroActions button{min-width:0;width:100%}#home.homeReference .homeResourceGrid{grid-template-columns:1fr 1fr}#home.homeReference .homeSideTabs{grid-template-columns:1fr 1fr}}
+/* v68 — home reference implementation. Home-only layout; marketplace behavior unchanged. */
+@media (min-width:981px){
+  main{width:min(1350px,88vw)}
+  .tutHomeReference{padding:0 0 26px}
+  .tutHomeReference .tutHero{position:relative;min-height:410px;display:block;padding:58px 0 32px;overflow:visible}
+  .tutHomeReference .heroCopy{position:relative;z-index:3;width:52%;max-width:650px}
+  .tutHomeReference .heroCopy h1{font-size:clamp(44px,4.05vw,62px);line-height:.99;letter-spacing:-.045em;margin:17px 0 14px;max-width:none}
+  .tutHomeReference .heroCopy h1 span{display:block;white-space:nowrap}
+  .tutHomeReference .heroCopy h1 .tutGoldLine{color:var(--gold2)}
+  .tutHomeReference .heroCopy>p{font-size:19px;line-height:1.38;color:#bbb8b1;margin:0;max-width:600px}
+  .tutHomeReference .heroActions{margin-top:20px;gap:16px}
+  .tutHomeReference .heroActions button{min-width:200px;min-height:62px;font-size:16px;border-radius:10px}
+  .tutHomeReference .heroActions .goldBtn{display:flex;align-items:center;justify-content:center;gap:24px;background:linear-gradient(135deg,#f4d77c,#e7ad35)}
+  .tutHomeReference .heroActions .outlineBtn{border-color:#a17b2c}
+  .tutHomeReference .tutEarth{position:absolute;z-index:1;right:-7vw;top:-2px;width:66vw;height:430px;padding:0;border:0;border-radius:0;background:none;overflow:hidden;text-align:right;pointer-events:none}
+  .tutHomeReference .tutEarth:before{display:none}
+  .tutHomeReference .tutEarth img{width:100%;height:100%;max-width:none;object-fit:contain;object-position:right center;filter:none}
+  .tutHomeReference .tutChooser{position:relative;z-index:4;display:grid;grid-template-columns:39% 1px 1fr;gap:28px;align-items:center;margin:0;padding:25px 28px 26px;border:1px solid #3b3425;border-radius:17px;background:linear-gradient(100deg,rgba(25,22,16,.96),rgba(8,10,10,.96));box-shadow:0 18px 55px rgba(0,0,0,.22)}
+  .tutHomeReference .tutIntentBlock>.eyebrow,.tutHomeReference .homeResourceHeader .eyebrow{display:block;margin-bottom:15px}
+  .tutHomeReference .homeSideTabs{max-width:none;margin:0;gap:12px}
+  .tutHomeReference .homeSideTab{min-height:66px;border-radius:10px}
+  .tutHomeReference .homeSideTab.active{color:#111;border-color:#e7bd55;background:linear-gradient(135deg,#f5d77c,#e7ad35);box-shadow:none}
+  .tutHomeReference .homeSideTab.active strong{color:#111}
+  .tutHomeReference .tutChooserDivider{width:1px;height:98px;background:#8b7137}
+  .tutHomeReference .homeResourcePanel{max-width:none;margin:0;padding:0;border:0;border-radius:0;background:transparent}
+  .tutHomeReference .homeResourceHeader{padding:0;border:0}
+  .tutHomeReference .homeResourceGrid{padding:0;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+  .tutHomeReference .homeResourceGrid button{min-height:66px;border-radius:10px;background:rgba(13,15,15,.82)}
+  .tutHomeReference .tutBenefits{grid-template-columns:repeat(3,1fr);margin:25px 0 8px;border:0}
+  .tutHomeReference .tutBenefits article{min-height:68px;padding:13px 9%;border:0;border-right:1px solid #4a402b;align-items:center}
+  .tutHomeReference .tutBenefits article:last-child{border-right:0}
+  .tutHomeReference .tutBenefits b{font-size:17px}.tutHomeReference .tutBenefits small{font-size:14px;color:#9c9992}
+}
+@media (max-width:980px){
+  .tutHomeReference .tutHero{display:grid;grid-template-columns:1fr;padding-top:28px;gap:10px}
+  .tutHomeReference .tutEarth{order:2;max-width:720px;width:100%;margin:0 auto;padding:0;border:0;background:none}
+  .tutHomeReference .tutEarth:before{display:none}.tutHomeReference .tutEarth img{max-width:100%}
+  .tutHomeReference .heroCopy h1 span{display:block}.tutHomeReference .heroCopy h1 .tutGoldLine{color:var(--gold2)}
+  .tutHomeReference .tutChooser{display:grid;grid-template-columns:1fr;padding:22px;border:1px solid #3b3425;border-radius:17px;background:#0d0e0e}
+  .tutHomeReference .tutChooserDivider{display:none}.tutHomeReference .homeSideTabs{max-width:none;margin:14px 0 20px}.tutHomeReference .homeResourcePanel{max-width:none;margin:0}
+  .tutHomeReference .tutBenefits{grid-template-columns:1fr 1fr 1fr}
+}
+@media (max-width:680px){
+  .tutHomeReference .heroCopy h1{font-size:clamp(38px,11vw,52px)}
+  .tutHomeReference .heroCopy h1 span{white-space:normal}
+  .tutHomeReference .heroCopy>p br{display:none}
+  .tutHomeReference .heroActions button{flex:1 1 150px}
+  .tutHomeReference .tutBenefits{grid-template-columns:1fr}.tutHomeReference .tutBenefits article{border-right:0;border-bottom:1px solid #282620}
+}
