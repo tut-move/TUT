@@ -37,7 +37,16 @@
       <button onclick="go('about')" data-ui-key="About">About</button>
       <button id="adminNav" class="hidden" onclick="go('adminPane')" data-ui-key="Owner">Owner</button>
     </nav>
-    <button type="button" class="mobileMarketBtn" onclick="toggleMarketMenu(event)" data-ui-key="Market" aria-label="Open market menu" aria-controls="marketMenu">Market <span aria-hidden="true">⌄</span></button>
+    <div class="mobileMarketWrap navMenu">
+      <button type="button" class="mobileMarketBtn" onclick="toggleMobileMarketMenu(event)" data-ui-key="Market" aria-label="Open market menu" aria-expanded="false">Market <span aria-hidden="true">⌄</span></button>
+      <div id="mobileMarketMenu" class="marketMenu mobileMarketMenu hidden">
+        <button type="button" onclick="openMarketCategory('driver')"><b data-ui-key="Drivers">Drivers</b></button>
+        <button type="button" onclick="openMarketCategory('truck')"><b data-ui-key="Trucks & trailers">Trucks & trailers</b></button>
+        <button type="button" onclick="openMarketCategory('load')"><b data-ui-key="Loads & transport">Loads & transport</b></button>
+        <button type="button" onclick="openMarketCategory('warehouse')"><b data-ui-key="Warehouses">Warehouses</b></button>
+        <button type="button" class="marketMenuAll" onclick="openMarketCategory('')" data-ui-key="View all market">View all market</button>
+      </div>
+    </div>
     <div class="tools">
       <select id="headerCountry" onchange="manualCountryOverride(this.value)" aria-label="Country / market"></select>
       <select id="headerCurrency" onchange="manualCurrencyOverride(this.value)" aria-label="Currency"></select>

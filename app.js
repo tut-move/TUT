@@ -1312,13 +1312,28 @@ function toggleMarketMenu(ev){
   ev?.stopPropagation();
   const m=$('marketMenu'); if(!m)return; m.classList.toggle('hidden');
 }
-function openMarketCategory(resource=''){
+function toggleMobileMarketMenu(ev){
+  ev?.stopPropagation();
+  const m=$('mobileMarketMenu'); if(!m)return;
+  const opening=m.classList.contains('hidden');
+  m.classList.toggle('hidden');
+  const btn=ev?.currentTarget;
+  if(btn)btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+}
+function closeMarketMenus(){
   $('marketMenu')?.classList.add('hidden');
+  $('mobileMarketMenu')?.classList.add('hidden');
+  document.querySelector('.mobileMarketBtn')?.setAttribute('aria-expanded','false');
+}
+function openMarketCategory(resource=''){
+  closeMarketMenus();
   go('market');
   const f=$('filterResource'); if(f)f.value=resource;
   loadMarket();
 }
-document.addEventListener('click',e=>{const m=$('marketMenu');if(m&&!m.classList.contains('hidden')&&!e.target.closest('.navMenu'))m.classList.add('hidden')});
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.navMenu'))closeMarketMenus();
+});
 
 function manualLanguageOverride(lang){
   const durableToken=localStorage.getItem('tut_session')||'';
