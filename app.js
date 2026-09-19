@@ -150,7 +150,7 @@ function translateNodeTree(root=document.body){
 }
 function refreshLanguage(){
   document.documentElement.lang=activeLang;
-  document.documentElement.dir=activeLang==='ar'?'rtl':'ltr';
+  document.documentElement.dir='ltr';
   translateNodeTree(document.body);
   const sel=document.getElementById('lang'); if(sel) sel.value=activeLang;
 }
@@ -182,7 +182,7 @@ function manualLanguageOverride(lang){
   const next=supported.includes(lang)?lang:'en';
   localStorage.setItem('tut_lang',next);
   document.documentElement.lang=next;
-  document.documentElement.dir=next==='ar'?'rtl':'ltr';
+  document.documentElement.dir='ltr';
   // Reload from the canonical English source so no text from the previous
   // language survives in the DOM. init() immediately applies the selected
   // language to the complete static + dynamic interface.
@@ -242,6 +242,19 @@ const HOME_HERO_COPY={
  pt:{line1:'O mundo tem mais para mover.',line2:'Nós tornamos isso possível.',intro1:'Motoristas, camiões, reboques, cargas e espaço de armazém —',intro2:'um mercado criado para toda a logística.',msg1:'Encontre o que precisa. Ofereça o que tem.',msg2:'Ligue. Acorde. Mova.'},
  ar:{line1:'العالم لديه المزيد ليتحرك.',line2:'ونحن نجعل ذلك يحدث.',intro1:'السائقون والشاحنات والمقطورات والحمولات ومساحات التخزين —',intro2:'سوق واحد صُمم لكل الخدمات اللوجستية.',msg1:'اعثر على ما تحتاجه. واعرض ما لديك.',msg2:'تواصل. اتفق. تحرّك.'}
 };
+// v81: register hero copy with the main translation engine. This prevents the
+// MutationObserver from treating freshly localized hero text as unknown text
+// and replacing it with canonical English.
+for(const [lng,c] of Object.entries(HOME_HERO_COPY)){
+  if(lng==='en')continue;
+  const map=UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={});
+  map[HOME_HERO_COPY.en.line1]=c.line1;
+  map[HOME_HERO_COPY.en.line2]=c.line2;
+  map[HOME_HERO_COPY.en.intro1]=c.intro1;
+  map[HOME_HERO_COPY.en.intro2]=c.intro2;
+  map[HOME_HERO_COPY.en.msg1]=c.msg1;
+  map[HOME_HERO_COPY.en.msg2]=c.msg2;
+}
 function localizeHomeHero(lang){
  const c=HOME_HERO_COPY[lang]||HOME_HERO_COPY.en;
  const h=document.querySelector('#home .heroHeadline');
@@ -257,8 +270,8 @@ function setLanguage(lang){
   localStorage.setItem('tut_lang',lang);
   TRANSLATION_REVERSE=buildTranslationReverse();
   document.documentElement.lang=lang;
-  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
-  document.body?.setAttribute('dir',lang==='ar'?'rtl':'ltr');
+  document.documentElement.dir='ltr';
+  document.body?.setAttribute('dir','ltr');
   const sel=document.getElementById('lang');if(sel)sel.value=lang;
   startTranslationObserver();
   // Translate the existing DOM in place. Do not rebuild forms or authentication UI:
@@ -993,7 +1006,7 @@ function applyStrictSiteLanguage(){
   const root=document.documentElement;
   root.lang=activeLang;
   root.dir=activeLang==='ar'?'rtl':'ltr';
-  document.body?.setAttribute('dir',root.dir);
+  document.body?.setAttribute('dir','ltr');
 
   document.querySelectorAll('[data-ui-key],[data-i18n]').forEach(strictTranslateElement);
 
@@ -1375,7 +1388,7 @@ function manualLanguageOverride(lang){
   const next=supported.includes(lang)?lang:'en';
   localStorage.setItem('tut_lang',next);
   document.documentElement.lang=next;
-  document.documentElement.dir=next==='ar'?'rtl':'ltr';
+  document.documentElement.dir='ltr';
   // Reload from the canonical English source so no text from the previous
   // language survives in the DOM. init() immediately applies the selected
   // language to the complete static + dynamic interface.

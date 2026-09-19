@@ -875,3 +875,18 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   html[lang="ar"] #home .v49Hero .compactProof{direction:rtl;}
   html[lang="ar"] #home .v49Hero .compactProof>div{padding:14px 0 0 28px;margin-right:0;margin-left:28px;}
 }
+
+
+/* v81 — Arabic changes text direction only; it must never mirror/crop the site layout. */
+html[lang="ar"] body{direction:ltr;text-align:left}
+html[lang="ar"] #home .v49Hero::after{background:linear-gradient(90deg,#03182a 0%,rgba(3,24,42,.98) 23%,rgba(3,24,42,.72) 39%,rgba(3,24,42,.12) 55%,rgba(3,24,42,0) 72%)}
+html[lang="ar"] #home .v49Hero .earthStage{inset:0 0 0 28%}
+html[lang="ar"] #home .v49Hero .heroCopy{left:max(4.2vw,calc((100vw - 1280px)/2));right:auto;direction:rtl;text-align:right}
+html[lang="ar"] #home .v49Hero .heroHeadline,
+html[lang="ar"] #home .v49Hero .heroIntro,
+html[lang="ar"] #home .v49Hero .heroMessage{direction:rtl;text-align:right}
+html[lang="ar"] #home .v49Hero .heroActions,
+html[lang="ar"] #home .v49Hero .compactProof{direction:rtl}
+html[lang="ar"] .pane:not(#home),html[lang="ar"] footer{direction:rtl;text-align:right}
+html[lang="ar"] input,html[lang="ar"] textarea,html[lang="ar"] select{direction:rtl;text-align:right}
+@media(max-width:980px){html[lang="ar"] #home .v49Hero .heroCopy{left:auto;right:auto;transform:none;width:auto;max-width:none}}
