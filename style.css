@@ -722,3 +722,13 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   #home .v49Hero .earthStage{min-height:610px;}
   #home .v49Hero .earthStage img{object-position:40% center;filter:brightness(1.24) contrast(1.18) saturate(1.32);}
 }
+
+/* v75 — final hero alignment + brighter cyan Earth. Home hero only. */
+@media (min-width:981px){
+  #home .v49Hero .heroCopy{transform:translateX(-54px);}
+  #home .v49Hero .heroHeadline{width:720px;}
+  #home .v49Hero .earthStage img{
+    object-position:38% center;
+    filter:brightness(1.14) contrast(1.12) saturate(1.16);
+  }
+}
