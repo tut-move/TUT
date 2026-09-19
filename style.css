@@ -632,9 +632,3 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 .aboutReference .aboutVision{text-align:center;padding:16px 18px 8px;max-width:780px}.aboutReference .aboutVision .eyebrow{font-size:9px}.aboutReference .aboutVision h2{font-size:23px;margin:6px 0 8px}.aboutReference .aboutVision p{font-size:12px;line-height:1.45;margin-bottom:13px}.aboutReference .aboutVision .goldBtn{font-size:12px;padding:10px 24px}
 @media(max-width:800px){.aboutReference{padding-top:28px!important}.aboutReference .aboutGrid{grid-template-columns:1fr}.founderReference{grid-template-columns:1fr;padding-top:28px}.founderIdentity img{height:175px}.founderStory{padding:0}.founderStory h2{font-size:22px}}
 html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right:3px solid #d7af45;padding-left:0;padding-right:16px}
-
-/* recovery patch — keep account entry points visible in the header */
-#account{display:flex;align-items:center;gap:6px;flex:0 0 auto}
-.authHeaderLogin,.authHeaderJoin{white-space:nowrap}
-@media(max-width:900px){.tools{gap:5px}.tools select{max-width:118px}.authHeaderLogin{padding:8px 6px}.authHeaderJoin{padding:9px 10px}}
-@media(max-width:720px){.topbar{align-items:flex-start}.tools{flex-wrap:wrap;justify-content:flex-end}#account{width:100%;justify-content:flex-end}}

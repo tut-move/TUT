@@ -279,7 +279,7 @@ async function init(){startTranslationObserver();
 }
 function renderAccount(){
  if(me){$('account').innerHTML=`<button class="outlineBtn mini" onclick="go('${me.role==='owner'?'adminPane':'accountPane'}')">${esc(me.name)}</button><button class="linkBtn" onclick="logout()">${tr('Logout')}</button>`;$('adminNav').classList.toggle('hidden',me.role!=='owner');$('notificationBtn')?.classList.remove('hidden');setTimeout(()=>loadNotifications(false),0)}
- else{$('account').innerHTML=`<button class="linkBtn authHeaderLogin" onclick="go('accountPane');setTimeout(()=>showAuthMode('login'),0)">${tr('Login')}</button><button class="goldBtn mini authHeaderJoin" onclick="go('accountPane');setTimeout(()=>showAuthMode('create'),0)">${tr('Create account')}</button>`;$('adminNav').classList.add('hidden');$('notificationBtn')?.classList.add('hidden');$('notificationCount')?.classList.add('hidden')}
+ else{$('account').innerHTML=`<button class="goldBtn mini" onclick="go('accountPane')">${tr('Login / Join')}</button>`;$('adminNav').classList.add('hidden');$('notificationBtn')?.classList.add('hidden');$('notificationCount')?.classList.add('hidden')}
 }
 async function ownerStatus(){
  const j=await api('/api/owner/status');
