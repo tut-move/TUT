@@ -711,3 +711,14 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   #home .v49Hero .heroHeadline span{display:block;white-space:nowrap}
   #home .v49Hero .earthStage img{filter:brightness(1.12) contrast(1.12) saturate(1.18)}
 }
+
+
+/* v74 — final home hero headline + stronger full-height Earth. Hero only. */
+@media (min-width:981px){
+  #home .v49Hero{min-height:650px;padding:58px 0 44px;}
+  #home .v49Hero .heroCopy{width:760px;max-width:none;}
+  #home .v49Hero .heroHeadline{width:760px;max-width:none;font-size:clamp(40px,3.15vw,49px);line-height:1.06;letter-spacing:-.038em;}
+  #home .v49Hero .heroHeadline span{display:block;white-space:nowrap;}
+  #home .v49Hero .earthStage{min-height:610px;}
+  #home .v49Hero .earthStage img{object-position:40% center;filter:brightness(1.24) contrast(1.18) saturate(1.32);}
+}
