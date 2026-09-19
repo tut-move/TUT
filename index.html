@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=78-language-complete">
+  <link rel="stylesheet" href="/style.css?v=65-about-code">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 </head>
 <body>
@@ -58,8 +58,8 @@
       <div class="hero resourceHero v49Hero">
         <div class="heroCopy">
           <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
-          <h1 class="heroHeadline"><span>The World Has More to <em>Move.</em></span><span>We Make It <em>Happen.</em></span></h1>
-          <p class="heroIntro">Drivers, trucks, trailers, loads and warehouse space —<br><strong>one marketplace built for all of logistics.</strong></p><p class="heroMessage">Find what you need. Offer what you have.<br><strong>Connect. Agree. Move.</strong></p>
+          <h1 data-ui-key="Find what you need. Put what you have to work.">Find what you need. Put what you have to work.</h1>
+          <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.">Drivers, trucks, trailers, loads and warehouse space — connected in one marketplace.</p>
           <div class="heroActions">
             <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})" data-ui-key="Start now">Start now</button>
             <button class="outlineBtn" onclick="openMarketCategory('')" data-ui-key="Browse market">Browse market</button>
@@ -70,8 +70,8 @@
             <div><strong data-ui-key="AGREE">AGREE</strong><span data-ui-key="On your own terms">On your own terms</span></div>
           </div>
         </div>
-        <div class="heroVisual brandStage earthStage">
-          <img src="/earth-map.jpg" alt="Earth at night">
+        <div class="heroVisual brandStage">
+          <img src="/tut-emblem.png" alt="TUT Move emblem">
         </div>
       </div>
 
@@ -343,7 +343,9 @@
     </section>
   </main>
 
-  <footer class="siteFooter"><strong>TUT MOVE</strong><span>Turn Unused Into Transport</span><span class="legalLinks"><button onclick="go('termsPane')">Terms of Service</button><button onclick="go('privacyPane')">Privacy Policy</button><button onclick="go('refundPane')">Cancellation &amp; Refund</button><button onclick="go('disputesPane')">Disputes &amp; Claims</button></span><a href="mailto:info@tutmove.com">info@tutmove.com</a><span>© 2026 TUT Move</span></footer>
+  <footer><div><strong>TUT MOVE</strong><span>tutmove.com · Turn Unused Into Transport</span></div><p>© 2026 TUT Move. Turn Unused Into Transport.</p>
+    <span class="legalLinks"><button onclick="go('termsPane')">Terms of Service</button><button onclick="go('privacyPane')">Privacy Policy</button><button onclick="go('refundPane')">Cancellation & Refund</button><button onclick="go('disputesPane')">Disputes & Claims</button></span><span><a href="mailto:info@tutmove.com">info@tutmove.com</a></span>
+</footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script defer src="/app.js?v=65-about-code"></script>
