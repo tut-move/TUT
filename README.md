@@ -142,9 +142,3 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - About page recreated as HTML/CSS from the supplied visual reference.
 - Founder personal photo removed from About; brand emblem used instead.
 - Existing marketplace/backend flows preserved.
-
-## v75 home clean fix
-- Home Earth is rendered by one real `.homeEarthVisual` layer using `/earth-hero.webp`.
-- Older v69/v71/v72/v73 Earth pseudo/background rules are neutralized by the final v75 CSS block.
-- Hero text now has explicit `data-ui-key` attributes, removing whitespace-dependent translation failures.
-- Existing marketplace/auth/server behavior is otherwise unchanged.
