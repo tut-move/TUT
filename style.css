@@ -703,3 +703,11 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   #home .v49Hero .heroIntro,#home .v49Hero .heroMessage{font-size:15px}
   .siteFooter .legalLinks{flex-wrap:wrap;gap:10px}.siteFooter .legalLinks button+button::before{display:none}
 }
+
+/* v73 — hero headline: exactly two complete lines on desktop. Hero only. */
+@media (min-width:981px){
+  #home .v49Hero .heroCopy{width:720px;max-width:none}
+  #home .v49Hero .heroHeadline{width:720px;max-width:none;font-size:clamp(38px,3vw,46px);line-height:1.08;letter-spacing:-.035em}
+  #home .v49Hero .heroHeadline span{display:block;white-space:nowrap}
+  #home .v49Hero .earthStage img{filter:brightness(1.12) contrast(1.12) saturate(1.18)}
+}
