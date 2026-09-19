@@ -809,3 +809,54 @@ html,body{max-width:100%;overflow-x:hidden}
   #home .v49Hero{width:auto;background-position:70% top;background-size:auto 52%;padding-top:300px}
   #home .v49Hero::before{background:linear-gradient(180deg,rgba(2,7,10,.18) 0%,rgba(2,7,10,.70) 27%,#050707 48%,#050707 100%)}
 }
+
+/* v73: seamless Earth layer — image is blended into the hero, never a rectangular block. */
+#home .v49Hero{
+  position:relative;
+  isolation:isolate;
+  background:#050b11!important;
+  min-height:520px;
+  padding-top:68px;
+  padding-bottom:46px;
+}
+#home .v49Hero::after{
+  content:""!important;
+  position:absolute;
+  z-index:-1;
+  pointer-events:none;
+  top:0;
+  right:0;
+  bottom:0;
+  width:min(58vw,900px);
+  background:url('/earth-hero.webp?v=73') right center/auto 100% no-repeat;
+  -webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.10) 8%,#000 34%);
+  mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.10) 8%,#000 34%);
+}
+#home .v49Hero::before{
+  z-index:0;
+  background:linear-gradient(90deg,#050b11 0%,#050b11 36%,rgba(5,11,17,.88) 49%,rgba(5,11,17,.28) 68%,rgba(5,11,17,0) 84%)!important;
+}
+#home .v49Hero .heroCopy{z-index:2}
+#home .v49Hero + .cleanStart{margin-top:0}
+
+@media(max-width:980px){
+  #home .v49Hero{min-height:auto;padding:54px 4vw 44px!important}
+  #home .v49Hero::after{
+    width:70vw;
+    opacity:.88;
+    background-position:right center;
+    -webkit-mask-image:linear-gradient(to right,transparent 0%,#000 42%);
+    mask-image:linear-gradient(to right,transparent 0%,#000 42%);
+  }
+  #home .v49Hero::before{background:linear-gradient(90deg,#050b11 0%,rgba(5,11,17,.96) 48%,rgba(5,11,17,.45) 100%)!important}
+}
+@media(max-width:600px){
+  #home .v49Hero{padding:270px 4vw 42px!important}
+  #home .v49Hero::after{
+    top:0;left:0;right:0;bottom:auto;width:100%;height:300px;opacity:1;
+    background-position:center top;background-size:auto 100%;
+    -webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 100%);
+    mask-image:linear-gradient(to bottom,#000 0%,#000 55%,transparent 100%);
+  }
+  #home .v49Hero::before{background:linear-gradient(180deg,rgba(5,11,17,.05) 0%,rgba(5,11,17,.25) 34%,#050b11 58%,#050b11 100%)!important}
+}
