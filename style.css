@@ -645,42 +645,66 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 .singleLineFooter .footerDivider{width:1px;height:18px;background:#6d5b2b;flex:0 0 1px;}
 @media(max-width:980px){.singleLineFooter{flex-wrap:wrap;white-space:normal;justify-content:flex-start}.singleLineFooter .legalLinks{flex-wrap:wrap}.v49Hero .homeEarthStage{max-width:620px}.v49Hero .homeEarthStage img{max-width:none}}
 \n\n/* v67 — hero only: stronger copy + larger existing Earth image */\n.v49Hero{grid-template-columns:.88fr 1.12fr;gap:42px;}\n.v49Hero .heroNewHeadline{font-size:clamp(44px,5.25vw,72px);line-height:.96;max-width:650px;letter-spacing:-.045em;margin:18px 0 22px;}\n.v49Hero .heroNewHeadline span{display:block;}\n.v49Hero .heroNewCopy{font-size:18px;line-height:1.48;max-width:620px;color:#b7b2a7;}\n.v49Hero .heroNewCopy strong{color:#f2eee5;font-weight:750;}\n.v49Hero .homeEarthStage{margin-right:-7vw;border-color:transparent;background:transparent;border-radius:0;overflow:visible;}\n.v49Hero .homeEarthStage img{width:118%;max-width:none;aspect-ratio:auto;object-fit:contain;border-radius:0;filter:drop-shadow(0 24px 60px rgba(0,0,0,.72));}\n@media(max-width:980px){.v49Hero{grid-template-columns:1fr;gap:28px}.v49Hero .homeEarthStage{margin-right:0;max-width:760px;overflow:hidden;border-radius:24px}.v49Hero .homeEarthStage img{width:100%;}.v49Hero .heroNewHeadline{font-size:clamp(40px,9vw,62px)}}\n@media(max-width:720px){.v49Hero .heroNewHeadline{font-size:clamp(38px,11vw,52px)}.v49Hero .heroNewCopy{font-size:16px}.v49Hero .homeEarthStage img{max-width:none;height:auto}}\n
-/* v68 — exact approved hero visual: only headline sizing + borderless larger Earth */
-.v49Hero .heroNewHeadline{
-  font-size:clamp(34px,3.35vw,52px);
-  line-height:1.08;
-  max-width:620px;
-  letter-spacing:-.035em;
-  margin:16px 0 22px;
+/* v68 — HERO VISUAL ONLY. Keep all existing page structure and behavior unchanged. */
+@media (min-width:981px){
+  .v49Hero{
+    grid-template-columns:.82fr 1.18fr;
+    gap:28px;
+  }
+  .v49Hero .heroNewHeadline{
+    font-size:clamp(34px,3.35vw,52px);
+    line-height:1.06;
+    max-width:610px;
+    letter-spacing:-.035em;
+    margin:16px 0 22px;
+  }
+  .v49Hero .heroNewCopy{
+    font-size:17px;
+    line-height:1.5;
+    max-width:590px;
+  }
+  .v49Hero .homeEarthStage{
+    padding:0;
+    margin-right:-13vw;
+    margin-left:-2vw;
+    border:0;
+    outline:0;
+    box-shadow:none;
+    background:transparent;
+    border-radius:0;
+    overflow:visible;
+  }
+  .v49Hero .homeEarthStage:before{display:none!important;}
+  .v49Hero .homeEarthStage img{
+    display:block;
+    width:148%;
+    max-width:none;
+    height:auto;
+    aspect-ratio:auto;
+    object-fit:contain;
+    border:0;
+    outline:0;
+    border-radius:0;
+    box-shadow:none;
+    filter:none;
+    transform:translateX(-3%);
+  }
 }
-.v49Hero .homeEarthStage{
-  border:0 !important;
-  outline:0 !important;
-  box-shadow:none !important;
-  background:transparent !important;
-  border-radius:0 !important;
-  overflow:visible !important;
-  padding:0 !important;
-  margin-right:-10vw;
-}
-.v49Hero .homeEarthStage:before{display:none !important;}
-.v49Hero .homeEarthStage img{
-  width:138%;
-  max-width:none !important;
-  height:auto;
-  aspect-ratio:auto;
-  object-fit:contain;
-  border:0 !important;
-  border-radius:0 !important;
-  box-shadow:none !important;
-  filter:none;
-}
-@media(max-width:980px){
-  .v49Hero .homeEarthStage{margin-right:0;max-width:none;border-radius:0 !important;overflow:visible !important;}
-  .v49Hero .homeEarthStage img{width:112%;max-width:none !important;}
-  .v49Hero .heroNewHeadline{font-size:clamp(34px,7vw,48px)}
-}
-@media(max-width:720px){
-  .v49Hero .heroNewHeadline{font-size:clamp(32px,9vw,44px)}
-  .v49Hero .homeEarthStage img{width:108%;}
+@media (max-width:980px){
+  .v49Hero .homeEarthStage{
+    padding:0;
+    border:0;
+    outline:0;
+    box-shadow:none;
+    background:transparent;
+    border-radius:0;
+  }
+  .v49Hero .homeEarthStage:before{display:none!important;}
+  .v49Hero .homeEarthStage img{
+    border:0;
+    outline:0;
+    border-radius:0;
+    box-shadow:none;
+    filter:none;
+  }
 }
