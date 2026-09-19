@@ -858,3 +858,11 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   #home .v49Hero .compactProof strong{font-size:12px;}
   #home .v49Hero .compactProof span{font-size:12px;color:#d7dce1;}
 }
+
+/* v84 recovery: keep account access visible and restore dark hero treatment. */
+.topbar .tools{flex-shrink:0;white-space:nowrap}
+.topbar #account{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.topbar #account .goldBtn{display:inline-flex!important;visibility:visible!important;opacity:1!important;white-space:nowrap}
+.earthStage{background:#05080d!important}
+.earthStage img{filter:brightness(.52) saturate(.78) contrast(1.12) drop-shadow(0 22px 55px #000)!important}
+@media (max-width:1180px){.desktopNav{display:none}.topbar{gap:10px}.tools{margin-left:auto}}
