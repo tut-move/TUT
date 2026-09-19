@@ -37,7 +37,7 @@
       <button onclick="go('about')" data-ui-key="About">About</button>
       <button id="adminNav" class="hidden" onclick="go('adminPane')" data-ui-key="Owner">Owner</button>
     </nav>
-    <button type="button" class="mobileMarketBtn" onclick="openMarketCategory('')" data-ui-key="Market" aria-label="Open market">Market</button>
+    <button type="button" class="mobileMarketBtn" onclick="toggleMarketMenu(event)" data-ui-key="Market" aria-label="Open market menu" aria-controls="marketMenu">Market <span aria-hidden="true">⌄</span></button>
     <div class="tools">
       <select id="headerCountry" onchange="manualCountryOverride(this.value)" aria-label="Country / market"></select>
       <select id="headerCurrency" onchange="manualCurrencyOverride(this.value)" aria-label="Currency"></select>
