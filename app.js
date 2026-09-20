@@ -778,7 +778,7 @@ async function loadAdmin(){
  const roleCards=[['driver','Drivers'],['carrier','Carriers / transport companies'],['shipper','Shippers / cargo owners'],['warehouse','Warehouse owners'],['equipment','Truck / trailer / equipment owners']];
  window.__adminUsers=j.users||[];
  $('adminArea').innerHTML=`
- <h2 class="subhead">Marketplace overview</h2>
+ <details class="panel ownerSection" open><summary>Marketplace overview</summary><div class="ownerSectionBody">
  <div class="kpis ownerKpis">
   <div class="kpi"><span>Marketplace users</span><b>${s.users}</b><small>Owner account excluded</small></div>
   <div class="kpi"><span>Verified users</span><b>${s.verifiedUsers||0}</b></div>
@@ -788,12 +788,12 @@ async function loadAdmin(){
   <div class="kpi"><span>${tr('Bookings')}</span><b>${s.bookings}</b></div>
   <div class="kpi"><span>${tr('Platform revenue*')}</span><b>${j.settings.defaultCurrency} ${s.platformRevenue}</b><small>Reporting currency</small></div>
  </div>
- <p class="muted">${tr('*Calculated from agreed bookings only; no real payment has been captured in this MVP.')}</p>
- <h2 class="subhead">Users by marketplace role</h2>
+ <p class="muted">${tr('*Calculated from agreed bookings only; no real payment has been captured in this MVP.')}</p></div></details>
+ <details class="panel ownerSection"><summary>Users & marketplace activity</summary><div class="ownerSectionBody"><h2 class="subhead">Users by marketplace role</h2>
  <div class="kpis roleKpis">${roleCards.map(([r,l])=>`<div class="kpi"><span>${l}</span><b>${rc[r]||0}</b></div>`).join('')}${rc.other?`<div class="kpi"><span>Other</span><b>${rc.other}</b></div>`:''}</div>
  <div class="adminUsersHead"><h2 class="subhead">Marketplace users</h2><div class="adminUserFilters"><input id="adminUserSearch" placeholder="Search name or email" oninput="renderAdminUsers()"><select id="adminRoleFilter" onchange="renderAdminUsers()"><option value="">All roles</option>${roleCards.map(([r,l])=>`<option value="${r}">${l}</option>`).join('')}</select><select id="adminVerifyFilter" onchange="renderAdminUsers()"><option value="">All verification</option><option value="verified">Verified</option><option value="pending">Pending</option><option value="not_started">Not started</option></select></div></div>
  <div id="adminUsersList" class="cards"></div>
- <h2 class="subhead">${tr('Recent bookings')}</h2><div class="cards">${j.bookings.slice(-20).reverse().map(b=>`<div class="card"><h3>${b.currency} ${b.agreedPrice}</h3><p>${tr('Fee')} ${b.platformFeePct}% = ${b.currency} ${b.platformFee}</p><span class="tag">${tr(b.status)}</span></div>`).join('')||`<div class="card">${tr('No bookings yet.')}</div>`}</div>`;
+ <h2 class="subhead">${tr('Recent bookings')}</h2><div class="cards">${j.bookings.slice(-20).reverse().map(b=>`<div class="card"><h3>${b.currency} ${b.agreedPrice}</h3><p>${tr('Fee')} ${b.platformFeePct}% = ${b.currency} ${b.platformFee}</p><span class="tag">${tr(b.status)}</span></div>`).join('')||`<div class="card">${tr('No bookings yet.')}</div>`}</div></div></details>`;
  renderAdminUsers();
 }
 function renderAdminUsers(){
