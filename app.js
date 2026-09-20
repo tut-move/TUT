@@ -276,6 +276,7 @@ async function init(){startTranslationObserver();
   detectLocalMarket();renderHeaderOverrides();detectCountryByIP();
   renderAccount();renderAuth();renderFields();togglePrice();
   await ownerStatus();await loadMarket();
+  if(me?.role==='owner')go('adminPane');
 }
 function renderAccount(){
  if(me){$('account').innerHTML=`<button class="outlineBtn mini" onclick="go('${me.role==='owner'?'adminPane':'accountPane'}')">${esc(me.name)}</button><button class="linkBtn" onclick="logout()">${tr('Logout')}</button>`;$('adminNav').classList.toggle('hidden',me.role!=='owner');$('marketplaceNav')?.classList.toggle('hidden',me.role==='owner');$('ownerNav')?.classList.toggle('hidden',me.role!=='owner');$('notificationBtn')?.classList.toggle('hidden',me.role==='owner');setTimeout(()=>loadNotifications(false),0)}
@@ -767,7 +768,7 @@ async function saveTripCheck(id,type){const wf=bookingWorkflow(type),body={ready
 async function confirmPickup(id){await api(`/api/bookings/${id}/pickup`,{method:'POST'});loadBookings()}
 async function confirmDelivery(id){const j=await api(`/api/bookings/${id}/deliver`,{method:'POST'});alert(tr(j.message||'Delivery confirmed.'));loadBookings();loadAdmin()}
 async function submitVerification(){if(!me){go('accountPane');return}try{const [license,identity,selfie]=await Promise.all([fileData('licenseFile'),fileData('identityFile'),fileData('selfieFile')]);const j=await api('/api/verification',{method:'POST',body:JSON.stringify({country:$('verifyCountry').value,licenseNumber:$('licenseNumber').value,licenseClass:$('licenseClass').value,expiry:$('licenseExpiry').value,files:{license,identity,selfie}})});me=j.user;renderAccount();$('verifyMsg').innerHTML=`${tr('Status')}: <b>${esc(tr(j.verification.status))}</b><br>${esc(tr(j.verification.message))}`}catch(e){$('verifyMsg').textContent=tr(e.message)}}
-async function loadVerification(){if(!me){$('verifyMsg').textContent=tr('Login first.');return}const j=await api('/api/verification');if(j.verification)$('verifyMsg').innerHTML=`${tr('Current status')}: <b>${esc(tr(j.verification.status))}</b><br>${esc(tr(j.verification.message||''))}`}
+async function loadVerification(){if(me?.role==='owner'){go('adminPane');return}if(!me){$('verifyMsg').textContent=tr('Login first.');return}const j=await api('/api/verification');if(j.verification)$('verifyMsg').innerHTML=`${tr('Current status')}: <b>${esc(tr(j.verification.status))}</b><br>${esc(tr(j.verification.message||''))}`}
 async function loadAdmin(){
  if(!me||me.role!=='owner')return;
  const j=await api('/api/admin/summary');
@@ -831,6 +832,7 @@ window.addEventListener('orientationchange',()=>setTimeout(scheduleMapRefresh,15
 
 
 async function loadVerification(){
+  if(me?.role==='owner'){go('adminPane');return}
   if(!me){if($('verificationStatus'))$('verificationStatus').textContent=tr('Sign in to submit verification.');return}
   try{
     const j=await api('/api/verification/me'),v=j.verification||{};
@@ -1242,6 +1244,7 @@ async function loadPayments(){
 async function payTestFromCenter(id){try{const j=await api(`/api/bookings/${id}/test-pay`,{method:'POST'});const el=$('paymentIntegrationStatus');if(el)el.insertAdjacentHTML('afterend',`<div class="msg">✓ ${esc(j.message||'Test payment authorized.')}</div>`);await loadPayments();loadBookings()}catch(e){alert(tr(e.message))}}
 
 function go(id){
+  if(me?.role==='owner'&&['market','post','matches','offers','verify','payments'].includes(id))id='adminPane';
   if(id==='adminPane'&&(!me||me.role!=='owner'))id='home';
   document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));const target=$(id);if(!target)return;target.classList.remove('hidden');
   if(id==='post')scheduleMapRefresh();if(id==='market')loadMarket();if(id==='matches')loadMatches();if(id==='offers'){loadNotifications(true);loadOffers();loadBookings()}if(id==='payments')loadPayments();if(id==='adminPane')loadAdmin();if(id==='verify')loadVerification();scrollTo({top:0,behavior:'smooth'});
