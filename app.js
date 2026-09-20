@@ -786,7 +786,7 @@ async function loadAdmin(){
   <div class="kpi"><span>${tr('Open listings')}</span><b>${s.openListings}</b></div>
   <div class="kpi"><span>${tr('Offers')}</span><b>${s.offers}</b></div>
   <div class="kpi"><span>${tr('Bookings')}</span><b>${s.bookings}</b></div>
-  <div class="kpi"><span>${tr('Platform revenue*')}</span><b>${s.platformRevenue}</b></div>
+  <div class="kpi"><span>${tr('Platform revenue*')}</span><b>${j.settings.defaultCurrency} ${s.platformRevenue}</b><small>Reporting currency</small></div>
  </div>
  <p class="muted">${tr('*Calculated from agreed bookings only; no real payment has been captured in this MVP.')}</p>
  <h2 class="subhead">Users by marketplace role</h2>
@@ -804,7 +804,8 @@ function renderAdminUsers(){
 }
 async function adminDeleteUser(userId,name){if(!me||me.role!=='owner')return;const ok=confirm(`${tr('Delete account')} — ${name}?\n${tr('This permanently removes the user account and its marketplace data.')}`);if(!ok)return;try{await api('/api/admin/users/'+encodeURIComponent(userId),{method:'DELETE'});await loadAdmin()}catch(e){alert(tr(e.message))}}
 async function saveOwnership(){const body={brandName:$('brandName').value,siteUrl:$('siteUrl').value,ownerName:$('ownerName').value,ownerEmail:$('ownerEmail').value,legalEntity:$('legalEntity').value,supportEmail:$('supportEmail').value};const j=await api('/api/admin/settings',{method:'PUT',body:JSON.stringify(body)});alert(tr('Ownership settings saved for')+' '+(j.settings.siteUrl||'TUT Move'));}
-async function saveSettings(){const j=await api('/api/admin/settings',{method:'PUT',body:JSON.stringify({platformFeePct:Number($('feePct').value),defaultCurrency:$('defaultCurrency').value})});alert(`${tr('Saved')}: ${j.settings.platformFeePct}%`) }
+async function saveSettings(){const pct=Number($('feePct').value);if(!Number.isFinite(pct)||pct<0||pct>100){alert('Fee must be between 0% and 100%.');return}const j=await api('/api/admin/settings',{method:'PUT',body:JSON.stringify({platformFeePct:pct,defaultCurrency:$('defaultCurrency').value})});alert(`${tr('Saved')}: ${j.settings.platformFeePct}% · ${j.settings.defaultCurrency}`) }
+async function changeOwnerPassword(){const currentPassword=$('ownerCurrentPassword').value,newPassword=$('ownerNewPassword').value;if(!currentPassword||newPassword.length<10){alert('Enter your current password and a new password of at least 10 characters.');return}try{await api('/api/owner/password',{method:'PUT',body:JSON.stringify({currentPassword,newPassword})});$('ownerCurrentPassword').value='';$('ownerNewPassword').value='';alert('Owner password changed successfully.')}catch(e){alert(tr(e.message))}}
 
 const tutObserver=new MutationObserver(muts=>{
   for(const m of muts) for(const n of m.addedNodes){

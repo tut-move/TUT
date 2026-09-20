@@ -258,6 +258,14 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   }
   if(p==='/api/logout'&&req.method==='POST'){const ids=sessionIdsFromRequest(req),db=readDB();if(ids.length)db.sessions=(db.sessions||[]).filter(x=>!ids.includes(x.id));await writeDB(db);res.setHeader('Set-Cookie',clearSessionCookie());return json(res,200,{ok:true});}
 
+  if(p==='/api/owner/password'&&req.method==='PUT'){
+    const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});
+    const b=await getBody(req),current=String(b.currentPassword||''),next=String(b.newPassword||'');
+    if(next.length<10)return json(res,400,{error:'New password must be at least 10 characters.'});
+    const hp=hashPassword(current,u.salt);try{if(!crypto.timingSafeEqual(Buffer.from(hp.hash,'hex'),Buffer.from(u.hash,'hex')))return json(res,401,{error:'Current password is incorrect.'});}catch{return json(res,401,{error:'Current password is incorrect.'});}
+    const db=readDB(),target=db.users.find(x=>x.id===u.id);if(!target)return json(res,404,{error:'Owner account not found.'});const nh=hashPassword(next);target.salt=nh.salt;target.hash=nh.hash;await writeDB(db);return json(res,200,{ok:true});
+  }
+
   if(p==='/api/account'&&req.method==='DELETE'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});
     if(u.role==='owner')return json(res,403,{error:'The platform-owner account cannot be deleted from this screen.'});
@@ -282,7 +290,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   if(p==='/api/me'&&req.method==='GET'){const u=auth(req);return json(res,200,{user:u?safeUser(u):null});}
   if(p==='/api/integrations/status'&&req.method==='GET'){const paymentCredentials=!!(process.env.STRIPE_SECRET_KEY||process.env.PAYMENT_PROVIDER_SECRET);const webhookSecret=!!(process.env.STRIPE_WEBHOOK_SECRET||process.env.PAYMENT_WEBHOOK_SECRET);const kycProvider=!!(process.env.KYC_PROVIDER||process.env.KYC_API_KEY);return json(res,200,{payment:{mode:paymentCredentials?'provider_credentials_detected':'test',credentialsDetected:paymentCredentials,webhookSecretDetected:webhookSecret,realCaptureEnabled:false},kyc:{providerConfigured:kycProvider,manualReviewEnabled:true}});}
   if(p==='/api/settings'&&req.method==='GET'){return json(res,200,{settings:readDB().settings});}
-  if(p==='/api/admin/settings'&&req.method==='PUT'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const b=await getBody(req),db=readDB();if(Number.isFinite(Number(b.platformFeePct))){const nextFeePct=Math.max(0,Math.min(30,Number(b.platformFeePct)));db.settings.platformFeePct=nextFeePct;}if(b.defaultCurrency)db.settings.defaultCurrency=String(b.defaultCurrency).slice(0,5);for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail'])if(k in b)db.settings[k]=String(b[k]||'').trim().slice(0,180);await writeDB(db);return json(res,200,{settings:db.settings});}
+  if(p==='/api/admin/settings'&&req.method==='PUT'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const b=await getBody(req),db=readDB();if(Number.isFinite(Number(b.platformFeePct))){const nextFeePct=Math.max(0,Math.min(100,Number(b.platformFeePct)));db.settings.platformFeePct=nextFeePct;}if(b.defaultCurrency)db.settings.defaultCurrency=String(b.defaultCurrency).slice(0,5);for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail'])if(k in b)db.settings[k]=String(b[k]||'').trim().slice(0,180);await writeDB(db);return json(res,200,{settings:db.settings});}
   if(p==='/api/listings'&&req.method==='GET'){const db=readDB();const listings=db.listings.filter(x=>x.status==='open').sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(x=>publicListing(x,db));return json(res,200,{listings});}
   if(p==='/api/listings'&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const b=await getBody(req);const resources=['driver','truck','load','warehouse','storage','equipment'];const intents=['have','need'];const priceModes=['fixed','negotiable','request_quotes','open_bidding'];if(!resources.includes(b.resource)||!intents.includes(b.intent)||!priceModes.includes(b.priceMode))return json(res,400,{error:'Invalid listing.'});
