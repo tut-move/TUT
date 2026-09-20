@@ -22,6 +22,7 @@
       <img class="brandMark" src="/tut-emblem.png" alt=""><span class="brandWords"><strong>TUT MOVE</strong></span>
     </button>
     <nav class="desktopNav compactNav">
+      <span id="marketplaceNav" class="desktopNavGroup">
       <div class="navMenu">
         <button type="button" class="navMenuTrigger" onclick="toggleMarketMenu(event)" data-ui-key="Market">Market <span aria-hidden="true">⌄</span></button>
         <div id="marketMenu" class="marketMenu hidden">
@@ -36,7 +37,8 @@
       <button onclick="go('offers')" data-ui-key="Activity">Activity</button>
       <button onclick="go('verify')" data-ui-key="Verify">Verify</button>
       <button onclick="go('about')" data-ui-key="About">About</button>
-      <button id="adminNav" class="hidden" onclick="go('adminPane')" data-ui-key="Owner">Owner</button>
+      </span>
+      <span id="ownerNav" class="desktopNavGroup hidden"><button id="adminNav" onclick="go('adminPane')" data-ui-key="Owner">Owner Dashboard</button></span>
     </nav>
     <div class="tools">
       <select id="headerCountry" onchange="manualCountryOverride(this.value)" aria-label="Country / market"></select>

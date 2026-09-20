@@ -278,8 +278,8 @@ async function init(){startTranslationObserver();
   await ownerStatus();await loadMarket();
 }
 function renderAccount(){
- if(me){$('account').innerHTML=`<button class="outlineBtn mini" onclick="go('${me.role==='owner'?'adminPane':'accountPane'}')">${esc(me.name)}</button><button class="linkBtn" onclick="logout()">${tr('Logout')}</button>`;$('adminNav').classList.toggle('hidden',me.role!=='owner');$('notificationBtn')?.classList.remove('hidden');setTimeout(()=>loadNotifications(false),0)}
- else{$('account').innerHTML=`<button class="goldBtn mini" onclick="go('accountPane')">${tr('Login / Join')}</button>`;$('adminNav').classList.add('hidden');$('notificationBtn')?.classList.add('hidden');$('notificationCount')?.classList.add('hidden')}
+ if(me){$('account').innerHTML=`<button class="outlineBtn mini" onclick="go('${me.role==='owner'?'adminPane':'accountPane'}')">${esc(me.name)}</button><button class="linkBtn" onclick="logout()">${tr('Logout')}</button>`;$('adminNav').classList.toggle('hidden',me.role!=='owner');$('marketplaceNav')?.classList.toggle('hidden',me.role==='owner');$('ownerNav')?.classList.toggle('hidden',me.role!=='owner');$('notificationBtn')?.classList.toggle('hidden',me.role==='owner');setTimeout(()=>loadNotifications(false),0)}
+ else{$('account').innerHTML=`<button class="goldBtn mini" onclick="go('accountPane')">${tr('Login / Join')}</button>`;$('adminNav').classList.add('hidden');$('marketplaceNav')?.classList.remove('hidden');$('ownerNav')?.classList.add('hidden');$('notificationBtn')?.classList.add('hidden');$('notificationCount')?.classList.add('hidden')}
 }
 async function ownerStatus(){
  const j=await api('/api/owner/status');
@@ -768,7 +768,39 @@ async function confirmPickup(id){await api(`/api/bookings/${id}/pickup`,{method:
 async function confirmDelivery(id){const j=await api(`/api/bookings/${id}/deliver`,{method:'POST'});alert(tr(j.message||'Delivery confirmed.'));loadBookings();loadAdmin()}
 async function submitVerification(){if(!me){go('accountPane');return}try{const [license,identity,selfie]=await Promise.all([fileData('licenseFile'),fileData('identityFile'),fileData('selfieFile')]);const j=await api('/api/verification',{method:'POST',body:JSON.stringify({country:$('verifyCountry').value,licenseNumber:$('licenseNumber').value,licenseClass:$('licenseClass').value,expiry:$('licenseExpiry').value,files:{license,identity,selfie}})});me=j.user;renderAccount();$('verifyMsg').innerHTML=`${tr('Status')}: <b>${esc(tr(j.verification.status))}</b><br>${esc(tr(j.verification.message))}`}catch(e){$('verifyMsg').textContent=tr(e.message)}}
 async function loadVerification(){if(!me){$('verifyMsg').textContent=tr('Login first.');return}const j=await api('/api/verification');if(j.verification)$('verifyMsg').innerHTML=`${tr('Current status')}: <b>${esc(tr(j.verification.status))}</b><br>${esc(tr(j.verification.message||''))}`}
-async function loadAdmin(){if(!me||me.role!=='owner')return;const j=await api('/api/admin/summary');$('feePct').value=j.settings.platformFeePct;$('defaultCurrency').value=j.settings.defaultCurrency;for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail']){if($(k))$(k).value=j.settings[k]||'';}const s=j.stats;$('adminArea').innerHTML=`<div class="kpis"><div class="kpi"><span>${tr('Users')}</span><b>${s.users}</b></div><div class="kpi"><span>${tr('Open listings')}</span><b>${s.openListings}</b></div><div class="kpi"><span>${tr('Offers')}</span><b>${s.offers}</b></div><div class="kpi"><span>${tr('Bookings')}</span><b>${s.bookings}</b></div><div class="kpi"><span>${tr('Platform revenue*')}</span><b>${s.platformRevenue}</b></div></div><p class="muted">${tr('*Calculated from agreed bookings only; no real payment has been captured in this MVP.')}</p><h2 class="subhead">${tr('Users')}</h2><div class="cards">${j.users.map(u=>`<div class="card"><h3>${esc(u.name)}</h3><p>${esc(u.email)}</p><p>${esc((u.roles||[]).map(roleLabel).join(', '))} · ${esc(tr(u.country||''))}</p><span class="tag">${esc(tr(u.verificationStatus))}</span><p class="muted">${tr('Registered')}: ${esc(new Date(u.createdAt).toLocaleString())}</p>${u.role==='owner'?'':`<div class="adminUserActions"><button class="dangerBtn mini" onclick="adminDeleteUser('${u.id}','${esc(u.name).replace(/'/g,'&#39;')}')">${tr('Delete account')}</button></div>`}</div>`).join('')}</div><h2 class="subhead">${tr('Recent bookings')}</h2><div class="cards">${j.bookings.slice(-20).reverse().map(b=>`<div class="card"><h3>${b.currency} ${b.agreedPrice}</h3><p>${tr('Fee')} ${b.platformFeePct}% = ${b.currency} ${b.platformFee}</p><span class="tag">${tr(b.status)}</span></div>`).join('')||`<div class="card">${tr('No bookings yet.')}</div>`}</div>`}
+async function loadAdmin(){
+ if(!me||me.role!=='owner')return;
+ const j=await api('/api/admin/summary');
+ $('feePct').value=j.settings.platformFeePct;$('defaultCurrency').value=j.settings.defaultCurrency;
+ for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail']){if($(k))$(k).value=j.settings[k]||'';}
+ const s=j.stats, rc=s.roleCounts||{};
+ const roleCards=[['driver','Drivers'],['carrier','Carriers / transport companies'],['shipper','Shippers / cargo owners'],['warehouse','Warehouse owners'],['equipment','Truck / trailer / equipment owners']];
+ window.__adminUsers=j.users||[];
+ $('adminArea').innerHTML=`
+ <h2 class="subhead">Marketplace overview</h2>
+ <div class="kpis ownerKpis">
+  <div class="kpi"><span>Marketplace users</span><b>${s.users}</b><small>Owner account excluded</small></div>
+  <div class="kpi"><span>Verified users</span><b>${s.verifiedUsers||0}</b></div>
+  <div class="kpi"><span>Pending verification</span><b>${s.pendingVerifications||0}</b></div>
+  <div class="kpi"><span>${tr('Open listings')}</span><b>${s.openListings}</b></div>
+  <div class="kpi"><span>${tr('Offers')}</span><b>${s.offers}</b></div>
+  <div class="kpi"><span>${tr('Bookings')}</span><b>${s.bookings}</b></div>
+  <div class="kpi"><span>${tr('Platform revenue*')}</span><b>${s.platformRevenue}</b></div>
+ </div>
+ <p class="muted">${tr('*Calculated from agreed bookings only; no real payment has been captured in this MVP.')}</p>
+ <h2 class="subhead">Users by marketplace role</h2>
+ <div class="kpis roleKpis">${roleCards.map(([r,l])=>`<div class="kpi"><span>${l}</span><b>${rc[r]||0}</b></div>`).join('')}${rc.other?`<div class="kpi"><span>Other</span><b>${rc.other}</b></div>`:''}</div>
+ <div class="adminUsersHead"><h2 class="subhead">Marketplace users</h2><div class="adminUserFilters"><input id="adminUserSearch" placeholder="Search name or email" oninput="renderAdminUsers()"><select id="adminRoleFilter" onchange="renderAdminUsers()"><option value="">All roles</option>${roleCards.map(([r,l])=>`<option value="${r}">${l}</option>`).join('')}</select><select id="adminVerifyFilter" onchange="renderAdminUsers()"><option value="">All verification</option><option value="verified">Verified</option><option value="pending">Pending</option><option value="not_started">Not started</option></select></div></div>
+ <div id="adminUsersList" class="cards"></div>
+ <h2 class="subhead">${tr('Recent bookings')}</h2><div class="cards">${j.bookings.slice(-20).reverse().map(b=>`<div class="card"><h3>${b.currency} ${b.agreedPrice}</h3><p>${tr('Fee')} ${b.platformFeePct}% = ${b.currency} ${b.platformFee}</p><span class="tag">${tr(b.status)}</span></div>`).join('')||`<div class="card">${tr('No bookings yet.')}</div>`}</div>`;
+ renderAdminUsers();
+}
+function renderAdminUsers(){
+ const users=window.__adminUsers||[], q=($('adminUserSearch')?.value||'').trim().toLowerCase(), role=$('adminRoleFilter')?.value||'', vf=$('adminVerifyFilter')?.value||'';
+ const filtered=users.filter(u=>{const roles=u.roles?.length?u.roles:[u.role];const vs=u.verificationStatus||'not_started';return(!q||`${u.name} ${u.email}`.toLowerCase().includes(q))&&(!role||roles.includes(role))&&(!vf||(vf==='pending'?['pending','pending_review','submitted'].includes(vs):vs===vf));});
+ const box=$('adminUsersList');if(!box)return;
+ box.innerHTML=filtered.map(u=>`<div class="card"><h3>${esc(u.name)}</h3><p>${esc(u.email)}</p><p>${esc((u.roles||[u.role]).filter(r=>r&&r!=='owner').map(roleLabel).join(', '))}${u.country?` · ${esc(tr(u.country))}`:''}</p><span class="tag">${esc(tr(u.verificationStatus||'not_started'))}</span><p class="muted">${tr('Registered')}: ${esc(new Date(u.createdAt).toLocaleString())}</p><div class="adminUserActions"><button class="dangerBtn mini" onclick="adminDeleteUser('${u.id}','${esc(u.name).replace(/'/g,'&#39;')}')">${tr('Delete account')}</button></div></div>`).join('')||'<div class="card">No marketplace users match these filters.</div>';
+}
 async function adminDeleteUser(userId,name){if(!me||me.role!=='owner')return;const ok=confirm(`${tr('Delete account')} — ${name}?\n${tr('This permanently removes the user account and its marketplace data.')}`);if(!ok)return;try{await api('/api/admin/users/'+encodeURIComponent(userId),{method:'DELETE'});await loadAdmin()}catch(e){alert(tr(e.message))}}
 async function saveOwnership(){const body={brandName:$('brandName').value,siteUrl:$('siteUrl').value,ownerName:$('ownerName').value,ownerEmail:$('ownerEmail').value,legalEntity:$('legalEntity').value,supportEmail:$('supportEmail').value};const j=await api('/api/admin/settings',{method:'PUT',body:JSON.stringify(body)});alert(tr('Ownership settings saved for')+' '+(j.settings.siteUrl||'TUT Move'));}
 async function saveSettings(){const j=await api('/api/admin/settings',{method:'PUT',body:JSON.stringify({platformFeePct:Number($('feePct').value),defaultCurrency:$('defaultCurrency').value})});alert(`${tr('Saved')}: ${j.settings.platformFeePct}%`) }
@@ -1019,7 +1051,7 @@ function clearQuickNeed(){
  const resource=$('resource');if(resource){resource.classList.remove('quickHidden');const lab=resource.previousElementSibling;if(lab?.tagName==='LABEL')lab.classList.remove('quickHidden')}
 }
 function enforceOwnerPrivacy(){
- const ok=!!me&&me.role==='owner';$('adminNav')?.classList.toggle('hidden',!ok);
+ const ok=!!me&&me.role==='owner';$('adminNav')?.classList.toggle('hidden',!ok);$('marketplaceNav')?.classList.toggle('hidden',ok);$('ownerNav')?.classList.toggle('hidden',!ok);$('notificationBtn')?.classList.toggle('hidden',ok||!me);
  if(!ok&&$('adminPane')&&!$('adminPane').classList.contains('hidden'))go('home');
 }
 window.addEventListener('DOMContentLoaded',enforceOwnerPrivacy);

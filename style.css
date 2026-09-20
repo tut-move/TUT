@@ -667,3 +667,8 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   .v49Hero .legacyHeroTitle{font-size:clamp(24px,7.25vw,34px);line-height:1.16;letter-spacing:-.04em}
   .v49Hero .legacyHeroTitle .heroSentence{white-space:nowrap}
 }
+/* v72 owner dashboard: owner is an administrator, not a marketplace participant */
+.desktopNavGroup{display:contents}.desktopNavGroup.hidden{display:none!important}
+.ownerKpis,.roleKpis{align-items:stretch}.kpi small{display:block;margin-top:.35rem;opacity:.62;font-size:.75rem}
+.adminUsersHead{display:flex;align-items:end;justify-content:space-between;gap:1rem;flex-wrap:wrap}.adminUserFilters{display:flex;gap:.65rem;flex-wrap:wrap}.adminUserFilters input,.adminUserFilters select{min-width:190px}
+@media(max-width:760px){.adminUserFilters{width:100%}.adminUserFilters input,.adminUserFilters select{width:100%}}
