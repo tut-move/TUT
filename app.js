@@ -200,7 +200,7 @@ async function detectCountryByIP(){
 const countries=['United States','Canada','Germany','France','Netherlands','Belgium','Spain','Italy','Poland','Austria','Switzerland','United Kingdom','Ireland','Sweden','Norway','Denmark','Finland','Czechia','Portugal','Greece','Romania','United Arab Emirates','Saudi Arabia','Qatar','Kuwait','Bahrain','Oman','Jordan','Egypt'];
 const T={en:{tagline:'Turn Unused Into Transport',market:'Market',post:'Post',matches:'Matches',offers:'Offers',verify:'Verify',heroTitle:'One place for what you have — and what you need.',heroText:'Drivers, trucks, loads and warehouse space. The market chooses the price. TUT Move brings the sides together.',postHaveNeed:'Post I HAVE / I NEED',browse:'Browse market'},ar:{tagline:'حوّل السعة غير المستخدمة إلى حركة',market:'السوق',post:'انشر',matches:'المطابقات',offers:'العروض',verify:'التحقق',heroTitle:'مكان واحد لما لديك — وما تحتاجه.',heroText:'سائقون وشاحنات وحمولات ومساحات تخزين. السوق يحدد السعر وTUT Move يجمع الأطراف.',postHaveNeed:'انشر عندي / أحتاج',browse:'تصفح السوق'},de:{tagline:'Ungenutzte Kapazität in Bewegung bringen',market:'Markt',post:'Inserieren',matches:'Übereinstimmungen',offers:'Angebote',verify:'Verifizieren',heroTitle:'Ein Ort für das, was Sie haben — und brauchen.',heroText:'Fahrer, Lkw, Ladungen und Lagerfläche. Der Markt bestimmt den Preis.',postHaveNeed:'ICH HABE / ICH BRAUCHE',browse:'Markt ansehen'},fr:{tagline:'Transformer la capacité inutilisée en mouvement',market:'Marché',post:'Publier',matches:'Correspondances',offers:'Offres',verify:'Vérifier',heroTitle:'Un seul endroit pour ce que vous avez — et ce dont vous avez besoin.',heroText:'Chauffeurs, camions, chargements et entrepôts. Le marché fixe le prix.',postHaveNeed:"Publier J’AI / J’AI BESOIN",browse:'Voir le marché'},es:{tagline:'Convierte capacidad sin usar en movimiento',market:'Mercado',post:'Publicar',matches:'Coincidencias',offers:'Ofertas',verify:'Verificar',heroTitle:'Un lugar para lo que tienes — y lo que necesitas.',heroText:'Conductores, camiones, cargas y almacenes. El mercado decide el precio.',postHaveNeed:'Publicar TENGO / NECESITO',browse:'Ver mercado'}};
 function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-async function api(p,o={}){const token=localStorage.getItem('tut_session')||'';o.credentials='same-origin';o.headers={'Content-Type':'application/json',...(token?{Authorization:'Bearer '+token}:{}),...(o.headers||{})};const r=await fetch(p,o);const j=await r.json().catch(()=>({}));if(r.status===401&&p==='/api/me'){localStorage.removeItem('tut_session')}if(!r.ok)throw new Error(j.error||'Request failed');return j}
+async function api(p,o={}){o.credentials='same-origin';o.headers={'Content-Type':'application/json',...(o.headers||{})};const r=await fetch(p,o);const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Request failed');return j}
 function go(id){if(id==='adminPane'&&(!me||me.role!=='owner'))id='home';document.querySelectorAll('.pane').forEach(x=>x.classList.add('hidden'));$(id).classList.remove('hidden');if(id==='post')scheduleMapRefresh();if(id==='market')loadMarket();if(id==='matches')loadMatches();if(id==='offers'){loadNotifications(true);loadOffers();loadBookings()}if(id==='adminPane')loadAdmin();if(id==='verify')loadVerification();scrollTo({top:0,behavior:'smooth'})}
 
 let TUT_TRANSLATION_OBSERVER=null;
@@ -286,7 +286,7 @@ async function ownerStatus(){
  $('ownerSetup').innerHTML=j.ownerConfigured?'':`<div class="panel ownerSetup"><h3>${tr('First-time Owner Setup')}</h3><p>${tr('Create the one platform-owner account. This closes after the first owner is created.')}</p><input id="oname" placeholder="${esc(tr('Owner name'))}"><input id="oemail" type="email" placeholder="${esc(tr('Owner email'))}"><input id="opass" type="password" placeholder="${esc(tr('Password (10+ characters)'))}"><button class="goldBtn" onclick="setupOwner()">${tr('Create Owner Account')}</button><div id="ownerMsg" class="msg"></div></div>`;
  translateNodeTree($('ownerSetup'));
 }
-async function setupOwner(){try{const j=await api('/api/owner/setup',{method:'POST',body:JSON.stringify({name:$('oname').value,email:$('oemail').value,password:$('opass').value,language:$('lang').value})});me=j.user;if(j.sessionToken)localStorage.setItem('tut_session',j.sessionToken);renderAccount();await ownerStatus();go('adminPane')}catch(e){$('ownerMsg').textContent=tr(e.message)}}
+async function setupOwner(){try{const j=await api('/api/owner/setup',{method:'POST',body:JSON.stringify({name:$('oname').value,email:$('oemail').value,password:$('opass').value,language:$('lang').value})});me=j.user;renderAccount();await ownerStatus();go('adminPane')}catch(e){$('ownerMsg').textContent=tr(e.message)}}
 function roleLabel(r){return tr(({driver:'Driver',truck_owner:'Truck / trailer owner',carrier:'Carrier / transport company',shipper:'Shipper / cargo owner',warehouse_owner:'Warehouse owner',member:'Member',owner:'Owner'})[r]||r.replaceAll('_',' '))}
 function roleIcon(r){return ''}
 function showAuthMode(mode){
@@ -341,16 +341,16 @@ function renderAuth(){setTimeout(enforceOwnerPrivacy,0);
  </div>`;
  syncRoleChoices(); translateNodeTree($('authArea'));
 }
-async function register(){try{detectLocalMarket();const selectedRole=$('rrole')?.value||'';const roles=selectedRole?[selectedRole]:[];if(!roles.length){$('rmsg').textContent=tr('Choose one role to continue.');return}if(!$('rlegal')?.checked){$('rmsg').textContent=tr('You must agree to the Terms of Service and Privacy Policy.');return}const j=await api('/api/register',{method:'POST',body:JSON.stringify({name:$('rname').value,email:$('remail').value,password:$('rpass').value,roles,country:$('rcountry').value,language:$('lang').value,currency:currencyFor($('rcountry').value),acceptedTerms:true,termsVersion:'2026-09-17'})});me=j.user;if(j.sessionToken)localStorage.setItem('tut_session',j.sessionToken);renderAccount();renderAuth();go('post')}catch(e){$('rmsg').textContent=tr(e.message)}}
-async function login(){try{const j=await api('/api/login',{method:'POST',body:JSON.stringify({email:$('lemail').value,password:$('lpass').value})});me=j.user;if(j.sessionToken)localStorage.setItem('tut_session',j.sessionToken);renderAccount();renderAuth();const next=sessionStorage.getItem('tut_after_login');sessionStorage.removeItem('tut_after_login');if(next?.startsWith('offer:')){go('market');setTimeout(()=>{const p=next.split(':');openOffer(p[1],p[2])},250)}else if(next?.startsWith('contact:')){go('market');setTimeout(()=>contactListing(next.split(':')[1]),250)}else go(me.role==='owner'?'adminPane':'market')}catch(e){$('lmsg').textContent=tr(e.message)}}
-async function logout(){await api('/api/logout',{method:'POST'});localStorage.removeItem('tut_session');me=null;renderAccount();renderAuth();go('home')}
+async function register(){try{detectLocalMarket();const selectedRole=$('rrole')?.value||'';const roles=selectedRole?[selectedRole]:[];if(!roles.length){$('rmsg').textContent=tr('Choose one role to continue.');return}if(!$('rlegal')?.checked){$('rmsg').textContent=tr('You must agree to the Terms of Service and Privacy Policy.');return}const j=await api('/api/register',{method:'POST',body:JSON.stringify({name:$('rname').value,email:$('remail').value,password:$('rpass').value,roles,country:$('rcountry').value,language:$('lang').value,currency:currencyFor($('rcountry').value),acceptedTerms:true,termsVersion:'2026-09-17'})});me=j.user;renderAccount();renderAuth();go('post')}catch(e){$('rmsg').textContent=tr(e.message)}}
+async function login(){try{const j=await api('/api/login',{method:'POST',body:JSON.stringify({email:$('lemail').value,password:$('lpass').value})});me=j.user;renderAccount();renderAuth();const next=sessionStorage.getItem('tut_after_login');sessionStorage.removeItem('tut_after_login');if(next?.startsWith('offer:')){go('market');setTimeout(()=>{const p=next.split(':');openOffer(p[1],p[2])},250)}else if(next?.startsWith('contact:')){go('market');setTimeout(()=>contactListing(next.split(':')[1]),250)}else go(me.role==='owner'?'adminPane':'market')}catch(e){$('lmsg').textContent=tr(e.message)}}
+async function logout(){await api('/api/logout',{method:'POST'});me=null;renderAccount();renderAuth();go('home')}
 async function deleteMyAccount(){
  if(!me||me.role==='owner')return;
  const password=$('deletePassword')?.value||'';
  const msg=$('deleteMsg');
  if(!password){if(msg)msg.textContent=tr('Enter your current password to continue.');return}
  if(!confirm(tr('This permanently deletes your account, listings, offers, bookings and verification data. Continue?')))return;
- try{const j=await api('/api/account',{method:'DELETE',body:JSON.stringify({password})});localStorage.removeItem('tut_session');me=null;renderAccount();renderAuth();alert(tr(j.message||'Account deleted.'));go('home')}catch(e){if(msg)msg.textContent=tr(e.message);else alert(tr(e.message))}
+ try{const j=await api('/api/account',{method:'DELETE',body:JSON.stringify({password})});me=null;renderAccount();renderAuth();alert(tr(j.message||'Account deleted.'));go('home')}catch(e){if(msg)msg.textContent=tr(e.message);else alert(tr(e.message))}
 }
 
 const EU_HEAVY_COUNTRIES=new Set(['Germany','France','Netherlands','Belgium','Spain','Italy','Poland','Austria','Ireland','Sweden','Denmark','Finland','Czechia','Portugal','Greece','Romania']);
@@ -1352,7 +1352,6 @@ document.addEventListener('click',e=>{
 });
 
 function manualLanguageOverride(lang){
-  const durableToken=localStorage.getItem('tut_session')||'';
   const focused=document.activeElement;
   setLanguage(lang);
   try{renderHeaderOverrides()}catch{}
@@ -1361,7 +1360,6 @@ function manualLanguageOverride(lang){
   try{if(!$('matches')?.classList.contains('hidden'))loadMatches()}catch{}
   try{if(!$('offers')?.classList.contains('hidden')){loadOffers();loadBookings()}}catch{}
   try{renderAccount()}catch{}
-  if(durableToken)localStorage.setItem('tut_session',durableToken);
   requestAnimationFrame(()=>{
     translateNodeTree(document.body);
     applyStrictSiteLanguage();
