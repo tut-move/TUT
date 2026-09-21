@@ -337,13 +337,21 @@ function renderAuth(){setTimeout(enforceOwnerPrivacy,0);
      <span class="eyebrow">${tr('EXISTING ACCOUNT')}</span><h3>${tr('Welcome back')}</h3>
      <p class="muted">${tr('Sign in to continue where you left off.')}</p>
      <div class="authFields"><input id="lemail" type="email" placeholder="${esc(tr('Email'))}"><input id="lpass" type="password" placeholder="${esc(tr('Password'))}"></div>
-     <button class="goldBtn full" onclick="login()">${tr('Login')}</button><div id="lmsg" class="msg"></div>
+     <button class="goldBtn full" onclick="login()">${tr('Login')}</button>
+     <button type="button" class="forgotLink" onclick="showForgotPassword()">${tr('Forgot password?')}</button><div id="lmsg" class="msg"></div>
    </div>
  </div>`;
  syncRoleChoices(); translateNodeTree($('authArea'));
 }
 async function register(){try{detectLocalMarket();const selectedRole=$('rrole')?.value||'';const roles=selectedRole?[selectedRole]:[];if(!roles.length){$('rmsg').textContent=tr('Choose one role to continue.');return}if(!$('rlegal')?.checked){$('rmsg').textContent=tr('You must agree to the Terms of Service and Privacy Policy.');return}const j=await api('/api/register',{method:'POST',body:JSON.stringify({name:$('rname').value,email:$('remail').value,password:$('rpass').value,roles,country:$('rcountry').value,language:$('lang').value,currency:currencyFor($('rcountry').value),acceptedTerms:true,termsVersion:'2026-09-17'})});me=j.user;renderAccount();renderAuth();go('post')}catch(e){$('rmsg').textContent=tr(e.message)}}
 async function login(){try{const j=await api('/api/login',{method:'POST',body:JSON.stringify({email:$('lemail').value,password:$('lpass').value})});me=j.user;renderAccount();renderAuth();const next=sessionStorage.getItem('tut_after_login');sessionStorage.removeItem('tut_after_login');if(next?.startsWith('offer:')){go('market');setTimeout(()=>{const p=next.split(':');openOffer(p[1],p[2])},250)}else if(next?.startsWith('contact:')){go('market');setTimeout(()=>contactListing(next.split(':')[1]),250)}else go(me.role==='owner'?'adminPane':'market')}catch(e){$('lmsg').textContent=tr(e.message)}}
+function showForgotPassword(){
+ const box=document.querySelector('.authMode[data-mode="login"]');if(!box)return;
+ box.innerHTML=`<span class="eyebrow">${tr('PASSWORD RECOVERY')}</span><h3>${tr('Reset your password')}</h3><p class="muted">${tr('Enter your account email. We will send you a secure reset link.')}</p><div class="authFields"><input id="forgotEmail" type="email" autocomplete="email" placeholder="${esc(tr('Email'))}"></div><button class="goldBtn full" onclick="requestPasswordReset()">${tr('Send reset link')}</button><button type="button" class="forgotLink" onclick="renderAuth();showAuthMode('login')">${tr('Back to login')}</button><div id="forgotMsg" class="msg"></div>`;
+}
+async function requestPasswordReset(){const msg=$('forgotMsg');try{const j=await api('/api/password/forgot',{method:'POST',body:JSON.stringify({email:$('forgotEmail').value})});msg.textContent=tr(j.message)}catch(e){msg.textContent=tr(e.message)}}
+function showResetPassword(token){go('accountPane');setTimeout(()=>{const area=$('authArea');if(!area)return;area.innerHTML=`<div class="authShell"><div class="panel authMode"><span class="eyebrow">${tr('PASSWORD RECOVERY')}</span><h3>${tr('Choose a new password')}</h3><p class="muted">${tr('Use at least 8 characters.')}</p><div class="authFields"><input id="newResetPass" type="password" autocomplete="new-password" placeholder="${esc(tr('New password'))}"><input id="confirmResetPass" type="password" autocomplete="new-password" placeholder="${esc(tr('Confirm new password'))}"></div><button class="goldBtn full" onclick="completePasswordReset('${esc(token)}')">${tr('Update password')}</button><div id="resetMsg" class="msg"></div></div></div>`},50)}
+async function completePasswordReset(token){const msg=$('resetMsg'),a=$('newResetPass').value,b=$('confirmResetPass').value;if(a!==b){msg.textContent=tr('Passwords do not match.');return}try{const j=await api('/api/password/reset',{method:'POST',body:JSON.stringify({token,password:a})});history.replaceState({},'',location.pathname);msg.textContent=tr(j.message);setTimeout(()=>{renderAuth();showAuthMode('login')},900)}catch(e){msg.textContent=tr(e.message)}}
 async function logout(){await api('/api/logout',{method:'POST'});me=null;renderAccount();renderAuth();go('home')}
 async function deleteMyAccount(){
  if(!me||me.role==='owner')return;
@@ -1451,3 +1459,5 @@ Object.assign(UI_TRANSLATIONS.de,{"Terms of Service":"Nutzungsbedingungen","Priv
 Object.assign(UI_TRANSLATIONS.fr,{"Terms of Service":"Conditions d’utilisation","Privacy Policy":"Politique de confidentialité","Cancellation & Refund":"Annulation et remboursement","Disputes & Claims":"Litiges et réclamations","I agree to the":"J’accepte les","and":"et","Registered":"Inscrit","Delete account":"Supprimer le compte"});
 Object.assign(UI_TRANSLATIONS.es,{"Terms of Service":"Términos de servicio","Privacy Policy":"Política de privacidad","Cancellation & Refund":"Cancelación y reembolso","Disputes & Claims":"Disputas y reclamaciones","I agree to the":"Acepto los","and":"y","Registered":"Registrado","Delete account":"Eliminar cuenta"});
 Object.assign(UI_TRANSLATIONS.pt,{"Terms of Service":"Termos de Serviço","Privacy Policy":"Política de Privacidade","Cancellation & Refund":"Cancelamento e reembolso","Disputes & Claims":"Disputas e reclamações","I agree to the":"Aceito os","and":"e","Registered":"Registado","Delete account":"Eliminar conta"});
+
+setTimeout(()=>{const resetToken=new URLSearchParams(location.search).get('reset');if(resetToken&&!me)showResetPassword(resetToken)},250);

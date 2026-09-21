@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const zlib = require('zlib');
+const tls = require('tls');
 const { URL } = require('url');
 let Pool = null;
 try { ({ Pool } = require('pg')); } catch (_) {}
@@ -23,7 +24,7 @@ function recordLoginFailure(req){const k=clientKey(req),a=loginAttempts.get(k)||
 function clearLoginFailures(req){loginAttempts.delete(clientKey(req))}
 function setSecurityHeaders(res){res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=(self)');res.setHeader('Cross-Origin-Opener-Policy','same-origin');}
 
-function emptyDB(){return {users:[], sessions:[], listings:[], offers:[], bookings:[], matches:[], verifications:[], notifications:[], settings:{brandName:'TUT Move',siteUrl:'https://tutmove.com',platformFeePct:5,defaultCurrency:'USD',ownerName:'',ownerEmail:'',legalEntity:'',supportEmail:'info@tutmove.com',launchMarkets:['USA','Canada','Europe','Middle East']}};}
+function emptyDB(){return {users:[], sessions:[], passwordResets:[], listings:[], offers:[], bookings:[], matches:[], verifications:[], notifications:[], settings:{brandName:'TUT Move',siteUrl:'https://tutmove.com',platformFeePct:5,defaultCurrency:'USD',ownerName:'',ownerEmail:'',legalEntity:'',supportEmail:'info@tutmove.com',launchMarkets:['USA','Canada','Europe','Middle East']}};}
 function normalizeDB(d){return {...emptyDB(),...(d||{}),settings:{...emptyDB().settings,...((d&&d.settings)||{})}}}
 function readLocalDB(){
   try{return normalizeDB(JSON.parse(fs.readFileSync(DBFILE,'utf8')))}
@@ -191,6 +192,24 @@ function bookingView(b,db){
   return out;
 }
 function hashPassword(p,salt=crypto.randomBytes(16).toString('hex')){const h=crypto.scryptSync(p,salt,64).toString('hex');return {salt,hash:h}}
+function resetTokenHash(token){return crypto.createHash('sha256').update(String(token)).digest('hex')}
+async function smtpSend({host,port,user,pass,from,to,subject,text}){
+  return new Promise((resolve,reject)=>{
+    const socket=tls.connect({host,port,servername:host,rejectUnauthorized:true});let buffer='',queue=[];
+    const fail=e=>{try{socket.destroy()}catch{}reject(e instanceof Error?e:new Error(String(e)))};
+    const wait=()=>new Promise((res,rej)=>queue.push({res,rej}));
+    socket.setTimeout(15000,()=>fail(new Error('SMTP timeout')));
+    socket.on('error',fail);socket.on('data',d=>{buffer+=d.toString();let lines=buffer.split(/\r?\n/);buffer=lines.pop();for(const line of lines){if(!line)continue;if(/^\d{3}-/.test(line))continue;if(/^\d{3} /.test(line)){const q=queue.shift();if(q){const code=Number(line.slice(0,3));code>=400?q.rej(new Error('SMTP '+code)):q.res(line)}}}});
+    socket.on('secureConnect',async()=>{try{await wait();const cmd=async c=>{socket.write(c+'\r\n');return wait()};await cmd('EHLO tutmove.com');await cmd('AUTH LOGIN');await cmd(Buffer.from(user).toString('base64'));await cmd(Buffer.from(pass).toString('base64'));await cmd(`MAIL FROM:<${from}>`);await cmd(`RCPT TO:<${to}>`);await cmd('DATA');const safeText=String(text).replace(/\r?\n\./g,'\r\n..');socket.write(`From: TUT Move <${from}>\r\nTo: ${to}\r\nSubject: ${subject}\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n${safeText}\r\n.\r\n`);await wait();await cmd('QUIT');socket.end();resolve()}catch(e){fail(e)}});
+  });
+}
+async function sendPasswordResetEmail(to,token){
+  const host=process.env.SMTP_HOST||'mail.privateemail.com',port=Number(process.env.SMTP_PORT||465),user=process.env.SMTP_USER||'',pass=process.env.SMTP_PASS||'',from=process.env.SMTP_FROM||user||'info@tutmove.com';
+  if(!user||!pass) throw new Error('Password reset email is not configured.');
+  const link=`${process.env.PUBLIC_SITE_URL||'https://tutmove.com'}/?reset=${encodeURIComponent(token)}`;
+  const text=`A password reset was requested for your TUT Move account.\n\nReset your password: ${link}\n\nThis link expires in 30 minutes and can be used once. If you did not request this, ignore this email.`;
+  await smtpSend({host,port,user,pass,from,to,subject:'Reset your TUT Move password',text});
+}
 function safeUser(u){return {id:u.id,name:u.name,email:u.email,role:u.role,roles:u.roles||[u.role],country:u.country||'',region:u.region||'',language:u.language||'en',currency:u.currency||'USD',verified:!!u.verified,verificationStatus:u.verificationStatus||'not_started',createdAt:u.createdAt}}
 function isOwner(u){return !!u&&u.role==='owner'}
 function ownerExists(){return readDB().users.some(u=>u.role==='owner')}
@@ -234,7 +253,7 @@ function serveStatic(res,p,req=null){const allowed=new Set(['/','/index.html','/
 const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'78',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'79',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -257,6 +276,29 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     if(!loginAllowed(req))return json(res,429,{error:'Too many login attempts. Please try again later.'});const b=await getBody(req),db=readDB(),u=db.users.find(x=>x.email===String(b.email||'').toLowerCase());if(!u){recordLoginFailure(req);return json(res,401,{error:'Invalid email or password.'})}if(u.accountStatus==='suspended')return json(res,403,{error:'Account suspended.'});const hp=hashPassword(String(b.password||''),u.salt);if(!crypto.timingSafeEqual(Buffer.from(hp.hash,'hex'),Buffer.from(u.hash,'hex'))){recordLoginFailure(req);return json(res,401,{error:'Invalid email or password.'})}clearLoginFailures(req);const sid=addSession(db,u.id);await writeDB(db);res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,200,{user:safeUser(u)});
   }
   if(p==='/api/logout'&&req.method==='POST'){const ids=sessionIdsFromRequest(req),db=readDB();if(ids.length)db.sessions=(db.sessions||[]).filter(x=>!ids.includes(x.id));await writeDB(db);res.setHeader('Set-Cookie',clearSessionCookie());return json(res,200,{ok:true});}
+  if(p==='/api/password/forgot'&&req.method==='POST'){
+    const b=await getBody(req),email=String(b.email||'').trim().toLowerCase();
+    if(!email)return json(res,400,{error:'Email is required.'});
+    const db=readDB(),u=db.users.find(x=>x.email===email);
+    const generic={ok:true,message:'If an account exists for that email, a password reset link has been sent.'};
+    if(!u)return json(res,200,generic);
+    const now=Date.now();db.passwordResets=(db.passwordResets||[]).filter(x=>new Date(x.expiresAt).getTime()>now&&!x.usedAt);
+    const token=crypto.randomBytes(32).toString('hex');
+    db.passwordResets.push({id:id('pr'),userId:u.id,tokenHash:resetTokenHash(token),createdAt:new Date(now).toISOString(),expiresAt:new Date(now+30*60*1000).toISOString(),usedAt:null});
+    await writeDB(db);
+    try{await sendPasswordResetEmail(u.email,token)}catch(e){console.error('Password reset email failed:',e.message);db.passwordResets=db.passwordResets.filter(x=>x.tokenHash!==resetTokenHash(token));await writeDB(db);return json(res,503,{error:'Password reset email is temporarily unavailable. Please try again later.'})}
+    return json(res,200,generic);
+  }
+  if(p==='/api/password/reset'&&req.method==='POST'){
+    const b=await getBody(req),token=String(b.token||''),next=String(b.password||'');
+    if(!token||next.length<8)return json(res,400,{error:'A valid reset link and password (8+ characters) are required.'});
+    const db=readDB(),h=resetTokenHash(token),now=Date.now(),r=(db.passwordResets||[]).find(x=>x.tokenHash===h&&!x.usedAt&&new Date(x.expiresAt).getTime()>now);
+    if(!r)return json(res,400,{error:'This reset link is invalid or has expired.'});
+    const u=db.users.find(x=>x.id===r.userId);if(!u)return json(res,400,{error:'This reset link is invalid or has expired.'});
+    const hp=hashPassword(next);u.salt=hp.salt;u.hash=hp.hash;r.usedAt=new Date().toISOString();
+    db.sessions=(db.sessions||[]).filter(x=>x.userId!==u.id);db.passwordResets=(db.passwordResets||[]).filter(x=>x.userId!==u.id||x.id===r.id);
+    await writeDB(db);res.setHeader('Set-Cookie',clearSessionCookie());return json(res,200,{ok:true,message:'Password updated. You can now sign in with your new password.'});
+  }
 
   if(p==='/api/owner/password'&&req.method==='PUT'){
     const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});
@@ -390,5 +432,5 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v78 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v79 running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});
