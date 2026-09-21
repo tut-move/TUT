@@ -705,3 +705,14 @@ img,video,svg,canvas{max-width:100%;height:auto}
   input,select,textarea,button{max-width:100%}
   .ownerSettingsGrid,.trustGrid,.uploadGrid,.formGrid2{grid-template-columns:1fr!important}
 }
+
+
+/* v81 — hero must never collide with the artwork at any desktop or mobile width. */
+.v49Hero{grid-template-columns:minmax(0,1.12fr) minmax(280px,.88fr);column-gap:clamp(28px,5vw,76px);align-items:center}
+.v49Hero .heroCopy{min-width:0;position:relative;z-index:2}
+.v49Hero .legacyHeroTitle{font-size:clamp(38px,3.65vw,58px);max-width:760px;overflow-wrap:normal;word-break:normal}
+.v49Hero .legacyHeroTitle .heroSentence{white-space:normal!important;max-width:100%}
+.v49Hero .heroVisual{min-width:0;position:relative;z-index:1}
+@media(max-width:980px){.v49Hero{grid-template-columns:1fr;row-gap:28px}.v49Hero .heroVisual{order:-1;max-width:520px;margin-inline:auto}.v49Hero .legacyHeroTitle{font-size:clamp(34px,7vw,52px);max-width:100%}}
+@media(max-width:700px){.v49Hero .legacyHeroTitle{font-size:clamp(29px,9vw,40px);line-height:1.08}.v49Hero .heroCopy p{overflow-wrap:normal;word-break:normal}.v49Hero .heroVisual{max-width:360px}}
+html[dir="rtl"] .v49Hero .heroCopy{text-align:right}

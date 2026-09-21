@@ -1,51 +1,41 @@
 {
   "users": [
     {
-      "id": "u_5cb45026ec23",
-      "name": "Test Driver",
-      "email": "v47test1787990915@example.com",
+      "id": "u_d58531711adb",
+      "name": "Audit User",
+      "email": "audit@example.com",
       "role": "driver",
       "roles": [
         "driver"
       ],
-      "country": "United States",
+      "country": "Germany",
       "region": "",
-      "language": "en",
+      "language": "de",
       "currency": "USD",
       "verified": false,
       "verificationStatus": "not_started",
-      "salt": "2301cf9a2fa4e3710b1a94961181fed8",
-      "hash": "a8dd402091b670fc5c59d333be497d2521e0f7259e2d256e142c1ae4b3c7af1858c8195ba91f1365e96f33476bdafcc54574f719b7815b661fc977d7f15b5527",
-      "createdAt": "2026-08-29T08:08:35.602Z",
-      "verification": {
-        "status": "pending",
-        "role": "driver",
-        "legalName": "Test Driver Legal",
-        "country": "United States",
-        "identityNumber": "ID12345",
-        "licenceNumber": "D1234567",
-        "licenceClasses": [
-          "Class A CDL"
-        ],
-        "licenceExpiry": "2030-01-01",
-        "endorsements": "H, N",
-        "registrationNumber": "",
-        "vehicleId": "",
-        "notes": "test",
-        "files": {},
-        "submittedAt": "2026-08-29T08:08:36.333Z",
-        "reviewedAt": null
-      }
+      "termsAcceptedAt": "2026-09-21T14:18:31.300Z",
+      "termsVersion": "2026-09-17",
+      "salt": "2be93de7b65c2697a79c678b528572e6",
+      "hash": "9349667ca44db1bc7531a3cf5be14dbb999606b206e154e3d7394ce9e49c9c6dbda0e2ebd10b5f1e1c4da0a69b2bbbb3b374c63c1e8fd231e53d70c084f3cd57",
+      "createdAt": "2026-09-21T14:18:31.300Z"
     }
   ],
   "sessions": [
     {
-      "id": "s_08215571834d",
-      "userId": "u_5cb45026ec23",
-      "createdAt": "2026-08-29T08:08:35.603Z",
-      "expiresAt": "2026-09-28T08:08:35.603Z"
+      "id": "s_3da479eadb74",
+      "userId": "u_d58531711adb",
+      "createdAt": "2026-09-21T14:18:31.300Z",
+      "expiresAt": "2026-10-21T14:18:31.300Z"
+    },
+    {
+      "id": "s_4f78b881df55",
+      "userId": "u_d58531711adb",
+      "createdAt": "2026-09-21T14:18:31.556Z",
+      "expiresAt": "2026-10-21T14:18:31.556Z"
     }
   ],
+  "passwordResets": [],
   "listings": [],
   "offers": [],
   "bookings": [],
