@@ -253,7 +253,7 @@ function serveStatic(res,p,req=null){const allowed=new Set(['/','/index.html','/
 const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
  try{
-  if(p==='/api/health')return json(res,200,{ok:true,version:'79',site:'tutmove.com',database:await dbInfo()});
+  if(p==='/api/health')return json(res,200,{ok:true,version:'85',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
@@ -432,5 +432,5 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v82 running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v85 production running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});

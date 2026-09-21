@@ -1,40 +1,6 @@
 {
-  "users": [
-    {
-      "id": "u_d58531711adb",
-      "name": "Audit User",
-      "email": "audit@example.com",
-      "role": "driver",
-      "roles": [
-        "driver"
-      ],
-      "country": "Germany",
-      "region": "",
-      "language": "de",
-      "currency": "USD",
-      "verified": false,
-      "verificationStatus": "not_started",
-      "termsAcceptedAt": "2026-09-21T14:18:31.300Z",
-      "termsVersion": "2026-09-17",
-      "salt": "2be93de7b65c2697a79c678b528572e6",
-      "hash": "9349667ca44db1bc7531a3cf5be14dbb999606b206e154e3d7394ce9e49c9c6dbda0e2ebd10b5f1e1c4da0a69b2bbbb3b374c63c1e8fd231e53d70c084f3cd57",
-      "createdAt": "2026-09-21T14:18:31.300Z"
-    }
-  ],
-  "sessions": [
-    {
-      "id": "s_3da479eadb74",
-      "userId": "u_d58531711adb",
-      "createdAt": "2026-09-21T14:18:31.300Z",
-      "expiresAt": "2026-10-21T14:18:31.300Z"
-    },
-    {
-      "id": "s_4f78b881df55",
-      "userId": "u_d58531711adb",
-      "createdAt": "2026-09-21T14:18:31.556Z",
-      "expiresAt": "2026-10-21T14:18:31.556Z"
-    }
-  ],
+  "users": [],
+  "sessions": [],
   "passwordResets": [],
   "listings": [],
   "offers": [],

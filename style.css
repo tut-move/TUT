@@ -30,7 +30,7 @@ html[dir="rtl"] input,html[dir="rtl"] select,html[dir="rtl"] textarea{text-align
 html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad4b;padding-left:0;padding-right:20px}
 
 
-/* v13 — Mobile layout: same TUT Move experience, adapted to small screens */
+
 @media (max-width: 860px){
   body{background:radial-gradient(circle at 70% 0,#181306 0,#080808 24%,#050505 62%);}
   main{width:min(100% - 32px,1180px);}
@@ -140,7 +140,7 @@ html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad
   .pageHead h1{font-size:32px;}
 }
 
-/* v14 resource-first marketplace */
+
 .goldText{color:var(--gold2)}
 .resourceChooser{padding:54px 0 74px}.sectionIntro{max-width:760px;margin-bottom:28px}.sectionIntro h2{font-size:clamp(34px,5vw,58px);margin:9px 0 10px}.sectionIntro p{color:var(--muted);font-size:17px}
 .resourceTiles{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.resourceTile{min-width:0;background:linear-gradient(160deg,#15130e,#0c0c0c 55%);border:1px solid #332c1c;border-radius:18px;padding:22px;display:flex;flex-direction:column;min-height:285px}.resourceIcon{display:grid;place-items:center;width:48px;height:48px;border:1px solid var(--gold);border-radius:14px;color:var(--gold2);font-weight:900;font-size:20px}.resourceTile h3{font-size:21px;margin:22px 0 9px}.resourceTile p{color:#aaa;line-height:1.5;flex:1}.resourceTile>div{display:grid;gap:7px}.resourceTile button{border:1px solid #4d4227;background:#0c0c0c;color:#e9d68b;border-radius:9px;padding:10px;cursor:pointer;text-align:left}.resourceTile button:first-child{background:linear-gradient(135deg,#e3c566,#9d7418);color:#111;border:0;font-weight:800}.marketPrinciple{text-align:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:46px 18px 52px;margin-bottom:22px}.marketPrinciple strong{font-size:clamp(30px,5vw,56px);letter-spacing:.08em}.marketPrinciple span{color:var(--gold);font-size:34px;padding:0 24px}.marketPrinciple p{max-width:850px;margin:22px auto 0;color:#aaa;line-height:1.7}
@@ -160,7 +160,7 @@ html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad
 .localLicenceCard small{display:block;color:#aaa;line-height:1.45;margin:4px 0}
 
 
-/* v17 Leaflet rendering failsafe — keeps tiles aligned even if CDN stylesheet is delayed */
+
 .leaflet-container{overflow:hidden;position:relative;outline:0;background:#ddd;z-index:0}
 .leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,
 .leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas{
@@ -205,7 +205,7 @@ html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad
 }
 @media(max-width:700px){.listingMap{height:280px}}
 
-/* v18 — compact local licence UI + visible automatic currency */
+
 .priceWithCurrency{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:stretch}
 .currencyBadge{min-width:96px;padding:0 14px;border:1px solid #5b4b25;border-radius:10px;background:#151107;color:var(--gold2);font-weight:900;display:flex;align-items:center;justify-content:center;white-space:nowrap}
 .specChecks{display:flex;flex-wrap:wrap;gap:10px 18px;border:1px solid #302b20;border-radius:12px;padding:14px;margin:10px 0 16px}
@@ -216,11 +216,11 @@ html[dir="rtl"] .aboutHero .aboutLead{border-left:0;border-right:2px solid #d6ad
 @media(max-width:600px){.priceWithCurrency{grid-template-columns:1fr}.currencyBadge{min-height:46px}.specChecks{gap:8px 12px}.specChecks label{flex:1 1 44%;}}
 html[dir="rtl"] .specChecks label{flex-direction:row-reverse;justify-content:flex-end}
 
-/* v19 language consistency */
+
 html[lang="de"] .pageHead p,html[lang="de"] .hero p{hyphens:auto}
 html[dir="rtl"] .marketBadge,html[dir="rtl"] .priceWithCurrency{direction:rtl}
 
-/* v22: persistent locale overrides + live market ticker */
+
 .tools{gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .tools select{max-width:170px}
 .liveTicker{display:flex;align-items:center;gap:8px;border-top:1px solid rgba(255,255,255,.08);border-bottom:1px solid rgba(255,255,255,.08);padding:8px 18px;background:#0d0d0d;font-size:12px;overflow:hidden}
@@ -232,7 +232,7 @@ html[dir="rtl"] .marketBadge,html[dir="rtl"] .priceWithCurrency{direction:rtl}
 
 footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:underline}
 
-/* v25 — booking, trip verification and payment test workflow */
+
 .testNotice{border:1px solid rgba(212,177,92,.35)}
 .testNotice{padding:10px 12px;border-radius:10px;margin:10px 0;font-weight:700}
 .tripCard h4{margin:18px 0 8px}
@@ -245,7 +245,7 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .tripFlow span.done{border-color:#d4b15c;font-weight:800}
 @media(max-width:700px){.tripChecks{grid-template-columns:1fr}}
 
-/* v26 — polished offers, booking workflow and multilingual price guidance */
+
 .bookingSectionHead{margin-top:42px;display:flex;justify-content:space-between;align-items:end}
 .bookingSectionHead .subhead{margin:5px 0 14px}
 .dealStepper{display:flex;align-items:center;gap:9px;overflow:auto;padding:14px 2px 20px;white-space:nowrap}
@@ -265,7 +265,7 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .paymentArchitecture{display:none}
 @media(max-width:800px){.estimatePanel{grid-template-columns:1fr}.estimateInputs{grid-template-columns:1fr}.estimateResult,.estimatePanel>.muted{grid-column:1}.bookingMoney{grid-template-columns:1fr}.dealStepper{padding-bottom:14px}}
 
-/* v27 — market pricing without platform-set estimates */
+
 .estimatePanel{display:none!important}
 .marketPricingPanel{padding:24px;border:1px solid rgba(212,177,92,.25);border-radius:18px;background:rgba(255,255,255,.025);margin-bottom:24px}
 .marketPricingPanel h3{font-size:28px;margin:8px 0}
@@ -276,7 +276,7 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 @media(max-width:800px){.marketPricingPanel{padding:18px}.marketPricingPanel h3{font-size:23px}}
 
 
-/* v28 — clean Offers workflow */
+
 .offersWorkflow{margin:34px 0 26px;padding:24px;border:1px solid rgba(212,177,92,.22);border-radius:18px;background:rgba(255,255,255,.018)}
 .offersWorkflow h2{font-size:30px;margin:7px 0 5px}
 .offersPricingNote{margin:0 0 20px;opacity:.78;line-height:1.5}
@@ -287,17 +287,17 @@ footer a{color:var(--gold2);text-decoration:none}footer a:hover{text-decoration:
 .offersStage strong{display:block;font-size:13px;line-height:1.45}
 @media(max-width:850px){.offersStages{grid-template-columns:1fr}.offersWorkflow{padding:18px}}
 
-/* v29 Verification v1 — additive only */
+
 .verificationWrap{padding-top:54px;padding-bottom:30px}.verificationStatus{display:inline-block;margin:12px 0 18px;padding:8px 12px;border:1px solid rgba(212,177,92,.35);border-radius:999px;font-weight:800}
 .verificationForm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:900px}.verificationForm label{font-size:12px;font-weight:700}.verificationForm input,.verificationForm select,.verificationForm textarea{margin-top:6px}.verifyWide{grid-column:1/-1}
 .ownerVerificationQueue{margin-top:24px}.verifyReview{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px;border:1px solid rgba(255,255,255,.09);border-radius:12px;margin:8px 0}.verifyReview small{display:block;opacity:.65;margin-top:4px}
 @media(max-width:700px){.verificationForm{grid-template-columns:1fr}.verifyWide{grid-column:auto}}
 
-/* v30 — Trust & Readiness verification redesign */
+
 .trustHead{align-items:flex-start}.trustStatus{display:flex;align-items:center;gap:9px;border:1px solid rgba(212,177,92,.28);border-radius:999px;padding:10px 14px;white-space:nowrap}.trustStatus span{width:9px;height:9px;border-radius:50%;background:#777}.trustStatus.pending span{background:#d4b15c;box-shadow:0 0 12px rgba(212,177,92,.6)}.trustStatus.verified span{background:#69c58a}.trustGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:8px 0 22px}.trustCard{position:relative;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:22px;background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));min-height:210px}.trustCard small{color:var(--gold2);font-weight:900;letter-spacing:.14em}.trustCard h3{font-size:21px;margin:10px 0 8px}.trustCard p{opacity:.72;line-height:1.55}.trustIcon{position:absolute;right:18px;top:16px;font-size:12px;border:1px solid rgba(212,177,92,.35);border-radius:50%;width:34px;height:34px;display:grid;place-items:center;color:var(--gold2);font-weight:900}.trustLine{display:flex;gap:8px;align-items:center;font-size:12px;margin-top:18px;opacity:.9}.trustLine i{width:7px;height:7px;border-radius:50%;background:var(--gold2);flex:none}.trustPanel{padding:26px}.trustIntro{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}.trustIntro h2,.tripGate h2{margin:5px 0}.trustIntro p{margin:0;opacity:.72}.privacyChip{border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:8px 11px;font-size:11px;white-space:nowrap}.trustNotice{padding:13px 15px;border:1px solid rgba(212,177,92,.22);border-radius:12px;margin:10px 0 18px}.trustRoleFields{margin-top:4px}.trustPrivacy{display:flex;gap:8px;flex-direction:column;margin:18px 0;padding:14px 16px;border-left:2px solid var(--gold2);background:rgba(212,177,92,.045);font-size:12px;line-height:1.5}.trustPrivacy span{opacity:.72}.trustSubmit{min-width:220px}.tripGate{margin-top:20px;padding:24px}.gateFlow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0}.gateFlow span{padding:8px 11px;border:1px solid rgba(255,255,255,.13);border-radius:999px;font-size:12px;font-weight:800}.gateFlow b{opacity:.35}.gateFlow .gateReady{border-color:rgba(212,177,92,.6);color:var(--gold2)}.tripGate>p{opacity:.7;margin-bottom:0;max-width:900px}
 @media(max-width:850px){.trustGrid{grid-template-columns:1fr}.trustCard{min-height:0}.trustIntro{flex-direction:column}.trustStatus{margin-top:10px}.trustPanel{padding:18px}.gateFlow b{display:none}}
 
-/* v31 verification final */
+
 .verifyShell{padding-top:44px;padding-bottom:34px}.verifyShell>h2{font-size:42px;margin:6px 0 8px}.verifyLead{max-width:760px;opacity:.78}
 .verifySteps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.verifyStep{display:flex;gap:12px;align-items:center;padding:16px;border:1px solid rgba(255,255,255,.09);border-radius:14px}.verifyStep>b{display:grid;place-items:center;min-width:34px;height:34px;border:1px solid rgba(212,177,92,.42);border-radius:50%}.verifyStep small{display:block;color:#d4b15c;font-weight:800;margin-bottom:4px}.verifyStep strong{font-size:14px}
 .verifyPanel{padding:22px;border:1px solid rgba(212,177,92,.2);border-radius:18px;background:rgba(255,255,255,.018)}.verifyPanelHead{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.verifyPanelHead h3{font-size:28px;margin:5px 0}.verifyMode{font-size:11px;opacity:.55}.compactVerify{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:none}.compactVerify label{font-size:12px;font-weight:700}.compactVerify input,.compactVerify select{margin-top:6px}.compactVerify button{grid-column:1/-1;max-width:260px}.tripReadyMini{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)}.tripReadyMini span{opacity:.65}.tripReadyMini i{font-style:normal;color:#d4b15c}
@@ -383,7 +383,7 @@ html[dir="rtl"] .listingMap{direction:ltr}
   .listingMap{height:230px!important;min-height:230px!important}
 }
 
-/* v33 account privacy + two-date flow */
+
 .privacyPanel{margin-top:16px;padding:18px;border:1px solid rgba(255,255,255,.09);border-radius:16px;background:rgba(255,255,255,.018)}
 .privacyPanel h3{margin:0 0 8px}.privacyPanel p{margin:0 0 14px;opacity:.72}.dangerPanel{border-color:rgba(210,75,75,.28)}
 .dangerBtn{border:1px solid rgba(220,80,80,.55);background:rgba(180,45,45,.12);color:#ffdede;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer}
@@ -398,7 +398,7 @@ html[dir="rtl"] .listingMap{direction:ltr}
 @media(max-width:900px){.needTiles{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.needChooser{padding:34px 0 52px}.needTiles{grid-template-columns:1fr}.needTile{min-height:112px;padding:16px}}
 html[dir="rtl"] .needTile{text-align:right}
 
-/* v37 clean entry chooser */
+
 .needChooser{padding:54px 0 72px}
 .needPrimaryGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
 .needPrimary{min-height:132px;padding:22px 24px;border:1px solid #332c1c;border-radius:18px;background:linear-gradient(150deg,#15130f,#0c0c0c 65%);color:inherit;display:flex;align-items:center;gap:18px;text-align:left;cursor:pointer}
@@ -417,7 +417,7 @@ html[dir="rtl"] .needPrimary,html[dir="rtl"] .needSubChoice{text-align:right}
 @media(max-width:760px){.needPrimaryGrid{grid-template-columns:1fr}.needSubGrid{grid-template-columns:1fr 1fr}.needPrimary{min-height:108px;padding:17px}}
 @media(max-width:480px){.needSubGrid{grid-template-columns:1fr}.needChooser{padding:34px 0 48px}.needPrimary b{font-size:18px}}
 
-/* v39 — safe copy-only fix */
+
 .globalDirection{
   margin:8px 0 10px;
   font-size:13px;
@@ -429,24 +429,24 @@ html[dir="rtl"] .needPrimary,html[dir="rtl"] .needSubChoice{text-align:right}
 .brandLockup > span{display:flex;flex-direction:column;align-items:flex-start}
 html[dir="rtl"] .brandLockup > span{align-items:flex-end}
 
-/* v41 adaptive booking workflows */
+
 .adaptiveBooking .tripTop{align-items:flex-start}.adaptiveBooking .tripTop>div{max-width:72%}.compact{margin:5px 0 0}.singleMoney{grid-template-columns:minmax(220px,420px)}.dealNotice{margin:12px 0 18px;padding:12px 14px;border:1px solid rgba(215,175,69,.28);border-radius:12px;color:#cfc7b6;background:#0c0c0c}.adaptiveFlow{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.adaptiveFlow span{padding:8px 11px;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:13px}.adaptiveFlow span.done{border-color:#7a662d;color:var(--gold2)}.dealSuccess{margin-top:12px;padding:13px 15px;border:1px solid #415d46;border-radius:12px;color:#aee2b5;background:#0b120c;font-weight:800}@media(max-width:700px){.adaptiveBooking .tripTop>div{max-width:100%}.bookingMoney.singleMoney{grid-template-columns:1fr}}
 
-/* v42 — role-aware deal presentation */
+
 .driverPartyGrid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;margin:18px 0}.partyPanel{border:1px solid var(--line);border-radius:14px;padding:18px;background:#0b0b0b}.partyPanel.primaryParty{border-color:#6b5727;background:linear-gradient(180deg,#15130d,#0b0b0b)}.partyPanel h3{font-size:24px;margin:6px 0 14px}.dealFacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.dealFact{padding:10px 12px;border:1px solid #29251d;border-radius:10px;min-width:0}.dealFact small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.dealFact strong{display:block;overflow-wrap:anywhere}.verificationSnapshot{margin-top:12px;padding:13px;border-radius:12px;border:1px solid #3a3325}.verifiedSnapshot{border-color:#395a40}.pendingSnapshot{border-color:#6b5727}.offerMessage{margin-top:12px;padding:12px;border-left:2px solid var(--gold);background:#101010}.offerMessage p{margin:5px 0 0}.warningNotice{border-color:#705d2d!important}.readyCheck{margin-top:16px!important;padding:14px!important;border:1px solid #3b3528;border-radius:12px}.readyCheck input{width:auto;margin-right:8px}.singleMoney{grid-template-columns:1fr}.adaptiveFlow{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.adaptiveFlow span{border:1px solid #3a352a;border-radius:999px;padding:7px 10px;font-size:12px}.adaptiveFlow span.done{border-color:var(--gold);color:var(--gold2)}
 @media(max-width:800px){.driverPartyGrid,.dealFacts{grid-template-columns:1fr}}
 
-/* v44 — explicit role selection and counterpart detail cards */
+
 .roleChoiceGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0 18px}.roleChoice{position:relative;display:grid;grid-template-columns:24px 30px 1fr;align-items:center;gap:10px;margin:0;padding:14px;border:1px solid #3a3427;border-radius:12px;background:#0b0b0b;cursor:pointer}.roleChoice input{position:absolute;opacity:0;pointer-events:none}.roleMark{display:grid;place-items:center;width:22px;height:22px;border:1px solid #68582d;border-radius:6px;color:transparent;font-weight:900}.roleChoice:has(input:checked){border-color:var(--gold);background:rgba(215,175,69,.08)}.roleChoice:has(input:checked) .roleMark{background:var(--gold);color:#111}.roleEmoji{font-size:22px}.activeRoleBadge{margin:12px 0;padding:12px 14px;border:1px solid #665329;border-radius:10px;color:var(--gold2);font-weight:800}.privacyPanel input{margin:10px 0}.partyPanel h3{margin:7px 0 15px}.dealFacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.dealFact{padding:10px;border:1px solid #302c24;border-radius:10px;background:#0b0b0b}.dealFact small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.dealFact strong{font-size:14px;overflow-wrap:anywhere}.driverPartyGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}.primaryParty{border-color:#6d5929!important}.partyPanel{border:1px solid #302b20;border-radius:14px;padding:16px;background:#0d0d0d}@media(max-width:760px){.roleChoiceGrid,.driverPartyGrid,.dealFacts{grid-template-columns:1fr}}
 
-/* v45 — calmer account onboarding */
+
 .authShell{max-width:720px;margin:0 auto}.authTabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px;padding:5px;border:1px solid var(--line);border-radius:14px;background:#0a0a0a}.authTab{border:0;border-radius:10px;padding:12px 14px;background:transparent;color:var(--muted);font-weight:800;cursor:pointer}.authTab.active{background:#18150f;color:var(--gold2);box-shadow:inset 0 0 0 1px #5d4d28}.authMode{padding:24px}.authMode h3{font-size:26px;margin:7px 0}.authFields{display:grid;gap:9px;margin:18px 0}.authFields input{margin:0}.roleQuestion{font-weight:800;font-size:14px;margin:18px 0 10px}.compactRoles{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.compactRoles .roleChoice{min-height:62px;grid-template-columns:22px 30px 1fr;padding:11px 12px;border-radius:11px}.compactRoles .roleChoice:last-child{grid-column:1/-1}.roleChoice .roleMark{position:relative;color:transparent;background:#0a0a0a}.roleChoice .roleMark::after{content:'✓';position:absolute;inset:0;display:grid;place-items:center;opacity:0;color:#111;font-size:14px}.roleChoice.selected{border-color:var(--gold);background:rgba(215,175,69,.07)}.roleChoice.selected .roleMark{background:var(--gold);border-color:var(--gold)}.roleChoice.selected .roleMark::after{opacity:1}.roleChoice:not(.selected) .roleMark{color:transparent!important}.roleChoice b{font-size:14px;line-height:1.25}.roleEmoji{font-size:20px}.marketRow{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:16px 0;padding:11px 13px;border:1px solid #302b20;border-radius:10px;background:#0b0b0b;color:var(--muted)}.marketRow strong{color:var(--text);font-size:14px}.accountShell{max-width:760px;margin:auto}.resourceHero .heroCopy h1 span{display:inline}.resourceHero .heroCopy p{max-width:680px}
 @media(max-width:700px){.compactRoles{grid-template-columns:1fr}.compactRoles .roleChoice:last-child{grid-column:auto}.authMode{padding:18px}.authShell{max-width:100%}}
 
-/* v46 role selector: language-safe buttons */
+
 .roleChoice{width:100%;text-align:start;color:var(--text);font:inherit}.roleChoice:focus-visible{outline:2px solid var(--gold);outline-offset:2px}.roleChoice.selected .roleMark{background:var(--gold);border-color:var(--gold)}.roleChoice.selected .roleMark::after{opacity:1}
 
-/* v47 — explicit selectable qualifications + universal route blocks */
+
 .checkCard{position:relative;border:1px solid #3a3427;border-radius:12px;padding:10px 12px!important;background:#111;transition:.15s ease;min-width:130px}
 .checkCard:hover{border-color:#8f7841;background:#17150f}
 .checkCard input[type="checkbox"]{position:absolute;opacity:0;pointer-events:none}
@@ -493,7 +493,7 @@ main{width:min(1240px,92vw)}
 }
 @media(max-width:620px){.confidenceStrip{grid-template-columns:1fr}.confidenceStrip article{border-right:0;border-bottom:1px solid #282620}.confidenceStrip article:last-child{border-bottom:0}.v48Hero h1{font-size:46px}.brandStage{border-radius:24px;padding:18px}.paymentCardTop{flex-direction:column}.providerRoadmap{padding:24px 0}.roadmapChecks{grid-template-columns:1fr}.verifyWizard{border-radius:18px;padding:16px}.verifyIntro h1{font-size:42px}.verifyStepper{padding:0}.verifyStep{padding:8px 4px}.verifyStep span{width:28px;height:28px}}
 
-/* v49 — calmer premium shell, simpler navigation and two-sided entry */
+
 .compactNav{align-items:center;flex-wrap:nowrap}
 .navMenu{position:relative}
 .navMenuTrigger{display:flex;align-items:center;gap:5px}
@@ -527,7 +527,7 @@ html[dir="rtl"] .resourceQuickGrid button{text-align:right}
 @media(max-width:980px){.compactNav{display:none}.v49Hero{grid-template-columns:1fr;min-height:auto;gap:24px}.v49Hero .brandStage{order:-1;max-width:440px;margin:auto}.v49Hero .brandStage img{max-width:280px}.sideChoiceGrid{grid-template-columns:1fr}}
 @media(max-width:600px){.v49Hero h1{font-size:clamp(40px,12vw,54px)}.resourceQuickGrid{grid-template-columns:1fr}.sideChoice{padding:18px}.brandWords strong{font-size:13px}.founderPhoto{min-height:auto}}
 
-/* v50 — calmer two-side entry, clean market menu, one-line registration roles */
+
 .cleanStart{padding:66px 0 54px;border-top:1px solid #24221e}
 .cleanStart .sectionIntro{max-width:760px;margin:0 auto 26px;text-align:center}
 .cleanStart .sectionIntro h2{font-size:clamp(36px,5.2vw,60px);line-height:1.02;margin:10px 0 14px;letter-spacing:-.045em}
@@ -548,7 +548,7 @@ html[dir="rtl"] .homeSideTab,html[dir="rtl"] .homeResourceGrid button,html[dir="
 @media(max-width:680px){.cleanStart{padding:44px 0}.homeSideTabs,.homeResourceGrid{grid-template-columns:1fr}.homeSideTab{min-height:78px}.homeResourceHeader{align-items:start;flex-direction:column;gap:7px}.compactRoles .roleChoice b{white-space:normal!important}.marketMenu{width:min(92vw,390px)}}
 
 
-/* v51 — clean horizontal marketplace choice */
+
 .homeSideTabs{max-width:900px;grid-template-columns:1fr 1fr;gap:12px}
 .homeSideTab{min-height:72px;display:flex;align-items:center;justify-content:center;text-align:center!important;padding:16px 20px}
 .homeSideTab strong{display:block;font-size:18px;line-height:1.1;white-space:nowrap}
@@ -563,7 +563,7 @@ html[dir="rtl"] .homeSideTab,html[dir="rtl"] .homeResourceGrid button{text-align
 @media(max-width:900px){.homeResourceGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:560px){.homeSideTabs{grid-template-columns:1fr 1fr}.homeSideTab{min-height:62px;padding:12px}.homeSideTab strong{font-size:15px}.homeResourceGrid{grid-template-columns:1fr 1fr}.homeResourceGrid button{min-height:58px;padding:12px 8px}.homeResourceGrid b{font-size:13px}}
 
-/* v52 — targeted fixes only: market menu + verification layout */
+
 .marketMenu{width:min(320px,88vw);padding:8px}
 .marketMenu button{display:flex!important;align-items:center!important;width:100%;min-height:44px;padding:10px 12px!important;border:0;border-radius:10px;background:transparent;color:var(--text);text-align:left;cursor:pointer}
 .marketMenu button b{display:block;font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -586,7 +586,7 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 @media(max-width:620px){#verify .verifyWizard{padding:16px}}
 
 
-/* v53 — speed, notification and secure accepted-driver flow */
+
 .notificationBtn{position:relative;border:1px solid var(--line);background:transparent;color:inherit;border-radius:12px;min-width:40px;height:40px;cursor:pointer;font-size:17px;display:inline-flex;align-items:center;justify-content:center}
 .notificationCount{position:absolute;right:-5px;top:-7px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#d6a94d;color:#0a0a0a;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
 .notificationPanel{margin-bottom:14px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
@@ -598,22 +598,22 @@ html[dir="rtl"] .marketMenu .marketMenuAll{text-align:center}
 .feeNotice{margin-top:10px;padding:10px 12px;border-radius:12px;background:rgba(214,169,77,.08);font-size:13px}
 @media(max-width:720px){.notificationBtn{min-width:36px;height:36px}.notificationPanel{border-radius:12px}.driverDocActions{display:grid;grid-template-columns:1fr}.driverDocActions a{width:100%}.heroVisual img{max-width:240px;height:auto}.founderPhoto img{max-width:100%;height:auto}}
 
-/* v54 targeted bugfix: mobile Market access only */
+
 .mobileMarketBtn{display:none;border:1px solid #65562d;background:transparent;color:var(--gold2);padding:9px 12px;border-radius:9px;font-weight:800;cursor:pointer}
 @media(max-width:860px){.mobileMarketBtn{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}.topbar{flex-wrap:wrap}.tools{margin-left:auto}}
 [dir=rtl] .tools{margin-left:0;margin-right:auto}
 
 
-/* v61 — transport journey stage lock only */
+
 .tripFlow span.locked{opacity:.38;border-style:dashed;cursor:not-allowed}
 .tripFlow span.active{border-color:var(--gold);font-weight:800;box-shadow:0 0 0 1px rgba(212,177,92,.16) inset}
 .transportDeal .tripChecks input:disabled,.transportDeal .readyCheck input:disabled{cursor:not-allowed;opacity:.55}
 .transportDeal button:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
 
-/* v62 — legal pages + owner user management only */
+
 .legalDoc{max-width:980px;margin:0 auto}.legalDoc h2{margin:26px 0 8px;font-size:20px}.legalDoc p{line-height:1.75;color:var(--muted)}.legalLinks{display:flex;gap:14px;flex-wrap:wrap}.legalLinks button,.inlineLegal{border:0;background:none;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit}.legalConsent{display:flex;align-items:flex-start;gap:10px;margin:14px 0 18px;line-height:1.45}.legalConsent input{margin-top:4px}.inlineLegal{color:var(--gold)}.adminUserActions{margin-top:14px}.adminUserActions .dangerBtn{width:auto}.legalPane[dir=rtl],html[dir=rtl] .legalDoc{text-align:right}
 
-/* v65 — About page coded to supplied visual reference */
+
 .aboutReference{max-width:1000px;margin:0 auto;padding-top:22px!important;padding-bottom:20px!important}
 .aboutReference .aboutHero{padding:0 18px 14px;max-width:780px}
 .aboutReference .aboutHero .eyebrow{font-size:10px;font-weight:800;letter-spacing:.24em}
@@ -642,14 +642,14 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 }
 @media(min-width:981px){.mobileMarketWrap{display:none!important}}
 
-/* v67: single Market control on mobile; dropdown escapes the horizontal nav scroller */
+
 .mobileMarketWrap{display:none!important}
 @media(max-width:980px){
   #marketMenu{max-height:min(360px,55vh);overflow-y:auto;box-shadow:0 22px 60px rgba(0,0,0,.72)}
 }
 
 
-/* v68 — restore the original hero copy only; keep v67 navigation/mobile fixes intact */
+
 .v49Hero .legacyHeroTitle span{color:var(--gold2)}
 .v49Hero .legacyHeroLead{margin-top:20px;color:#d7d2c8;font-size:17px;line-height:1.55;font-weight:650}
 @media(max-width:600px){
@@ -659,7 +659,7 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 }
 
 
-/* v69 — keep each hero sentence intact and remove redundant home copy */
+
 .v49Hero .legacyHeroTitle{font-size:clamp(30px,4.15vw,64px);line-height:1.08;letter-spacing:-.045em;max-width:none}
 .v49Hero .legacyHeroTitle .heroSentence{display:block;white-space:nowrap;color:var(--text)}
 .v49Hero .legacyHeroTitle .heroSentence em{font-style:normal;color:var(--gold2)}
@@ -667,13 +667,13 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
   .v49Hero .legacyHeroTitle{font-size:clamp(24px,7.25vw,34px);line-height:1.16;letter-spacing:-.04em}
   .v49Hero .legacyHeroTitle .heroSentence{white-space:nowrap}
 }
-/* v72 owner dashboard: owner is an administrator, not a marketplace participant */
+
 .desktopNavGroup{display:contents}.desktopNavGroup.hidden{display:none!important}
 .ownerKpis,.roleKpis{align-items:stretch}.kpi small{display:block;margin-top:.35rem;opacity:.62;font-size:.75rem}
 .adminUsersHead{display:flex;align-items:end;justify-content:space-between;gap:1rem;flex-wrap:wrap}.adminUserFilters{display:flex;gap:.65rem;flex-wrap:wrap}.adminUserFilters input,.adminUserFilters select{min-width:190px}
 @media(max-width:760px){.adminUserFilters{width:100%}.adminUserFilters input,.adminUserFilters select{width:100%}}
 
-/* v75 owner dashboard: cleaner hierarchy without changing owner controls */
+
 .ownerKingBar{margin:-8px 0 26px;text-align:center;color:var(--gold2);font-weight:900;letter-spacing:.2em;font-size:clamp(14px,1.6vw,20px);padding:12px 16px;border-bottom:1px solid #493b1c;text-shadow:0 0 18px rgba(215,175,69,.22)}
 .ownerHead{margin-bottom:18px}.ownerHead h1{font-size:clamp(32px,4vw,46px)}
 .ownerSection{padding:0;overflow:hidden;margin-bottom:16px}.ownerSection summary{cursor:pointer;list-style:none;padding:18px 20px;font-weight:850;font-size:18px;color:var(--text);display:flex;align-items:center;justify-content:space-between}.ownerSection summary::-webkit-details-marker{display:none}.ownerSection summary:after{content:'+';color:var(--gold);font-size:22px}.ownerSection[open] summary:after{content:'–'}.ownerSection[open] summary{border-bottom:1px solid var(--line)}.ownerSectionBody{padding:4px 20px 20px}.ownerSectionBody .compact{margin:14px 0 0;line-height:1.5}.ownerSettingsGrid{display:grid;grid-template-columns:1.35fr .65fr;gap:16px;align-items:start}.ownerSettingsGrid .ownerSection{margin-bottom:16px}.ownerDashboard .subhead{margin:28px 0 14px}.ownerDashboard .kpis{gap:12px}.ownerDashboard .kpi{padding:16px}.ownerDashboard .kpi b{font-size:26px}.ownerDashboard .adminUsersHead{margin-top:26px}.ownerDashboard #adminUsersList.cards{gap:12px}
@@ -681,7 +681,7 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 
 .forgotLink{display:block;margin:12px auto 0;background:none;border:0;color:var(--gold,#b99345);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.forgotLink:hover{opacity:.8}
 
-/* v80 — mobile hero safety: never clip marketing copy on narrow screens */
+
 .hero,.heroCopy,.v49Hero,.v49Hero .heroCopy,.v49Hero .legacyHeroTitle,.v49Hero .legacyHeroTitle .heroSentence{min-width:0;max-width:100%}
 @media(max-width:700px){
   .v49Hero .legacyHeroTitle{font-size:clamp(30px,9.4vw,42px);line-height:1.08;letter-spacing:-.045em;max-width:100%;overflow:visible}
@@ -692,7 +692,7 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 }
 @media(max-width:390px){.v49Hero .legacyHeroTitle{font-size:clamp(28px,9vw,36px)}}
 
-/* v80 final — viewport safety across narrow phones */
+
 html,body{max-width:100%;overflow-x:hidden}
 *,*::before,*::after{box-sizing:border-box}
 img,video,svg,canvas{max-width:100%;height:auto}
@@ -707,7 +707,7 @@ img,video,svg,canvas{max-width:100%;height:auto}
 }
 
 
-/* v81 — hero must never collide with the artwork at any desktop or mobile width. */
+
 .v49Hero{grid-template-columns:minmax(0,1.12fr) minmax(280px,.88fr);column-gap:clamp(28px,5vw,76px);align-items:center}
 .v49Hero .heroCopy{min-width:0;position:relative;z-index:2}
 .v49Hero .legacyHeroTitle{font-size:clamp(38px,3.65vw,58px);max-width:760px;overflow-wrap:normal;word-break:normal}
@@ -717,7 +717,7 @@ img,video,svg,canvas{max-width:100%;height:auto}
 @media(max-width:700px){.v49Hero .legacyHeroTitle{font-size:clamp(29px,9vw,40px);line-height:1.08}.v49Hero .heroCopy p{overflow-wrap:normal;word-break:normal}.v49Hero .heroVisual{max-width:360px}}
 html[dir="rtl"] .v49Hero .heroCopy{text-align:right}
 
-/* v82 release hardening — responsive typography, clean emblem, full-width About */
+
 .v49Hero .brandStage{border:0!important;border-radius:0!important;background:transparent!important;padding:0!important;overflow:visible!important;box-shadow:none!important}
 .v49Hero .brandStage:before,.v49Hero .brandStage:after{display:none!important;content:none!important}
 .v49Hero .brandStage img{filter:drop-shadow(0 22px 55px rgba(0,0,0,.55));max-width:430px}
@@ -762,3 +762,45 @@ footer{flex-wrap:wrap;align-items:center}footer .legalLinks{display:flex;gap:14p
 }
 /* Preserve the intended gold emphasis after language switching. */
 .v49Hero .legacyHeroTitle .heroSentence:last-child{color:var(--gold2)!important}
+\n/* Clean release: authoritative presentation rules */
+html,body{max-width:100%;overflow-x:hidden}
+.v49Hero{grid-template-columns:minmax(0,1.12fr) minmax(280px,.88fr);gap:clamp(28px,5vw,76px);align-items:center;overflow:visible}
+.v49Hero .heroCopy{min-width:0;max-width:100%}
+.v49Hero .legacyHeroTitle{font-size:clamp(38px,3.65vw,58px);line-height:1.06;letter-spacing:-.045em;max-width:760px;overflow:visible;word-break:normal;overflow-wrap:normal}
+.v49Hero .legacyHeroTitle .heroSentence{display:block;white-space:normal;color:var(--text)}
+.v49Hero .legacyHeroTitle .heroSentence em,.v49Hero .legacyHeroTitle .heroSentence:last-child{color:var(--gold2)}
+.v49Hero .brandStage{border:0!important;border-radius:0!important;background:transparent!important;padding:0!important;overflow:visible!important;box-shadow:none!important}
+.v49Hero .brandStage:before,.v49Hero .brandStage:after{display:none!important;content:none!important}
+.v49Hero .brandStage img{display:block;width:min(100%,430px);max-width:430px;margin:auto;filter:drop-shadow(0 22px 55px rgba(0,0,0,.55))}
+.aboutReference{width:100%;max-width:none}.aboutReference .aboutHero{max-width:1100px}.aboutReference .aboutGrid{width:100%;max-width:none}.founderReference{width:100%;max-width:none;grid-template-columns:minmax(260px,.72fr) minmax(0,1.28fr)}.founderStory{min-width:0}.founderStory p{max-width:900px}
+footer{align-items:center;flex-wrap:wrap}.legalLinks{display:flex;gap:8px 14px;flex-wrap:wrap}.legalLinks button{border:0;background:none;color:inherit;padding:0;cursor:pointer}.legalLinks button:hover{color:var(--gold2)}
+@media(max-width:980px){.v49Hero{grid-template-columns:1fr;gap:24px}.v49Hero .heroVisual{order:-1;max-width:460px;margin-inline:auto}.founderReference{grid-template-columns:1fr}.aboutReference .aboutHero{max-width:none}}
+@media(max-width:700px){main{width:calc(100% - 32px)}.v49Hero{padding-top:8px;overflow:visible}.v49Hero .heroVisual{width:100%;max-width:330px}.v49Hero .brandStage img{width:min(68vw,290px)}.v49Hero .legacyHeroTitle{font-size:clamp(30px,9.4vw,42px);line-height:1.08;letter-spacing:-.04em;max-width:100%}.v49Hero .legacyHeroTitle .heroSentence,.v49Hero .legacyHeroTitle .heroSentence em{white-space:normal!important}.v49Hero .heroCopy>p,.v49Hero .legacyHeroLead{max-width:100%;overflow-wrap:normal;word-break:normal}.aboutHero h1{font-size:clamp(38px,11vw,58px)}.aboutGrid{grid-template-columns:1fr}.founderReference{padding-inline:0}.founderStory{padding-inline:0}footer{align-items:flex-start}.legalLinks{width:100%}}
+html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:right}
+
+/* FINAL RELEASE LAYOUT — canonical public-page rules */
+html,body{max-width:100%;overflow-x:hidden}
+.v49Hero{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);gap:clamp(36px,5vw,72px);align-items:center;min-height:620px;padding:48px 0}
+.v49Hero .heroCopy{min-width:0;max-width:760px}
+.v49Hero .legacyHeroTitle{font-size:clamp(42px,4.35vw,68px);line-height:1.02;letter-spacing:-.045em;margin:16px 0 22px;max-width:760px;overflow:visible;word-break:normal;overflow-wrap:normal}
+.v49Hero .legacyHeroTitle .heroSentence{display:block;white-space:normal!important;color:var(--text)}
+.v49Hero .legacyHeroTitle .heroSentence em,.v49Hero .legacyHeroTitle .heroSentence:last-child{font-style:normal;color:var(--gold2)!important}
+.v49Hero .legacyHeroLead{font-size:18px;line-height:1.55;max-width:690px;color:#d7d2c8}
+.v49Hero .heroVisual{min-width:0;text-align:center}
+.v49Hero .brandStage{border:0!important;border-radius:0!important;background:transparent!important;padding:0!important;overflow:visible!important;box-shadow:none!important}
+.v49Hero .brandStage:before,.v49Hero .brandStage:after{display:none!important;content:none!important}
+.v49Hero .brandStage img{display:block;width:min(100%,430px);max-width:430px;margin:auto;filter:drop-shadow(0 22px 55px rgba(0,0,0,.55))}
+.aboutReference{width:100%!important;max-width:1160px!important;margin-inline:auto;padding-inline:0!important}
+.aboutReference .aboutHero{width:100%;max-width:100%!important;padding:58px 0 42px!important}
+.aboutReference .aboutHero h1{font-size:clamp(42px,5.6vw,72px)!important;line-height:1.02!important;max-width:980px;margin:12px 0 24px!important}
+.aboutReference .aboutHero>p{font-size:17px!important;line-height:1.65!important;max-width:920px!important}
+.aboutReference .aboutHero .aboutLead{font-size:20px!important;line-height:1.5!important;max-width:900px!important}
+.aboutReference .aboutGrid{margin-inline:0!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.aboutReference .aboutGrid article{min-height:220px;padding:24px!important}
+.aboutReference .aboutGrid h2{font-size:22px!important}.aboutReference .aboutGrid p{font-size:14px!important;line-height:1.6!important}
+.founderReference{margin-inline:0!important;grid-template-columns:minmax(280px,.75fr) minmax(0,1.25fr);gap:44px;padding:38px 24px!important}
+.founderStory p{font-size:15px!important;line-height:1.58!important}.founderStory h2{font-size:30px!important}
+.aboutReference .aboutVision{max-width:920px!important;padding:44px 18px 64px!important}.aboutReference .aboutVision h2{font-size:clamp(30px,4vw,48px)!important}.aboutReference .aboutVision p{font-size:16px!important;line-height:1.6!important}
+.legalDoc{max-width:980px;margin-inline:auto}.legalDoc h2{margin-top:28px;color:var(--gold2);font-size:21px}.legalDoc p{line-height:1.72;color:#c8c2b7}
+@media(max-width:980px){.v49Hero{grid-template-columns:1fr;min-height:auto;padding:28px 0;gap:26px}.v49Hero .heroVisual{order:-1;max-width:440px;margin-inline:auto}.v49Hero .brandStage img{width:min(62vw,330px)}.v49Hero .heroCopy{max-width:100%}.aboutReference .aboutGrid,.founderReference{grid-template-columns:1fr}.founderIdentity{max-width:460px;margin:auto}}
+@media(max-width:700px){main{width:calc(100% - 28px)}.pane{padding-top:24px}.v49Hero{padding-top:10px;gap:20px}.v49Hero .heroVisual{max-width:320px}.v49Hero .brandStage img{width:min(64vw,270px)}.v49Hero .legacyHeroTitle{font-size:clamp(34px,10.3vw,48px)!important;line-height:1.04!important;letter-spacing:-.035em!important;max-width:100%!important}.v49Hero .legacyHeroTitle .heroSentence,.v49Hero .legacyHeroTitle .heroSentence em{white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important}.v49Hero .legacyHeroLead{font-size:16px;line-height:1.5}.aboutReference .aboutHero{padding:34px 0 28px!important}.aboutReference .aboutHero h1{font-size:clamp(38px,11vw,52px)!important}.aboutReference .aboutHero>p{font-size:16px!important}.aboutReference .aboutHero .aboutLead{font-size:18px!important}.aboutReference .aboutGrid article{min-height:auto}.founderReference{padding:28px 0!important}.founderStory h2{font-size:26px!important}.legalDoc{padding:18px}.legalDoc h2{font-size:19px}}
