@@ -1506,3 +1506,14 @@ for(const [lng,map] of Object.entries(V80_FINAL_RUNTIME_TRANSLATIONS)) Object.as
 TRANSLATION_REVERSE=null;
 for(const lng of ['ar','de','fr','es','pt']) UI_TRANSLATIONS[lng]['AVAILABLE ']=UI_TRANSLATIONS[lng]['AVAILABLE'];
 TRANSLATION_REVERSE=null;
+
+/* v82 — footer/legal navigation language coverage. */
+const V82_TRANSLATIONS={
+ ar:{"Terms of Service":"شروط الخدمة","Privacy Policy":"سياسة الخصوصية","Cancellation & Refund":"الإلغاء والاسترداد","Disputes & Claims":"النزاعات والمطالبات","LEGAL":"قانوني"},
+ de:{"Terms of Service":"Nutzungsbedingungen","Privacy Policy":"Datenschutzerklärung","Cancellation & Refund":"Stornierung & Erstattung","Disputes & Claims":"Streitfälle & Ansprüche","LEGAL":"RECHTLICH"},
+ fr:{"Terms of Service":"Conditions d’utilisation","Privacy Policy":"Politique de confidentialité","Cancellation & Refund":"Annulation et remboursement","Disputes & Claims":"Litiges et réclamations","LEGAL":"JURIDIQUE"},
+ es:{"Terms of Service":"Términos del servicio","Privacy Policy":"Política de privacidad","Cancellation & Refund":"Cancelación y reembolso","Disputes & Claims":"Disputas y reclamaciones","LEGAL":"LEGAL"},
+ pt:{"Terms of Service":"Termos de Serviço","Privacy Policy":"Política de Privacidade","Cancellation & Refund":"Cancelamento e reembolso","Disputes & Claims":"Litígios e reclamações","LEGAL":"LEGAL"}
+};
+for(const [lng,map] of Object.entries(V82_TRANSLATIONS))Object.assign(UI_TRANSLATIONS[lng]||(UI_TRANSLATIONS[lng]={}),map);
+TRANSLATION_REVERSE=null;

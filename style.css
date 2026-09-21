@@ -716,3 +716,49 @@ img,video,svg,canvas{max-width:100%;height:auto}
 @media(max-width:980px){.v49Hero{grid-template-columns:1fr;row-gap:28px}.v49Hero .heroVisual{order:-1;max-width:520px;margin-inline:auto}.v49Hero .legacyHeroTitle{font-size:clamp(34px,7vw,52px);max-width:100%}}
 @media(max-width:700px){.v49Hero .legacyHeroTitle{font-size:clamp(29px,9vw,40px);line-height:1.08}.v49Hero .heroCopy p{overflow-wrap:normal;word-break:normal}.v49Hero .heroVisual{max-width:360px}}
 html[dir="rtl"] .v49Hero .heroCopy{text-align:right}
+
+/* v82 release hardening — responsive typography, clean emblem, full-width About */
+.v49Hero .brandStage{border:0!important;border-radius:0!important;background:transparent!important;padding:0!important;overflow:visible!important;box-shadow:none!important}
+.v49Hero .brandStage:before,.v49Hero .brandStage:after{display:none!important;content:none!important}
+.v49Hero .brandStage img{filter:drop-shadow(0 22px 55px rgba(0,0,0,.55));max-width:430px}
+.v49Hero .legacyHeroTitle{overflow-wrap:anywhere}
+.v49Hero .legacyHeroTitle .heroSentence{white-space:normal!important}
+.v49Hero .legacyHeroTitle .heroSentence:last-child{color:var(--text)}
+.v49Hero .legacyHeroTitle .heroSentence:last-child::first-line{color:inherit}
+.aboutReference{max-width:1160px!important;width:100%;padding-left:0!important;padding-right:0!important}
+.aboutReference .aboutHero{max-width:1040px!important;padding-left:0!important;padding-right:0!important}
+.aboutReference .aboutHero h1{font-size:clamp(42px,5.2vw,70px)!important}
+.aboutReference .aboutHero>p{max-width:980px!important;font-size:16px!important;line-height:1.65!important}
+.aboutReference .aboutHero .aboutLead{max-width:930px!important;font-size:18px!important;line-height:1.5!important}
+.aboutReference .aboutGrid{margin-left:0!important;margin-right:0!important}
+.aboutReference .aboutGrid article{min-height:220px!important;padding:24px!important}
+.aboutReference .aboutGrid h2{font-size:22px!important}
+.aboutReference .aboutGrid p{font-size:14px!important;line-height:1.65!important}
+.founderReference{grid-template-columns:minmax(280px,.42fr) minmax(0,.58fr)!important;padding-left:0!important;padding-right:0!important}
+.founderStory p{font-size:15px!important;line-height:1.6!important}
+.aboutReference .aboutVision{max-width:980px!important}.aboutReference .aboutVision p{font-size:15px!important}
+footer{flex-wrap:wrap;align-items:center}footer .legalLinks{display:flex;gap:14px;flex-wrap:wrap}
+@media(max-width:860px){
+  main{width:min(100% - 28px,1180px)!important}
+  .v49Hero{gap:20px!important;padding-top:4px!important}
+  .v49Hero .heroCopy{min-width:0;width:100%}
+  .v49Hero .brandStage{order:-1!important;width:100%;max-width:none!important;margin:0 auto!important}
+  .v49Hero .brandStage img{width:min(70vw,300px)!important;max-width:300px!important}
+  .v49Hero .legacyHeroTitle{font-size:clamp(34px,10.4vw,54px)!important;line-height:1.03!important;letter-spacing:-.04em!important;max-width:100%!important}
+  .v49Hero .legacyHeroTitle .heroSentence{display:block!important;white-space:normal!important;overflow-wrap:normal!important;word-break:normal!important}
+  .v49Hero .heroCopy>p{font-size:17px!important;line-height:1.5!important}
+  .aboutReference .aboutHero{padding-left:0!important;padding-right:0!important}
+  .aboutReference .aboutHero h1{font-size:clamp(38px,11vw,58px)!important}
+  .founderReference{grid-template-columns:1fr!important;gap:24px!important}
+  footer{padding-left:16px!important;padding-right:16px!important}
+}
+@media(max-width:480px){
+  main{width:calc(100% - 24px)!important}
+  .v49Hero .legacyHeroTitle{font-size:clamp(30px,9.5vw,42px)!important}
+  .heroActions{grid-template-columns:1fr!important}
+  .aboutReference .aboutGrid{grid-template-columns:1fr!important}
+  .aboutReference .aboutGrid article{min-height:0!important}
+  footer .legalLinks{display:grid;grid-template-columns:1fr;gap:10px}
+}
+/* Preserve the intended gold emphasis after language switching. */
+.v49Hero .legacyHeroTitle .heroSentence:last-child{color:var(--gold2)!important}
