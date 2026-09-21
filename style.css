@@ -680,3 +680,28 @@ html[dir="rtl"] .aboutReference .aboutHero .aboutLead{border-left:0;border-right
 @media(max-width:860px){.ownerSettingsGrid{grid-template-columns:1fr}.ownerKingBar{text-align:left;margin-top:0}.ownerSection summary{padding:16px}.ownerSectionBody{padding:2px 16px 16px}}
 
 .forgotLink{display:block;margin:12px auto 0;background:none;border:0;color:var(--gold,#b99345);font:inherit;font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:3px}.forgotLink:hover{opacity:.8}
+
+/* v80 — mobile hero safety: never clip marketing copy on narrow screens */
+.hero,.heroCopy,.v49Hero,.v49Hero .heroCopy,.v49Hero .legacyHeroTitle,.v49Hero .legacyHeroTitle .heroSentence{min-width:0;max-width:100%}
+@media(max-width:700px){
+  .v49Hero .legacyHeroTitle{font-size:clamp(30px,9.4vw,42px);line-height:1.08;letter-spacing:-.045em;max-width:100%;overflow:visible}
+  .v49Hero .legacyHeroTitle .heroSentence{white-space:normal!important;overflow-wrap:normal;word-break:normal}
+  .v49Hero .legacyHeroTitle .heroSentence em{white-space:nowrap}
+  .v49Hero .heroCopy>p,.v49Hero .legacyHeroLead{max-width:100%;overflow-wrap:anywhere}
+  .v49Hero{overflow:hidden}
+}
+@media(max-width:390px){.v49Hero .legacyHeroTitle{font-size:clamp(28px,9vw,36px)}}
+
+/* v80 final — viewport safety across narrow phones */
+html,body{max-width:100%;overflow-x:hidden}
+*,*::before,*::after{box-sizing:border-box}
+img,video,svg,canvas{max-width:100%;height:auto}
+.heroCopy,.panel,.card,.grid>*{min-width:0}
+@media(max-width:700px){
+  .wrap{width:min(100% - 28px,1180px)}
+  h1,h2,h3,p,button,a,label,span{overflow-wrap:break-word}
+  .v49Hero .legacyHeroTitle .heroSentence,.v49Hero .legacyHeroTitle .heroSentence em{white-space:normal!important}
+  .tools,.topbar,.adminUsersHead,.wizardActions,.trustIntro{max-width:100%}
+  input,select,textarea,button{max-width:100%}
+  .ownerSettingsGrid,.trustGrid,.uploadGrid,.formGrid2{grid-template-columns:1fr!important}
+}
