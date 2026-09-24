@@ -13,6 +13,10 @@ const DBFILE = path.join(ROOT, 'data', 'db.json');
 const UPLOADS = path.join(ROOT, 'data', 'uploads');
 const PORT = process.env.PORT || 3000;
 const DATABASE_URL = process.env.DATABASE_URL || '';
+const REVOLUT_SECRET_KEY = process.env.REVOLUT_MERCHANT_SECRET_KEY || '';
+const REVOLUT_ENV = String(process.env.REVOLUT_ENV || 'sandbox').toLowerCase() === 'production' ? 'production' : 'sandbox';
+const REVOLUT_API_VERSION = process.env.REVOLUT_API_VERSION || '2026-03-12';
+const REVOLUT_BASE_URL = REVOLUT_ENV === 'production' ? 'https://merchant.revolut.com' : 'https://sandbox-merchant.revolut.com';
 let pgPool = null;
 let dbCache = null;
 
@@ -112,6 +116,35 @@ function addSession(db,userId){
 }
 function sessionCookie(sid){return `sid=${sid}; HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=2592000`}
 function clearSessionCookie(){return 'sid=; HttpOnly; Secure; SameSite=Lax; Max-Age=0; Path=/'}
+function currencyMinorAmount(amount,currency){
+  const c=String(currency||'').toUpperCase();
+  const zero=new Set(['BIF','CLP','DJF','GNF','ISK','JPY','KMF','KRW','PYG','RWF','UGX','UYI','VND','VUV','XAF','XOF','XPF']);
+  const three=new Set(['BHD','IQD','JOD','KWD','LYD','OMR','TND']);
+  const digits=zero.has(c)?0:(three.has(c)?3:2),factor=10**digits;
+  return Math.round(Number(amount||0)*factor);
+}
+function commissionIsPaid(b){return ['commission_paid','paid','completed'].includes(String(b?.paymentStatus||''))}
+async function revolutRequest(method,endpoint,body){
+  if(!REVOLUT_SECRET_KEY)throw new Error('Revolut Merchant API is not configured yet. Add REVOLUT_MERCHANT_SECRET_KEY in Render.');
+  const headers={'Authorization':`Bearer ${REVOLUT_SECRET_KEY}`,'Revolut-Api-Version':REVOLUT_API_VERSION,'Accept':'application/json'};
+  if(body!==undefined)headers['Content-Type']='application/json';
+  const r=await fetch(REVOLUT_BASE_URL+endpoint,{method,headers,body:body===undefined?undefined:JSON.stringify(body)});
+  const raw=await r.text();let data={};try{data=raw?JSON.parse(raw):{}}catch{data={raw}}
+  if(!r.ok)throw new Error(data?.message||data?.error||`Revolut API error (${r.status})`);
+  return data;
+}
+async function syncRevolutCommission(db,b){
+  if(!b?.revolutOrderId)return false;
+  const order=await revolutRequest('GET',`/api/orders/${encodeURIComponent(b.revolutOrderId)}`);
+  b.revolutOrderState=order.state||b.revolutOrderState||'';b.revolutLastSyncAt=new Date().toISOString();
+  if(order.state==='completed'){
+    b.paymentStatus='commission_paid';b.paymentMode=`revolut_${REVOLUT_ENV}`;b.commissionPaidAt=b.commissionPaidAt||new Date().toISOString();
+    b.commissionPaidAmount=Number(b.commissionAmount??b.platformFee??0);b.commissionPaidCurrency=b.currency;
+    if(b.trip?.ready&&bookingDealType(b,db)==='transport'&&!b.trip.pickupConfirmed)b.status='ready_for_pickup';
+    return true;
+  }
+  return false;
+}
 function dealTypeForListing(listing){
   if(!listing)return 'transport';
   if(listing.resource==='driver')return 'driver';
@@ -133,7 +166,7 @@ function normalizeBookingWorkflow(b,db){
   const listing=db.listings.find(x=>x.id===b.listingId),offer=db.offers.find(x=>x.id===b.offerId);
   if(listing&&offer){const otherUserId=offer.fromUserId===listing.userId?offer.toUserId:offer.fromUserId;if(listing.resource==='load'){if(listing.intent==='have'){b.buyerUserId=listing.userId;b.providerUserId=otherUserId}else if(listing.intent==='need'){b.providerUserId=listing.userId;b.buyerUserId=otherUserId}}else if(listing.intent==='need'){b.buyerUserId=listing.userId;b.providerUserId=otherUserId}else if(listing.intent==='have'){b.providerUserId=listing.userId;b.buyerUserId=otherUserId}}
   if(type==='driver'){
-    const feePct=Number(b.platformFeePct ?? db.settings.platformFeePct ?? 5);b.platformFeePct=feePct;b.platformFee=+(Number(b.agreedPrice||0)*feePct/100).toFixed(2);b.commissionAmount=b.platformFee;b.serviceAmount=Number(b.agreedPrice||0);b.servicePaymentMode='direct_between_users';b.providerNet=Number(b.agreedPrice||0);b.feeChargedTo='buyer';b.buyerTotal=Number(b.agreedPrice||0);if(!b.paymentStatus||b.paymentStatus==='not_required')b.paymentStatus='test_unpaid';if(!b.paymentMode||b.paymentMode==='not_required')b.paymentMode='test_commission';
+    const feePct=Number(b.platformFeePct ?? db.settings.platformFeePct ?? 5);b.platformFeePct=feePct;b.platformFee=+(Number(b.agreedPrice||0)*feePct/100).toFixed(2);b.commissionAmount=b.platformFee;b.serviceAmount=Number(b.agreedPrice||0);b.servicePaymentMode='direct_between_users';b.providerNet=Number(b.agreedPrice||0);b.feeChargedTo='buyer';b.buyerTotal=Number(b.agreedPrice||0);if(!b.paymentStatus||b.paymentStatus==='not_required'||b.paymentStatus==='test_unpaid')b.paymentStatus='commission_due';if(!b.paymentMode||b.paymentMode==='not_required'||b.paymentMode==='test_commission')b.paymentMode='revolut_pending';
     if(['ready_for_pickup','in_transit','completed_test'].includes(b.status))b.status=b.trip.ready?'driver_match_confirmed':'driver_agreed';
   }else if(type==='warehouse'&&(b.trip.ready||b.status==='ready_for_pickup'))b.status='storage_confirmed';
   else if((type==='truck'||type==='equipment')&&(b.trip.ready||b.status==='ready_for_pickup'))b.status='vehicle_ready';
@@ -330,7 +363,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   }
 
   if(p==='/api/me'&&req.method==='GET'){const u=auth(req);return json(res,200,{user:u?safeUser(u):null});}
-  if(p==='/api/integrations/status'&&req.method==='GET'){const paymentCredentials=!!(process.env.STRIPE_SECRET_KEY||process.env.PAYMENT_PROVIDER_SECRET);const webhookSecret=!!(process.env.STRIPE_WEBHOOK_SECRET||process.env.PAYMENT_WEBHOOK_SECRET);const kycProvider=!!(process.env.KYC_PROVIDER||process.env.KYC_API_KEY);return json(res,200,{payment:{mode:paymentCredentials?'provider_credentials_detected':'test',credentialsDetected:paymentCredentials,webhookSecretDetected:webhookSecret,realCaptureEnabled:false},kyc:{providerConfigured:kycProvider,manualReviewEnabled:true}});}
+  if(p==='/api/integrations/status'&&req.method==='GET'){const paymentCredentials=!!REVOLUT_SECRET_KEY;const kycProvider=!!(process.env.KYC_PROVIDER||process.env.KYC_API_KEY);return json(res,200,{payment:{provider:'revolut',mode:paymentCredentials?REVOLUT_ENV:'not_configured',credentialsDetected:paymentCredentials,realCaptureEnabled:paymentCredentials&&REVOLUT_ENV==='production',sandboxEnabled:paymentCredentials&&REVOLUT_ENV==='sandbox'},kyc:{providerConfigured:kycProvider,manualReviewEnabled:true}});}
   if(p==='/api/settings'&&req.method==='GET'){return json(res,200,{settings:readDB().settings});}
   if(p==='/api/admin/settings'&&req.method==='PUT'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const b=await getBody(req),db=readDB();if(Number.isFinite(Number(b.platformFeePct))){const nextFeePct=Math.max(0,Math.min(100,Number(b.platformFeePct)));db.settings.platformFeePct=nextFeePct;}if(b.defaultCurrency)db.settings.defaultCurrency=String(b.defaultCurrency).slice(0,5);for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail'])if(k in b)db.settings[k]=String(b[k]||'').trim().slice(0,180);await writeDB(db);return json(res,200,{settings:db.settings});}
   if(p==='/api/listings'&&req.method==='GET'){const db=readDB();const listings=db.listings.filter(x=>x.status==='open').sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(x=>publicListing(x,db));return json(res,200,{listings});}
@@ -347,7 +380,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   if(/^\/api\/offers\/[^/]+\/(accept|reject|counter)$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const parts=p.split('/'),oid=parts[3],action=parts[4],db=readDB(),o=db.offers.find(x=>x.id===oid);if(!o)return json(res,404,{error:'Offer not found.'});if(o.toUserId!==u.id&&o.fromUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Not allowed.'});
     if(action==='accept'){
-      if(o.toUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only recipient can accept.'});o.status='accepted';const listing=db.listings.find(x=>x.id===o.listingId);if(listing)listing.status='booked';const dealType=dealTypeForListing(listing);const feePct=Number(db.settings.platformFeePct ?? 5);const fee=+(o.amount*feePct/100).toFixed(2);const otherUserId=listing?(o.fromUserId===listing.userId?o.toUserId:o.fromUserId):o.fromUserId;const isLoad=listing&&listing.resource==='load';const buyerUserId=isLoad?(listing.intent==='have'?listing.userId:otherUserId):(listing&&listing.intent==='need'?listing.userId:otherUserId),providerUserId=isLoad?(listing.intent==='need'?listing.userId:otherUserId):(listing&&listing.intent==='have'?listing.userId:otherUserId);const booking={id:id('b'),listingId:o.listingId,offerId:o.id,dealType,buyerUserId,providerUserId,agreedPrice:o.amount,currency:o.currency,platformFeePct:feePct,platformFee:fee,commissionAmount:fee,serviceAmount:+o.amount.toFixed(2),servicePaymentMode:'direct_between_users',buyerTotal:+o.amount.toFixed(2),providerNet:+o.amount.toFixed(2),feeChargedTo:'buyer',paymentStatus:'test_unpaid',paymentMode:'test_commission',payoutStatus:'not_applicable',status:'agreed',trip:{driverVerified:false,licenceVerified:false,truckVerified:false,cargoConfirmed:false,receiverConfirmed:false,termsConfirmed:false,warehouseVerified:false,datesConfirmed:false,handoverConfirmed:false,equipmentVerified:false,pickupConfirmed:false,providerReady:false,buyerReady:false,pickupAt:null,deliveredAt:null,updatedAt:new Date().toISOString()},createdAt:new Date().toISOString()};db.bookings.push(booking);addNotification(db,buyerUserId,'agreement','Agreement accepted',`Your ${dealType} agreement is accepted. TUT Move commission of ${o.currency} ${fee.toFixed(2)} is now due separately. The service amount remains payable directly between the parties.`,'offers');addNotification(db,providerUserId,'agreement','You were selected',`Your ${dealType} offer/agreement was accepted. Open Activity to continue.`,'offers');recomputeMatches(db);await writeDB(db);return json(res,200,{booking});
+      if(o.toUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only recipient can accept.'});o.status='accepted';const listing=db.listings.find(x=>x.id===o.listingId);if(listing)listing.status='booked';const dealType=dealTypeForListing(listing);const feePct=Number(db.settings.platformFeePct ?? 5);const fee=+(o.amount*feePct/100).toFixed(2);const otherUserId=listing?(o.fromUserId===listing.userId?o.toUserId:o.fromUserId):o.fromUserId;const isLoad=listing&&listing.resource==='load';const buyerUserId=isLoad?(listing.intent==='have'?listing.userId:otherUserId):(listing&&listing.intent==='need'?listing.userId:otherUserId),providerUserId=isLoad?(listing.intent==='need'?listing.userId:otherUserId):(listing&&listing.intent==='have'?listing.userId:otherUserId);const booking={id:id('b'),listingId:o.listingId,offerId:o.id,dealType,buyerUserId,providerUserId,agreedPrice:o.amount,currency:o.currency,platformFeePct:feePct,platformFee:fee,commissionAmount:fee,serviceAmount:+o.amount.toFixed(2),servicePaymentMode:'direct_between_users',buyerTotal:+o.amount.toFixed(2),providerNet:+o.amount.toFixed(2),feeChargedTo:'buyer',paymentStatus:'commission_due',paymentMode:'revolut_pending',payoutStatus:'not_applicable',status:'agreed',trip:{driverVerified:false,licenceVerified:false,truckVerified:false,cargoConfirmed:false,receiverConfirmed:false,termsConfirmed:false,warehouseVerified:false,datesConfirmed:false,handoverConfirmed:false,equipmentVerified:false,pickupConfirmed:false,providerReady:false,buyerReady:false,pickupAt:null,deliveredAt:null,updatedAt:new Date().toISOString()},createdAt:new Date().toISOString()};db.bookings.push(booking);addNotification(db,buyerUserId,'agreement','Agreement accepted',`Your ${dealType} agreement is accepted. TUT Move commission of ${o.currency} ${fee.toFixed(2)} is now due separately. The service amount remains payable directly between the parties.`,'offers');addNotification(db,providerUserId,'agreement','You were selected',`Your ${dealType} offer/agreement was accepted. Open Activity to continue.`,'offers');recomputeMatches(db);await writeDB(db);return json(res,200,{booking});
     }
     if(action==='reject'){o.status='rejected';addNotification(db,o.fromUserId,'offer_rejected','Offer update','Your offer was not accepted.','offers');await writeDB(db);return json(res,200,{offer:o});}
     const b=await getBody(req),amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Counter amount required.'});o.status='countered';const c={id:id('o'),listingId:o.listingId,fromUserId:u.id,toUserId:u.id===o.fromUserId?o.toUserId:o.fromUserId,amount,currency:o.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:o.id,createdAt:new Date().toISOString()};db.offers.push(c);addNotification(db,c.toUserId,'counter','Counter offer received',`${u.name||'A member'} sent a counter offer of ${c.currency} ${c.amount}.`,'offers');await writeDB(db);return json(res,201,{offer:c});
@@ -386,9 +419,28 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const parts=p.split('/'),bid=parts[3],kind=parts[5],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b||bookingDealType(b,db)!=='driver')return json(res,404,{error:'Driver agreement not found.'});const ctx=driverDealContext(b,db);if(!ctx||(![ctx.driverUserId,ctx.requesterUserId].includes(u.id)&&!isOwner(u)))return json(res,403,{error:'Documents are private.'});const v=verificationRecordForUser(db,ctx.driverUserId),f=v.files&&v.files[kind];if(!f||!f.name)return json(res,404,{error:'Document not uploaded.'});const fp=path.join(UPLOADS,path.basename(f.name));if(!fs.existsSync(fp))return json(res,404,{error:'Document file not found.'});const buf=fs.readFileSync(fp);res.writeHead(200,{'Content-Type':f.mime||'application/octet-stream','Content-Length':buf.length,'Content-Disposition':`inline; filename="${path.basename(f.name)}"`,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff'});return res.end(buf);
   }
   if(p==='/api/bookings'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();db.bookings.forEach(b=>normalizeBookingWorkflow(b,db));const bookings=(isOwner(u)?db.bookings:db.bookings.filter(b=>b.buyerUserId===u.id||b.providerUserId===u.id)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(b=>bookingView(b,db));await writeDB(db);return json(res,200,{bookings});}
-  if(/^\/api\/bookings\/[^/]+\/test-pay$/.test(p)&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(b.buyerUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only the buyer can run the test payment.'});const dealType=bookingDealType(b,db);if(!b.trip?.ready)return json(res,409,{error:'Agreement checks must be complete before payment.'});b.paymentMode='test_commission';b.paymentStatus='test_authorized';b.testPaymentAt=new Date().toISOString();b.status='payment_tested';addNotification(db,b.providerUserId,'payment','Commission test authorized',`The requester authorized the simulated TUT Move commission payment for this ${dealType} agreement.`,'offers');await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — TUT Move commission was simulated; the service amount is paid directly between the parties.'});
+  if(/^\/api\/bookings\/[^/]+\/commission-checkout$/.test(p)&&req.method==='POST'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(b.buyerUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only the commission payer can start this payment.'});
+    if(commissionIsPaid(b))return json(res,200,{paid:true,booking:b,message:'Commission is already paid.'});
+    const amount=Number(b.commissionAmount??b.platformFee??0),currency=String(b.currency||'').toUpperCase();if(!(amount>0)||!/^[A-Z]{3}$/.test(currency))return json(res,400,{error:'Invalid commission amount or currency.'});
+    if(b.revolutOrderId){try{if(await syncRevolutCommission(db,b)){await writeDB(db);return json(res,200,{paid:true,booking:b,message:'Commission payment confirmed.'})}}catch(e){console.warn('Revolut order sync failed:',e.message)}}
+    const site=String(db.settings.siteUrl||'https://tutmove.com').replace(/\/$/,'');
+    const order=await revolutRequest('POST','/api/orders',{amount:currencyMinorAmount(amount,currency),currency,description:`TUT Move commission — ${bid}`,redirect_url:`${site}/?commission_return=${encodeURIComponent(bid)}`,metadata:{tut_booking_id:bid,tut_payment_type:'platform_commission'}});
+    if(!order.id||!order.checkout_url)throw new Error('Revolut did not return a checkout URL.');
+    b.revolutOrderId=order.id;b.revolutCheckoutUrl=order.checkout_url;b.revolutOrderState=order.state||'pending';b.revolutOrderCreatedAt=new Date().toISOString();b.paymentStatus='commission_checkout_created';b.paymentMode=`revolut_${REVOLUT_ENV}`;await writeDB(db);
+    return json(res,200,{checkoutUrl:order.checkout_url,orderId:order.id,amount,currency,environment:REVOLUT_ENV});
   }
+  if(/^\/api\/bookings\/[^/]+\/commission-status$/.test(p)&&req.method==='GET'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});
+    if(b.revolutOrderId&&REVOLUT_SECRET_KEY){try{await syncRevolutCommission(db,b);await writeDB(db)}catch(e){console.warn('Revolut status sync failed:',e.message)}}return json(res,200,{paymentStatus:b.paymentStatus,paid:commissionIsPaid(b),booking:b});
+  }
+  if(p==='/api/payments/revolut/webhook'&&req.method==='POST'){
+    const body=await getBody(req);const orderId=String(body.order_id||'');if(!orderId)return json(res,400,{error:'order_id required'});const db=readDB(),b=db.bookings.find(x=>x.revolutOrderId===orderId);if(!b)return json(res,204,{});
+    try{await syncRevolutCommission(db,b);await writeDB(db)}catch(e){console.error('Revolut webhook verification failed:',e.message);return json(res,502,{error:'Could not verify order with Revolut.'})}
+    res.writeHead(204);return res.end();
+  }
+  if(/^\/api\/bookings\/[^/]+\/test-pay$/.test(p)&&req.method==='POST'){return json(res,410,{error:'Test payment bypass is disabled. Use Revolut commission checkout.'});}
+
   if(/^\/api\/bookings\/[^/]+\/trip-check$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],body=await getBody(req),db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});
     const dealType=bookingDealType(b,db);b.dealType=dealType;b.trip=b.trip||{};
@@ -405,7 +457,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     }else{
       const allowed=['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed','termsConfirmed','warehouseVerified','datesConfirmed','handoverConfirmed','equipmentVerified'];for(const k of allowed)if(k in body)b.trip[k]=!!body[k];
       const checks=requiredChecks(dealType);const coreReady=checks.every(k=>b.trip[k]);b.trip.ready=coreReady&&!!b.trip.providerReady&&!!b.trip.buyerReady;
-      if(b.trip.ready){if(dealType==='warehouse')b.status='storage_confirmed';else if(dealType==='truck'||dealType==='equipment')b.status='vehicle_ready';else if(b.paymentStatus==='test_authorized')b.status='ready_for_pickup';else b.status='verified_waiting_payment';}
+      if(b.trip.ready){if(dealType==='warehouse')b.status='storage_confirmed';else if(dealType==='truck'||dealType==='equipment')b.status='vehicle_ready';else if(commissionIsPaid(b))b.status='ready_for_pickup';else b.status='verified_waiting_payment';}
       else if(b.trip.buyerReady&&!b.trip.providerReady)b.status='requester_confirmed';
       else if(b.trip.providerReady&&!b.trip.buyerReady)b.status='provider_ready';
       else if(!b.trip.buyerReady&&!b.trip.providerReady&&['requester_confirmed','provider_ready'].includes(b.status))b.status='agreed';
@@ -414,7 +466,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     await writeDB(db);return json(res,200,{booking:b});
   }
   if(/^\/api\/bookings\/[^/]+\/pickup$/.test(p)&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(bookingDealType(b,db)!=='transport')return json(res,400,{error:'Pickup applies only to transport bookings.'});if(!b.trip?.ready)return json(res,409,{error:'Trip verification is not complete.'});if(b.paymentStatus!=='test_authorized')return json(res,409,{error:'TUT Move commission must be authorized before pickup.'});if(b.trip?.pickupConfirmed||['in_transit','completed_test'].includes(b.status))return json(res,409,{error:'Pickup is already confirmed.'});b.trip.pickupConfirmed=true;b.trip.pickupAt=new Date().toISOString();b.status='in_transit';await writeDB(db);return json(res,200,{booking:b});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(bookingDealType(b,db)!=='transport')return json(res,400,{error:'Pickup applies only to transport bookings.'});if(!b.trip?.ready)return json(res,409,{error:'Trip verification is not complete.'});if(!commissionIsPaid(b))return json(res,409,{error:'TUT Move commission must be paid before pickup.'});if(b.trip?.pickupConfirmed||['in_transit','completed_test'].includes(b.status))return json(res,409,{error:'Pickup is already confirmed.'});b.trip.pickupConfirmed=true;b.trip.pickupAt=new Date().toISOString();b.status='in_transit';await writeDB(db);return json(res,200,{booking:b});
   }
   if(/^\/api\/bookings\/[^/]+\/deliver$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id)&&!isOwner(u))return json(res,403,{error:'Not part of this booking.'});if(bookingDealType(b,db)!=='transport')return json(res,400,{error:'Delivery applies only to transport bookings.'});if(b.status!=='in_transit')return json(res,409,{error:'Pickup must be confirmed first.'});b.trip.receiverConfirmed=true;b.trip.deliveredAt=new Date().toISOString();b.status='completed_test';b.payoutStatus='test_ready';await writeDB(db);return json(res,200,{booking:b,message:'TEST MODE ONLY — payout is simulated; no money moved.'});
@@ -432,5 +484,5 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v85 production running on ${PORT}`)))
+  .then(()=>server.listen(PORT,()=>console.log(`TUT Move production running on ${PORT}`)))
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});

@@ -142,3 +142,18 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - About page recreated as HTML/CSS from the supplied visual reference.
 - Founder personal photo removed from About; brand emblem used instead.
 - Existing marketplace/backend flows preserved.
+
+## Revolut automatic TUT Move commission checkout
+
+This build keeps the underlying service payment directly between the marketplace parties. TUT Move collects only the separately calculated commission frozen when an offer is accepted.
+
+Render environment variables:
+- `REVOLUT_MERCHANT_SECRET_KEY` = Revolut Merchant Secret API key (never put this key in the ZIP or browser code)
+- `REVOLUT_ENV` = `sandbox` while testing; change to `production` only with a production Merchant key
+- `REVOLUT_API_VERSION` = `2026-03-12` (optional; this is the build default)
+
+Revolut webhook URL to register for `ORDER_COMPLETED`:
+`https://tutmove.com/api/payments/revolut/webhook`
+
+Payment flow:
+accepted offer -> server freezes final price and owner commission rate -> server calculates commission -> payer clicks Pay TUT Move commission -> server creates Revolut Merchant Order for commission only -> hosted Revolut checkout -> return to TUT Move -> server verifies order status directly with Revolut -> commission becomes paid.
