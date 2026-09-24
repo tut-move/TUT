@@ -217,19 +217,19 @@
 
     <section id="payments" class="pane hidden">
       <div class="pageHead paymentPageHead">
-        <div><span class="eyebrow">MONEY FLOW</span><h1>Payments</h1><p>Test the money flow now. Connect a regulated marketplace payment provider before charging real customers.</p></div>
+        <div><span class="eyebrow">COMMISSION FLOW</span><h1>TUT Move commission</h1><p>The agreed service price stays between the parties. TUT Move calculates and tracks its commission separately.</p></div>
         <span class="modePill">TEST MODE</span>
       </div>
       <div id="paymentIntegrationStatus" class="integrationStatus"></div>
       <div class="paymentOverview">
         <article class="paymentStat"><small>Accepted agreements</small><strong id="paymentBookingCount">0</strong></article>
-        <article class="paymentStat"><small>Awaiting payment</small><strong id="paymentPendingCount">0</strong></article>
-        <article class="paymentStat"><small>Test authorized</small><strong id="paymentAuthorizedCount">0</strong></article>
+        <article class="paymentStat"><small>Commission due</small><strong id="paymentPendingCount">0</strong></article>
+        <article class="paymentStat"><small>Commission test authorized</small><strong id="paymentAuthorizedCount">0</strong></article>
       </div>
       <div id="paymentList" class="paymentList"></div>
       <section class="providerRoadmap">
-        <div><span class="eyebrow">PRODUCTION CHECKLIST</span><h2>Ready for the real provider later.</h2><p>The app keeps payment state separate from marketplace pricing, so the next step can be Stripe Connect or another marketplace-capable provider without changing how users negotiate.</p></div>
-        <div class="roadmapChecks"><span>✓ Buyer payment state</span><span>✓ Platform fee calculation</span><span>✓ Provider net amount</span><span>○ Payment intent / checkout</span><span>○ Webhooks</span><span>○ Connected-account payout</span></div>
+        <div><span class="eyebrow">PRODUCTION CHECKLIST</span><h2>Ready for the real provider later.</h2><p>The app keeps TUT Move commission separate from the service price, so a payment provider can be connected later without changing how users negotiate or pay each other.</p></div>
+        <div class="roadmapChecks"><span>✓ Commission payment state</span><span>✓ Owner-controlled commission calculation</span><span>✓ Direct service payment remains separate</span><span>○ Payment intent / checkout</span><span>○ Webhooks</span><span>○ Connected-account payout</span></div>
       </section>
     </section>
 
@@ -342,7 +342,7 @@
       <div class="pageHead ownerHead"><div><h1>TUT Move Owner Dashboard</h1><p>Monitor the market; do not control its prices.</p></div><button class="outlineBtn" onclick="loadAdmin()">Refresh</button></div>
       <details class="panel ownerSection" open><summary>Site & ownership</summary><div class="ownerSectionBody"><div class="two"><div><label>Brand</label><input id="brandName" value="TUT Move"></div><div><label>Official domain</label><input id="siteUrl" value="https://tutmove.com"></div></div><div class="two"><div><label>Owner / founder name</label><input id="ownerName" placeholder="Your legal name"></div><div><label>Owner email</label><input id="ownerEmail" type="email" placeholder="Private owner email"></div></div><div class="two"><div><label>Legal entity (optional)</label><input id="legalEntity" placeholder="Company name when registered"></div><div><label>Public support email</label><input id="supportEmail" type="email" placeholder="support@tutmove.com"></div></div><button class="goldBtn" onclick="saveOwnership()">Save ownership settings</button></div></details>
       <div class="ownerSettingsGrid">
-       <details class="panel ownerSection" open><summary>Commission & reporting currency</summary><div class="ownerSectionBody"><div class="two"><div><label>TUT Move fee %</label><input id="feePct" type="number" min="0" max="100" step="0.1"></div><div><label>Reporting currency</label><select id="defaultCurrency"><option value="CHF">CHF — Swiss franc</option><option value="GBP">GBP — Pound sterling</option><option value="USD">USD — US dollar</option><option value="EUR">EUR — Euro</option><option value="CAD">CAD — Canadian dollar</option><option value="KWD">KWD — Kuwaiti dinar</option></select></div></div><button class="goldBtn" onclick="saveSettings()">Save fee settings</button><p class="muted compact">Fee = percentage of the agreed deal amount. Deals keep their original currency; owner revenue is reported in the selected currency using the latest available FX rate.</p></div></details>
+       <details class="panel ownerSection" open><summary>Commission & reporting currency</summary><div class="ownerSectionBody"><div class="two"><div><label>TUT Move fee %</label><input id="feePct" type="number" min="0" max="100" step="0.1"></div><div><label>Reporting currency</label><select id="defaultCurrency"><option value="CHF">CHF — Swiss franc</option><option value="GBP">GBP — Pound sterling</option><option value="USD">USD — US dollar</option><option value="EUR">EUR — Euro</option><option value="CAD">CAD — Canadian dollar</option><option value="KWD">KWD — Kuwaiti dinar</option></select></div></div><button class="goldBtn" onclick="saveSettings()">Save fee settings</button><p class="muted compact">Commission = percentage of the agreed deal amount. Default is 5%. Only the Owner can change the percentage. Each deal freezes the percentage that was active when the offer was accepted. The service price is paid directly between the parties; TUT Move commission is separate.</p></div></details>
        <details class="panel ownerSection"><summary>Owner security</summary><div class="ownerSectionBody"><div class="two"><div><label>Current password</label><input id="ownerCurrentPassword" type="password" autocomplete="current-password"></div><div><label>New password</label><input id="ownerNewPassword" type="password" minlength="10" autocomplete="new-password"></div></div><button class="outlineBtn" onclick="changeOwnerPassword()">Change password</button></div></details>
       </div>
       <div id="adminArea"></div>
@@ -354,6 +354,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=85-final-release"></script>
+<script defer src="/app.js?v=commission-final"></script>
 </body>
 </html>
