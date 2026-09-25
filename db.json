@@ -17,6 +17,8 @@
     "ownerEmail": "",
     "legalEntity": "",
     "supportEmail": "info@tutmove.com",
+    "commissionIban": "",
+    "commissionAccountName": "",
     "launchMarkets": [
       "USA",
       "Canada",
