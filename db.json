@@ -17,8 +17,11 @@
     "ownerEmail": "",
     "legalEntity": "",
     "supportEmail": "info@tutmove.com",
-    "commissionIban": "",
-    "commissionAccountName": "",
-    "launchMarkets": ["USA", "Canada", "Europe", "Middle East"]
+    "launchMarkets": [
+      "USA",
+      "Canada",
+      "Europe",
+      "Middle East"
+    ]
   }
 }

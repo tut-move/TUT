@@ -39,6 +39,7 @@
       </div>
       <button onclick="go('post')" data-ui-key="Post">Post</button>
       <button onclick="go('offers')" data-ui-key="Activity">Activity</button>
+      <button onclick="go('verify')" data-ui-key="Verify">Verify</button>
       <button onclick="go('about')" data-ui-key="About">About</button>
       </span>
       <span id="ownerNav" class="desktopNavGroup hidden"><button id="adminNav" onclick="go('adminPane')" data-ui-key="Owner">Owner Dashboard</button></span>
@@ -216,37 +217,104 @@
 
     <section id="payments" class="pane hidden">
       <div class="pageHead paymentPageHead">
-        <div><span class="eyebrow">COMMISSION FLOW</span><h1>TUT Move commission</h1><p>The agreed service price stays between the parties. TUT Move calculates and tracks its commission separately.</p></div>
-        <span class="modePill">MANUAL CONFIRMATION</span>
+        <div><span class="eyebrow">MONEY FLOW</span><h1>Payments</h1><p>Test the money flow now. Connect a regulated marketplace payment provider before charging real customers.</p></div>
+        <span class="modePill">TEST MODE</span>
       </div>
       <div id="paymentIntegrationStatus" class="integrationStatus"></div>
       <div class="paymentOverview">
         <article class="paymentStat"><small>Accepted agreements</small><strong id="paymentBookingCount">0</strong></article>
-        <article class="paymentStat"><small>Commission due</small><strong id="paymentPendingCount">0</strong></article>
-        <article class="paymentStat"><small>Commission confirmed</small><strong id="paymentAuthorizedCount">0</strong></article>
+        <article class="paymentStat"><small>Awaiting payment</small><strong id="paymentPendingCount">0</strong></article>
+        <article class="paymentStat"><small>Test authorized</small><strong id="paymentAuthorizedCount">0</strong></article>
       </div>
       <div id="paymentList" class="paymentList"></div>
-
+      <section class="providerRoadmap">
+        <div><span class="eyebrow">PRODUCTION CHECKLIST</span><h2>Ready for the real provider later.</h2><p>The app keeps payment state separate from marketplace pricing, so the next step can be Stripe Connect or another marketplace-capable provider without changing how users negotiate.</p></div>
+        <div class="roadmapChecks"><span>✓ Buyer payment state</span><span>✓ Platform fee calculation</span><span>✓ Provider net amount</span><span>○ Payment intent / checkout</span><span>○ Webhooks</span><span>○ Connected-account payout</span></div>
+      </section>
     </section>
+
+    <section id="verify" class="pane hidden">
+      <div class="verifyV48">
+        <div class="verifyIntro">
+          <div><span class="eyebrow">TRUST & VERIFICATION</span><h1>Build a profile people can trust.</h1><p>We only ask for the information relevant to your marketplace role. Your submission is stored for manual review in this test build.</p></div>
+          <div id="verificationStatus" class="verificationStatus statusCard">Sign in to start verification.</div>
+        </div>
+
+        <div class="verifyStepper" aria-label="Verification steps">
+          <button type="button" class="verifyStep active" data-verify-step="1"><span>1</span><b>Identity</b></button>
+          <i></i><button type="button" class="verifyStep" data-verify-step="2"><span>2</span><b>Qualifications</b></button>
+          <i></i><button type="button" class="verifyStep" data-verify-step="3"><span>3</span><b>Documents</b></button>
+        </div>
+
+        <form id="verificationForm" class="verificationForm verifyWizard" enctype="multipart/form-data">
+          <section class="verifyWizardStep" data-step-panel="1">
+            <div class="stepHeading"><span>STEP 1 OF 3</span><h2>Who are you?</h2><p>Start with the details that identify the person or business behind the account.</p></div>
+            <div class="formGrid2">
+              <label><span>Account role</span><select id="verifyRole" required>
+                <option value="shipper">Shipper / cargo owner</option><option value="carrier">Carrier / transport company</option><option value="driver">Driver</option><option value="warehouse">Warehouse owner</option><option value="equipment">Truck / trailer / equipment owner</option>
+              </select></label>
+              <label><span>Full legal name</span><input id="verifyLegalName" required autocomplete="name" placeholder="As shown on your ID"></label>
+              <label><span>Country / market</span><input id="verifyCountry" required placeholder="Country"></label>
+              <label><span>Government ID number</span><input id="verifyIdentityNumber" required placeholder="ID / passport number"></label>
+            </div>
+            <div class="wizardActions"><span></span><button class="goldBtn" type="button" onclick="verifyNextStep()">Continue</button></div>
+          </section>
+
+          <section class="verifyWizardStep hidden" data-step-panel="2">
+            <div class="stepHeading"><span>STEP 2 OF 3</span><h2>Show your qualifications.</h2><p>The fields below adapt to the role you selected.</p></div>
+            <div data-role-field="driver carrier" class="roleVerifyBlock premiumRoleBlock">
+              <div class="blockTitle"><div><span class="miniIcon">▣</span><div><h3>Driving licence</h3><p>Licence type, validity and specialist endorsements.</p></div></div></div>
+              <div class="formGrid2"><label><span>Licence number</span><input id="verifyLicence"></label><label><span>Licence expiry</span><input id="verifyLicenceExpiry" type="date"></label></div>
+              <label><span>Licence class / qualification</span></label><div id="verifyLicenceClasses" class="verificationChecks"></div>
+              <label><span>Endorsements / certificates</span><input id="verifyEndorsements" placeholder="Hazmat, tanker, doubles/triples..."></label>
+            </div>
+            <div data-role-field="carrier equipment" class="roleVerifyBlock premiumRoleBlock">
+              <div class="blockTitle"><div><span class="miniIcon">▤</span><div><h3>Vehicle / business</h3><p>Connect the account to the operating business or vehicle.</p></div></div></div>
+              <div class="formGrid2"><label><span>Business / registration number</span><input id="verifyRegistration"></label><label><span>Vehicle ID / plate</span><input id="verifyVehicle"></label></div>
+            </div>
+            <div data-role-field="warehouse shipper" class="roleVerifyBlock premiumRoleBlock">
+              <div class="blockTitle"><div><span class="miniIcon">▥</span><div><h3>Business details</h3><p>Add the registration used for commercial activity.</p></div></div></div>
+              <label><span>Business / registration number</span><input id="verifyBusinessRegistration"></label>
+            </div>
+            <div class="wizardActions"><button class="outlineBtn" type="button" onclick="verifyPrevStep()">Back</button><button class="goldBtn" type="button" onclick="verifyNextStep()">Continue</button></div>
+          </section>
+
+          <section class="verifyWizardStep hidden" data-step-panel="3">
+            <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>For this prototype, files are submitted to TUT Move for manual owner review. Do not use production-sensitive documents until secure object storage and official KYC are connected.</p></div>
+            <div class="uploadGrid">
+              <label class="uploadCard"><span class="uploadIcon">ID</span><b>Government ID</b><small>Image or PDF</small><input id="verifyIdentityFile" type="file" accept="image/*,.pdf" required></label>
+              <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Image</small><input id="verifySelfieFile" type="file" accept="image/*"></label>
+              <label class="uploadCard" data-role-field="driver carrier"><span class="uploadIcon">DL</span><b>Driving licence</b><small>Image or PDF</small><input id="verifyLicenceFile" type="file" accept="image/*,.pdf"></label>
+            </div>
+            <label><span>Notes for reviewer</span><textarea id="verifyNotes" rows="3" placeholder="Anything the reviewer should know"></textarea></label>
+            <div class="privacyNote"><b>Test build</b><span>Manual review only. Official identity verification and encrypted production document storage still need to be connected.</span></div>
+            <div class="wizardActions"><button class="outlineBtn" type="button" onclick="verifyPrevStep()">Back</button><button class="goldBtn" type="submit">Submit for review</button></div>
+            <div id="verifySubmitMsg" class="formMessage" aria-live="polite"></div>
+          </section>
+        </form>
+        <div id="ownerVerificationQueue" class="ownerVerificationQueue"></div>
+      </div>
+    </section>
+
 
     <section id="termsPane" class="pane hidden legalPane"><div class="pageHead"><div><span class="eyebrow">LEGAL</span><h1>Terms of Service</h1><p>Rules for using TUT Move and entering agreements with other users.</p></div></div><div class="panel legalDoc">
       <h2>1. Platform role</h2><p>TUT Move is an independent online marketplace and technology platform that helps users discover and contact independent drivers, vehicle owners, carriers, shippers, warehouse providers and other transport-related users. TUT Move is not the carrier, driver, shipper, vehicle owner, warehouse operator, insurer or employer merely because the platform is used.</p>
       <h2>2. Agreements are between users</h2><p>Any transport, driving, vehicle, storage or related service agreement is made directly between the users who accept it. Each party is responsible for understanding and agreeing the price, scope, dates, locations, cargo, vehicle and other commercial terms before proceeding.</p>
-      <h2>3. Your duty to verify the other party</h2><p>Each user is responsible for checking the other party and any identity, licences, permits, insurance, cargo, vehicle, warehouse, equipment, authority or other documents relevant to their agreement. TUT Move does not review, approve or guarantee transaction documents. Any documents required for a deal are exchanged directly between the parties after the commission stage is completed.</p>
+      <h2>3. Your duty to verify the other party</h2><p>Every user must personally perform the checks they consider necessary before relying on another user. This includes identity, authority to act, licences, permits, qualifications, vehicle ownership or right of use, vehicle condition, insurance, cargo information and any legal or operational requirements relevant to the service. A profile, document, badge or verification status shown by TUT Move is not a guarantee that a person, document, vehicle or service is suitable for a particular transaction.</p>
       <h2>4. Insurance</h2><p>TUT Move does not provide motor, cargo, goods-in-transit, employer, public-liability or other insurance unless a specific service expressly states otherwise. Each party is responsible for obtaining and checking the insurance required for its own activity and for the proposed transaction, including limits, exclusions, territory and validity.</p>
-      <h2>5. User responsibility</h2><p>Users are responsible for their listings, offers, agreements, documents, payments between the parties, safety, legality, licences, insurance, taxes, customs, sanctions, cargo restrictions and other requirements that apply to their activity. TUT Move is not a party to the underlying service contract between users.</p>
+      <h2>5. User responsibility</h2><p>Users are responsible for the accuracy and legality of information, listings, offers and documents they provide; for the safety and legality of their activities; and for complying with laws, licences, taxes, customs, sanctions, cargo restrictions and other requirements that apply to them.</p>
       <h2>6. Platform fee</h2><p>TUT Move may charge a platform fee. The applicable fee is the fee displayed for the transaction before payment or confirmation. The platform fee may change for future or unpaid transactions. TUT Move does not set the underlying service price agreed between users.</p>
       <h2>7. Cancellations, refunds and disputes</h2><p>Cancellations, refunds and disputes are handled under the separate Cancellation & Refund Policy and Disputes & Claims Policy. TUT Move may provide tools to communicate or record a dispute, but this does not make TUT Move the provider of the underlying transport or other service.</p>
-      <h2>8. Account controls</h2><p>TUT Move may restrict, suspend or remove access to the platform where reasonably necessary for security, misuse, suspected fraud, false information, policy breaches or protection of the marketplace. Users must not misuse the platform, impersonate others or use TUT Move for unlawful activity.</p>
+      <h2>8. Account controls</h2><p>TUT Move may restrict, suspend or remove access to the platform where reasonably necessary for security, misuse, suspected fraud, false information, policy breaches or protection of the marketplace. Users must not misuse the platform, impersonate others, upload fraudulent documents or use TUT Move for unlawful activity.</p>
       <h2>9. Limitation of platform responsibility</h2><p>To the maximum extent permitted by applicable law, TUT Move is not responsible for the acts or omissions of independent users or for accidents, injury, cargo loss or damage, theft, delay, missed pickup or delivery, vehicle failure, insurance disputes, fines, penalties, loss of profit or disputes arising from the underlying service between users. Nothing in these Terms excludes or limits liability that cannot lawfully be excluded or limited.</p>
       <h2>10. Changes</h2><p>TUT Move may update these Terms as the platform develops. Material changes should be presented through the platform. The version accepted at registration or later acceptance may be recorded with the date of acceptance.</p>
     </div></section>
 
     <section id="privacyPane" class="pane hidden legalPane"><div class="pageHead"><div><span class="eyebrow">LEGAL</span><h1>Privacy Policy</h1><p>How information is used to operate TUT Move.</p></div></div><div class="panel legalDoc">
-      <h2>Information we handle</h2><p>TUT Move may process account and contact information, role and marketplace profile data, listings, offers, agreements, messages and notifications, technical/security records and transaction information needed to operate the platform.</p>
-      <h2>Why information is used</h2><p>Information may be used to create and secure accounts, operate marketplace matching and agreements, prevent misuse and fraud, provide support, maintain necessary records and operate payment integrations when enabled. TUT Move does not collect or review transaction documents between the parties.</p>
-      <h2>Sharing between transaction parties</h2><p>Public marketplace information may be visible to marketplace users. Information needed to complete an accepted deal is shared only through the applicable platform flow. Deal documents are exchanged directly between the parties and are not uploaded to or reviewed by TUT Move.</p>
-      <h2>Service providers</h2><p>When external hosting, payment, communications or security providers are enabled, information necessary for those services may be processed by them under their own applicable terms and privacy arrangements.</p>
+      <h2>Information we handle</h2><p>TUT Move may process account and contact information, role and marketplace profile data, listings, offers, agreements, messages and notifications, verification information and uploaded documents, technical/security records and transaction information needed to operate the platform.</p>
+      <h2>Why information is used</h2><p>Information may be used to create and secure accounts, operate marketplace matching and agreements, provide verification features, prevent misuse and fraud, provide support, maintain records and operate payment or identity-verification integrations when enabled.</p>
+      <h2>Sharing between transaction parties</h2><p>Public marketplace information may be visible to marketplace users. Private contact or verification information should only be exposed where the platform flow permits it, such as after an accepted agreement. Users receiving another person's information must use it only for the relevant transaction and lawful purposes.</p>
+      <h2>Service providers</h2><p>When external hosting, payment, identity-verification, communications or security providers are enabled, information necessary for those services may be processed by them under their own applicable terms and privacy arrangements.</p>
       <h2>Retention and security</h2><p>TUT Move aims to keep information only as needed for platform operation, security, disputes, records and applicable legal requirements, and to use reasonable technical safeguards. No internet service can promise absolute security.</p>
       <h2>Your requests</h2><p>Users may request access, correction or deletion of account information through available account controls or the published support contact. Some records may need to be retained where required for security, transaction records, disputes or applicable law.</p>
     </div></section>
@@ -272,9 +340,9 @@
     <section id="adminPane" class="pane hidden ownerDashboard">
       <div class="ownerKingBar">THE KING OF TUT</div>
       <div class="pageHead ownerHead"><div><h1>TUT Move Owner Dashboard</h1><p>Monitor the market; do not control its prices.</p></div><button class="outlineBtn" onclick="loadAdmin()">Refresh</button></div>
-      <details class="panel ownerSection" open><summary>Site & ownership</summary><div class="ownerSectionBody"><div class="two"><div><label>Brand</label><input id="brandName" value="TUT Move"></div><div><label>Official domain</label><input id="siteUrl" value="https://tutmove.com"></div></div><div class="two"><div><label>Owner / founder name</label><input id="ownerName" placeholder="Your legal name"></div><div><label>Owner email</label><input id="ownerEmail" type="email" placeholder="Private owner email"></div></div><div class="two"><div><label>Legal entity (optional)</label><input id="legalEntity" placeholder="Company name when registered"></div><div><label>Public support email</label><input id="supportEmail" type="email" placeholder="support@tutmove.com"></div></div><div class="two"><div><label>Commission IBAN</label><input id="commissionIban" placeholder="IBAN used to receive TUT Move commission"></div><div><label>Commission account name</label><input id="commissionAccountName" placeholder="Account holder name"></div></div><button class="goldBtn" onclick="saveOwnership()">Save ownership settings</button></div></details>
+      <details class="panel ownerSection" open><summary>Site & ownership</summary><div class="ownerSectionBody"><div class="two"><div><label>Brand</label><input id="brandName" value="TUT Move"></div><div><label>Official domain</label><input id="siteUrl" value="https://tutmove.com"></div></div><div class="two"><div><label>Owner / founder name</label><input id="ownerName" placeholder="Your legal name"></div><div><label>Owner email</label><input id="ownerEmail" type="email" placeholder="Private owner email"></div></div><div class="two"><div><label>Legal entity (optional)</label><input id="legalEntity" placeholder="Company name when registered"></div><div><label>Public support email</label><input id="supportEmail" type="email" placeholder="support@tutmove.com"></div></div><button class="goldBtn" onclick="saveOwnership()">Save ownership settings</button></div></details>
       <div class="ownerSettingsGrid">
-       <details class="panel ownerSection" open><summary>Commission & reporting currency</summary><div class="ownerSectionBody"><div class="two"><div><label>TUT Move fee %</label><input id="feePct" type="number" min="0" max="100" step="0.1"></div><div><label>Reporting currency</label><select id="defaultCurrency"><option value="CHF">CHF — Swiss franc</option><option value="GBP">GBP — Pound sterling</option><option value="USD">USD — US dollar</option><option value="EUR">EUR — Euro</option><option value="CAD">CAD — Canadian dollar</option><option value="KWD">KWD — Kuwaiti dinar</option></select></div></div><button class="goldBtn" onclick="saveSettings()">Save fee settings</button><p class="muted compact">Commission = percentage of the agreed deal amount. Default is 5%. Only the Owner can change the percentage. Each deal freezes the percentage that was active when the offer was accepted. The service price is paid directly between the parties; TUT Move commission is separate.</p></div></details>
+       <details class="panel ownerSection" open><summary>Commission & reporting currency</summary><div class="ownerSectionBody"><div class="two"><div><label>TUT Move fee %</label><input id="feePct" type="number" min="0" max="100" step="0.1"></div><div><label>Reporting currency</label><select id="defaultCurrency"><option value="CHF">CHF — Swiss franc</option><option value="GBP">GBP — Pound sterling</option><option value="USD">USD — US dollar</option><option value="EUR">EUR — Euro</option><option value="CAD">CAD — Canadian dollar</option><option value="KWD">KWD — Kuwaiti dinar</option></select></div></div><button class="goldBtn" onclick="saveSettings()">Save fee settings</button><p class="muted compact">Fee = percentage of the agreed deal amount. Deals keep their original currency; owner revenue is reported in the selected currency using the latest available FX rate.</p></div></details>
        <details class="panel ownerSection"><summary>Owner security</summary><div class="ownerSectionBody"><div class="two"><div><label>Current password</label><input id="ownerCurrentPassword" type="password" autocomplete="current-password"></div><div><label>New password</label><input id="ownerNewPassword" type="password" minlength="10" autocomplete="new-password"></div></div><button class="outlineBtn" onclick="changeOwnerPassword()">Change password</button></div></details>
       </div>
       <div id="adminArea"></div>
@@ -286,6 +354,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=commission-manual-confirmation"></script>
+<script defer src="/app.js?v=85-final-release"></script>
 </body>
 </html>
