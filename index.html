@@ -236,7 +236,7 @@
     <section id="verify" class="pane hidden">
       <div class="verifyV48">
         <div class="verifyIntro">
-          <div><span class="eyebrow">TRUST & VERIFICATION</span><h1>Build a profile people can trust.</h1><p>We only ask for the information relevant to your marketplace role. Your submission is stored for manual review in this test build.</p></div>
+          <div><span class="eyebrow">TRUST & VERIFICATION</span><h1>Build a profile people can trust.</h1><p>Prepare the details the other party may use to verify you after the TUT Move fee is paid. TUT Move does not manually approve users.</p></div>
           <div id="verificationStatus" class="verificationStatus statusCard">Sign in to start verification.</div>
         </div>
 
@@ -280,19 +280,19 @@
           </section>
 
           <section class="verifyWizardStep hidden" data-step-panel="3">
-            <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>These details build your verification profile. After the TUT Move fee is paid, the other party can review limited account details and confirm you directly. Full ID documents are not shown to the other party online.</p></div>
+            <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>These documents stay private. TUT Move does not manually approve them. The other party receives only limited verification details after the TUT Move fee is paid; original documents can be checked directly between the parties when appropriate.</p></div>
             <div class="uploadGrid">
               <label class="uploadCard"><span class="uploadIcon">ID</span><b>Government ID</b><small>Image or PDF</small><input id="verifyIdentityFile" type="file" accept="image/*,.pdf" required></label>
               <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Image</small><input id="verifySelfieFile" type="file" accept="image/*"></label>
               <label class="uploadCard" data-role-field="driver carrier"><span class="uploadIcon">DL</span><b>Driving licence</b><small>Image or PDF</small><input id="verifyLicenceFile" type="file" accept="image/*,.pdf"></label>
             </div>
-            <label><span>Additional verification notes</span><textarea id="verifyNotes" rows="3" placeholder="Optional details that may help the other party verify you"></textarea></label>
-            <div class="privacyNote"><b>Test build</b><span>Manual review only. Official identity verification and encrypted production document storage still need to be connected.</span></div>
+            <label><span>Profile notes</span><textarea id="verifyNotes" rows="3" placeholder="Optional information for the other party"></textarea></label>
+            <div class="privacyNote"><b>Privacy</b><span>Full ID and licence files are not automatically shown to the other party. Use original documents for in-person checks when needed.</span></div>
             <div class="wizardActions"><button class="outlineBtn" type="button" onclick="verifyPrevStep()">Back</button><button class="goldBtn" type="submit">Save verification profile</button></div>
             <div id="verifySubmitMsg" class="formMessage" aria-live="polite"></div>
           </section>
         </form>
-        <div id="ownerVerificationQueue" class="ownerVerificationQueue"></div>
+        
       </div>
     </section>
 

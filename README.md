@@ -114,7 +114,7 @@ Verification is now role-adaptive and trip-oriented. The UI asks for minimal acc
 ## v53 live-flow test
 - Performance: optimized large images, browser caching, gzip for HTML/CSS/JS, fewer repeated translation refreshes, lazy founder image.
 - Notifications: in-app bell and Activity notifications for offers, counters, accepted agreements and simulated payments.
-- Commission: 5% charged to the requester/buyer only. Provider receives the agreed amount in full.
+- Legacy note superseded by v88: the owner controls the current percentage; each accepted deal locks that percentage and amount. Stripe charges only the TUT Move fee.
 - Test payment: simulated authorization works for all agreement types, including driver agreements. No real money moves.
 - Driver document privacy: uploaded licence/ID/selfie are not public. After a driver agreement is accepted, only that driver, the accepted requester, or the owner account can view/print the uploaded files.
 
@@ -144,11 +144,11 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - Existing marketplace/backend flows preserved.
 
 
-## v87 — Dynamic fee snapshot + mutual verification hardening
-- The owner can change the current TUT Move fee percentage at any time from Owner → Platform economics.
-- The percentage is snapshotted when an offer is accepted; later fee changes affect new deals only.
-- Fee amount is always calculated from the accepted deal value (`agreedPrice × platformFeePct / 100`).
-- Stripe Checkout collects only the snapshotted TUT Move fee; the underlying deal value remains outside TUT Move.
-- After Stripe confirms the fee, limited counterparty details unlock and both parties must independently confirm each other.
-- Owner approve/reject is removed from the verification decision path.
-- Full Government ID, selfie and driving-licence files are never exposed to the counterparty; they remain private to the account holder. Drivers may still record licence number/class/expiry for their own profile, with only masked/limited licence data shown after fee payment.
+## v88 — fee-first mutual verification
+- Owner/manual approval is removed from the transaction verification path.
+- The owner can change the current TUT Move fee percentage; each accepted deal snapshots and locks the percentage and fee amount at acceptance. Later fee changes do not rewrite existing deals.
+- Stripe Checkout charges only the locked TUT Move success fee, never the underlying deal amount.
+- Stripe webhook `/api/stripe/webhook` verifies the Stripe signature, paid status, exact fee amount, currency and deal id before unlocking verification.
+- After fee confirmation, each party can view limited details about the other party and independently confirm `I verified this party`. Both confirmations are required before the deal workflow can continue.
+- Full uploaded ID/licence/selfie files are not exposed by the mutual-profile endpoint. For cash/COD or in-person handover, parties can inspect originals directly.
+- Required server secrets: `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`. Never expose these in frontend code.
