@@ -142,3 +142,13 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - About page recreated as HTML/CSS from the supplied visual reference.
 - Founder personal photo removed from About; brand emblem used instead.
 - Existing marketplace/backend flows preserved.
+
+
+## v87 — Dynamic fee snapshot + mutual verification hardening
+- The owner can change the current TUT Move fee percentage at any time from Owner → Platform economics.
+- The percentage is snapshotted when an offer is accepted; later fee changes affect new deals only.
+- Fee amount is always calculated from the accepted deal value (`agreedPrice × platformFeePct / 100`).
+- Stripe Checkout collects only the snapshotted TUT Move fee; the underlying deal value remains outside TUT Move.
+- After Stripe confirms the fee, limited counterparty details unlock and both parties must independently confirm each other.
+- Owner approve/reject is removed from the verification decision path.
+- Full Government ID, selfie and driving-licence files are never exposed to the counterparty; they remain private to the account holder. Drivers may still record licence number/class/expiry for their own profile, with only masked/limited licence data shown after fee payment.

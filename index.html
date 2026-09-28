@@ -280,15 +280,15 @@
           </section>
 
           <section class="verifyWizardStep hidden" data-step-panel="3">
-            <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>For this prototype, files are submitted to TUT Move for manual owner review. Do not use production-sensitive documents until secure object storage and official KYC are connected.</p></div>
+            <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>These details build your verification profile. After the TUT Move fee is paid, the other party can review limited account details and confirm you directly. Full ID documents are not shown to the other party online.</p></div>
             <div class="uploadGrid">
               <label class="uploadCard"><span class="uploadIcon">ID</span><b>Government ID</b><small>Image or PDF</small><input id="verifyIdentityFile" type="file" accept="image/*,.pdf" required></label>
               <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Image</small><input id="verifySelfieFile" type="file" accept="image/*"></label>
               <label class="uploadCard" data-role-field="driver carrier"><span class="uploadIcon">DL</span><b>Driving licence</b><small>Image or PDF</small><input id="verifyLicenceFile" type="file" accept="image/*,.pdf"></label>
             </div>
-            <label><span>Notes for reviewer</span><textarea id="verifyNotes" rows="3" placeholder="Anything the reviewer should know"></textarea></label>
+            <label><span>Additional verification notes</span><textarea id="verifyNotes" rows="3" placeholder="Optional details that may help the other party verify you"></textarea></label>
             <div class="privacyNote"><b>Test build</b><span>Manual review only. Official identity verification and encrypted production document storage still need to be connected.</span></div>
-            <div class="wizardActions"><button class="outlineBtn" type="button" onclick="verifyPrevStep()">Back</button><button class="goldBtn" type="submit">Submit for review</button></div>
+            <div class="wizardActions"><button class="outlineBtn" type="button" onclick="verifyPrevStep()">Back</button><button class="goldBtn" type="submit">Save verification profile</button></div>
             <div id="verifySubmitMsg" class="formMessage" aria-live="polite"></div>
           </section>
         </form>
