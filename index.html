@@ -254,8 +254,10 @@
                 <option value="shipper">Shipper / cargo owner</option><option value="carrier">Carrier / transport company</option><option value="driver">Driver</option><option value="warehouse">Warehouse owner</option><option value="equipment">Truck / trailer / equipment owner</option>
               </select></label>
               <label><span>Full legal name</span><input id="verifyLegalName" required autocomplete="name" placeholder="As shown on your ID"></label>
+              <label><span>Email address</span><input id="verifyEmail" type="email" readonly placeholder="Verified account email"></label>
+              <label><span>Phone number</span><input id="verifyPhone" type="tel" required autocomplete="tel" placeholder="Phone number"></label>
               <label><span>Country / market</span><input id="verifyCountry" required placeholder="Country"></label>
-              <label><span>Government ID number</span><input id="verifyIdentityNumber" required placeholder="ID / passport number"></label>
+              <label><span>Government ID / passport number</span><input id="verifyIdentityNumber" required placeholder="ID / passport number"></label>
             </div>
             <div class="wizardActions"><span></span><button class="goldBtn" type="button" onclick="verifyNextStep()">Continue</button></div>
           </section>
