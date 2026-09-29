@@ -277,6 +277,28 @@ function closeCompletedDealListings(db,b){
   for(const id0 of ids){const x=db.listings.find(z=>z.id===id0);if(x){x.status='closed';x.closedAt=new Date().toISOString();x.closedReason='deal_completed';x.bookingId=b.id;}}
   b.closedListingIds=[...ids];recomputeMatches(db);return b.closedListingIds;
 }
+function reconcileCompletedDeals(db){
+  let changed=false;
+  for(const b of (db.bookings||[])){
+    const complete=b.status==='completed'||b.mutualVerification?.complete===true||(b.mutualVerification?.buyerVerifiedProvider&&b.mutualVerification?.providerVerifiedBuyer);
+    if(!complete)continue;
+    if(b.status!=='completed'){b.status='completed';changed=true;}
+    if(!b.completedAt){b.completedAt=b.mutualVerification?.providerVerifiedAt||b.mutualVerification?.buyerVerifiedAt||new Date().toISOString();changed=true;}
+    const before=JSON.stringify((b.closedListingIds||[]).slice().sort());
+    closeCompletedDealListings(db,b);
+    if(before!==JSON.stringify((b.closedListingIds||[]).slice().sort()))changed=true;
+    for(const n of (db.notifications||[])){
+      if(![b.buyerUserId,b.providerUserId].includes(n.userId))continue;
+      if(n.title==='Mutual verification complete'&&/deal can continue/i.test(String(n.message||''))){
+        n.title='Deal completed';
+        n.message='Both parties reviewed and confirmed each other. This deal is now closed.';
+        changed=true;
+      }
+    }
+  }
+  if(changed)recomputeMatches(db);
+  return changed;
+}
 function stripeSigValid(raw,header,secret){try{const parts=String(header||'').split(',').map(x=>x.split('='));const t=parts.find(x=>x[0]==='t')?.[1];const sigs=parts.filter(x=>x[0]==='v1').map(x=>x[1]);if(!t||!sigs.length)return false;if(Math.abs(Date.now()/1000-Number(t))>300)return false;const expected=crypto.createHmac('sha256',secret).update(t+'.'+raw.toString('utf8')).digest('hex');return sigs.some(sig=>sig.length===expected.length&&crypto.timingSafeEqual(Buffer.from(sig),Buffer.from(expected)))}catch{return false}}
 async function createStripeCheckout(b,siteUrl){const key=process.env.STRIPE_SECRET_KEY;if(!key)throw new Error('Stripe secret key is not configured on the server.');const amount=Math.round(Number(b.platformFee||0)*100);if(amount<50)throw new Error('Commission amount is below Stripe minimum for this currency.');const q=new URLSearchParams();q.set('mode','payment');q.set('success_url',`${siteUrl}/?payment=success&deal=${encodeURIComponent(b.id)}`);q.set('cancel_url',`${siteUrl}/?payment=cancelled&deal=${encodeURIComponent(b.id)}`);q.set('client_reference_id',b.id);q.set('metadata[deal_id]',b.id);q.set('metadata[expected_fee_minor]',String(amount));q.set('metadata[fee_currency]',String(b.currency).toLowerCase());q.set('line_items[0][quantity]','1');q.set('line_items[0][price_data][currency]',String(b.currency).toLowerCase());q.set('line_items[0][price_data][unit_amount]',String(amount));q.set('line_items[0][price_data][product_data][name]',`TUT Move success fee — ${b.id}`);const r=await fetch('https://api.stripe.com/v1/checkout/sessions',{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/x-www-form-urlencoded'},body:q});const j=await r.json();if(!r.ok)throw new Error(j?.error?.message||'Stripe Checkout could not be created.');return j;}
 
@@ -489,5 +511,5 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
 });
 initDB()
-  .then(()=>server.listen(PORT,()=>console.log(`TUT Move v88 mutual-verification running on ${PORT}`)))
+  .then(async()=>{const db=readDB();if(reconcileCompletedDeals(db))await writeDB(db);server.listen(PORT,()=>console.log(`TUT Move v91 auto-close completed deals running on ${PORT}`))})
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});
