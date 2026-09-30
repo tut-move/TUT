@@ -4,6 +4,7 @@ const path = require('path');
 const crypto = require('crypto');
 const zlib = require('zlib');
 const tls = require('tls');
+const nodemailer = require('nodemailer');
 const { URL } = require('url');
 let Pool = null;
 try { ({ Pool } = require('pg')); } catch (_) {}
@@ -185,15 +186,11 @@ function resetTokenHash(token){return crypto.createHash('sha256').update(String(
 function emailTokenHash(token){return crypto.createHash('sha256').update(String(token)).digest('hex')}
 function accountActive(u){return !!u&&(u.role==='owner'||!!u.emailVerifiedAt)}
 async function smtpSend({host,port,user,pass,from,to,subject,text}){
-  return new Promise((resolve,reject)=>{
-    const socket=tls.connect({host,port,servername:host,rejectUnauthorized:true});let buffer='',queue=[];
-    const fail=e=>{try{socket.destroy()}catch{}reject(e instanceof Error?e:new Error(String(e)))};
-    const wait=()=>new Promise((res,rej)=>queue.push({res,rej}));
-    socket.setTimeout(15000,()=>fail(new Error('SMTP timeout')));
-    socket.on('error',fail);socket.on('data',d=>{buffer+=d.toString();let lines=buffer.split(/\r?\n/);buffer=lines.pop();for(const line of lines){if(!line)continue;if(/^\d{3}-/.test(line))continue;if(/^\d{3} /.test(line)){const q=queue.shift();if(q){const code=Number(line.slice(0,3));code>=400?q.rej(new Error('SMTP '+code)):q.res(line)}}}});
-    socket.on('secureConnect',async()=>{try{await wait();const cmd=async c=>{socket.write(c+'\r\n');return wait()};await cmd('EHLO tutmove.com');await cmd('AUTH LOGIN');await cmd(Buffer.from(user).toString('base64'));await cmd(Buffer.from(pass).toString('base64'));await cmd(`MAIL FROM:<${from}>`);await cmd(`RCPT TO:<${to}>`);await cmd('DATA');const safeText=String(text).replace(/\r?\n\./g,'\r\n..');socket.write(`From: TUT Move <${from}>\r\nTo: ${to}\r\nSubject: ${subject}\r\nMIME-Version: 1.0\r\nContent-Type: text/plain; charset=UTF-8\r\n\r\n${safeText}\r\n.\r\n`);await wait();await cmd('QUIT');socket.end();resolve()}catch(e){fail(e)}});
-  });
+  const secure=Number(port)===465;
+  const transporter=nodemailer.createTransport({host,port:Number(port),secure,auth:{user,pass},connectionTimeout:15000,greetingTimeout:15000,socketTimeout:20000});
+  await transporter.sendMail({from:from||user,to,subject,text});
 }
+
 async function sendEmailVerification(to,token){
   const host=process.env.SMTP_HOST||'mail.privateemail.com',port=Number(process.env.SMTP_PORT||465),user=process.env.SMTP_USER||'',pass=process.env.SMTP_PASS||'',from=process.env.SMTP_FROM||user||'info@tutmove.com';
   if(!user||!pass) throw new Error('Email verification is not configured.');
@@ -311,8 +308,17 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     const hp=hashPassword(b.password);const u={id:id('u'),name:String(b.name).trim(),email:String(b.email).trim().toLowerCase(),role:'owner',roles:['owner'],country:b.country||'',region:b.region||'',language:b.language||'en',currency:b.currency||'USD',verified:true,verificationStatus:'owner',...hp,createdAt:new Date().toISOString()};db.users.push(u);const sid=addSession(db,u.id);await writeDB(db);res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,201,{user:safeUser(u)});
   }
   if(p==='/api/register'&&req.method==='POST'){
-    const b=await getBody(req),email=String(b.email||'').trim().toLowerCase(),phone=String(b.phone||'').trim();if(!b.name||!email||!phone||!b.password||b.password.length<8)return json(res,400,{error:'Name, email, phone and password (8+ chars) required.'});if(b.acceptedTerms!==true)return json(res,400,{error:'You must agree to the Terms of Service and Privacy Policy.'});const db=readDB();if(db.users.some(u=>String(u.email||'').trim().toLowerCase()===email))return json(res,409,{error:'Email already registered.'});
-    const hp=hashPassword(b.password);const roles=Array.isArray(b.roles)&&b.roles.length?b.roles.slice(0,5):['member'];const token=crypto.randomBytes(32).toString('hex'),now=Date.now();const u={id:id('u'),name:String(b.name).trim(),email,phone:phone.slice(0,50),emailVerifiedAt:null,emailVerificationTokenHash:emailTokenHash(token),emailVerificationExpiresAt:new Date(now+24*60*60*1000).toISOString(),role:roles[0],roles,country:b.country||'',region:b.region||'',language:b.language||'en',currency:b.currency||'USD',verified:false,verificationStatus:'not_started',termsAcceptedAt:new Date().toISOString(),termsVersion:String(b.termsVersion||'2026-09-17'),...hp,createdAt:new Date().toISOString()};db.users.push(u);const sid=addSession(db,u.id);await writeDB(db);let emailSent=true;try{await sendEmailVerification(u.email,token)}catch(e){emailSent=false;console.error('Email verification send failed:',e.message)}res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,201,{user:safeUser(u),emailVerificationSent:emailSent,message:'Account created. Verify your email to activate the account.'});
+    const b=await getBody(req),email=String(b.email||'').trim().toLowerCase(),phone=String(b.phone||'').trim();if(!b.name||!email||!phone||!b.password||b.password.length<8)return json(res,400,{error:'Name, email, phone and password (8+ chars) required.'});if(b.acceptedTerms!==true)return json(res,400,{error:'You must agree to the Terms of Service and Privacy Policy.'});const db=readDB();
+    const existing=db.users.find(u=>String(u.email||'').trim().toLowerCase()===email);
+    if(existing){
+      if(existing.emailVerifiedAt)return json(res,409,{error:'Email already registered. Please sign in.'});
+      const hpExisting=hashPassword(String(b.password||''),existing.salt);
+      if(!existing.hash||!crypto.timingSafeEqual(Buffer.from(hpExisting.hash,'hex'),Buffer.from(existing.hash,'hex')))return json(res,409,{error:'An unverified account already exists for this email. Sign in with its password, then resend the verification email.'});
+      const token=crypto.randomBytes(32).toString('hex');existing.emailVerificationTokenHash=emailTokenHash(token);existing.emailVerificationExpiresAt=new Date(Date.now()+24*60*60*1000).toISOString();
+      const sid=addSession(db,existing.id);await writeDB(db);let emailSent=true;try{await sendEmailVerification(existing.email,token)}catch(e){emailSent=false;console.error('Email verification recovery send failed:',e.message)}
+      res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,200,{user:safeUser(existing),emailVerificationSent:emailSent,message:emailSent?'This account already existed but was not verified. A new verification email has been sent.':'This account already existed but was not verified. You are signed in; use Resend email after the mail service is available.'});
+    }
+    const hp=hashPassword(b.password);const roles=Array.isArray(b.roles)&&b.roles.length?b.roles.slice(0,5):['member'];const token=crypto.randomBytes(32).toString('hex'),now=Date.now();const u={id:id('u'),name:String(b.name).trim(),email,phone:phone.slice(0,50),emailVerifiedAt:null,emailVerificationTokenHash:emailTokenHash(token),emailVerificationExpiresAt:new Date(now+24*60*60*1000).toISOString(),role:roles[0],roles,country:b.country||'',region:b.region||'',language:b.language||'en',currency:b.currency||'USD',verified:false,verificationStatus:'not_started',termsAcceptedAt:new Date().toISOString(),termsVersion:String(b.termsVersion||'2026-09-17'),...hp,createdAt:new Date().toISOString()};db.users.push(u);const sid=addSession(db,u.id);await writeDB(db);let emailSent=true;try{await sendEmailVerification(u.email,token)}catch(e){emailSent=false;console.error('Email verification send failed:',e.message)}res.setHeader('Set-Cookie',sessionCookie(sid));return json(res,201,{user:safeUser(u),emailVerificationSent:emailSent,message:emailSent?'Account created. Check your email to verify and activate the account.':'Account created, but the verification email could not be sent. Open Account and use Resend email.'});
   }
   if(p==='/api/email/verify'&&req.method==='POST'){
     const b=await getBody(req),token=String(b.token||'').trim();if(!token)return json(res,400,{error:'Verification token is required.'});
