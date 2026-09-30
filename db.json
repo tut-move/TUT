@@ -262,7 +262,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.418Z",
-      "closedAt": "2026-09-29T04:24:33.436Z",
+      "closedAt": "2026-09-30T02:56:11.782Z",
       "closedReason": "deal_completed",
       "bookingId": "b_016638298b95"
     },
@@ -296,7 +296,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.441Z",
-      "closedAt": "2026-09-29T04:24:33.450Z",
+      "closedAt": "2026-09-30T02:56:11.783Z",
       "closedReason": "deal_completed",
       "bookingId": "b_6c2a181cc66d"
     },
@@ -330,7 +330,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.463Z",
-      "closedAt": "2026-09-29T04:24:33.470Z",
+      "closedAt": "2026-09-30T02:56:11.783Z",
       "closedReason": "deal_completed",
       "bookingId": "b_32772e9ff783"
     },
@@ -364,7 +364,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.474Z",
-      "closedAt": "2026-09-29T04:24:33.479Z",
+      "closedAt": "2026-09-30T02:56:11.783Z",
       "closedReason": "deal_completed",
       "bookingId": "b_4efde2e60bd4"
     },
@@ -398,7 +398,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.483Z",
-      "closedAt": "2026-09-29T04:24:33.494Z",
+      "closedAt": "2026-09-30T02:56:11.783Z",
       "closedReason": "deal_completed",
       "bookingId": "b_7ee38304a94c"
     },
@@ -432,7 +432,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.498Z",
-      "closedAt": "2026-09-29T04:24:33.506Z",
+      "closedAt": "2026-09-30T02:56:11.783Z",
       "closedReason": "deal_completed",
       "bookingId": "b_2769a5481224"
     },
@@ -578,8 +578,7 @@
       "commissionPaidAt": "2026-09-29T04:24:33.429Z",
       "completedAt": "2026-09-29T04:24:33.436Z",
       "closedListingIds": [
-        "l_4ea83f12dd14",
-        "l_c31c36901136"
+        "l_4ea83f12dd14"
       ]
     },
     {
@@ -631,8 +630,7 @@
       "commissionPaidAt": "2026-09-29T04:24:33.447Z",
       "completedAt": "2026-09-29T04:24:33.450Z",
       "closedListingIds": [
-        "l_a3686c0fd569",
-        "l_f3c9fa165d88"
+        "l_a3686c0fd569"
       ]
     },
     {
@@ -684,8 +682,7 @@
       "commissionPaidAt": "2026-09-29T04:24:33.466Z",
       "completedAt": "2026-09-29T04:24:33.470Z",
       "closedListingIds": [
-        "l_44c8752ba084",
-        "l_26dd9f74f489"
+        "l_44c8752ba084"
       ]
     },
     {
@@ -737,8 +734,7 @@
       "commissionPaidAt": "2026-09-29T04:24:33.477Z",
       "completedAt": "2026-09-29T04:24:33.479Z",
       "closedListingIds": [
-        "l_e9c1027cd864",
-        "l_958c7187711a"
+        "l_e9c1027cd864"
       ]
     },
     {
@@ -790,8 +786,7 @@
       "commissionPaidAt": "2026-09-29T04:24:33.491Z",
       "completedAt": "2026-09-29T04:24:33.494Z",
       "closedListingIds": [
-        "l_155eebdb67bd",
-        "l_62143e0a383b"
+        "l_155eebdb67bd"
       ]
     },
     {
@@ -843,8 +838,7 @@
       "commissionPaidAt": "2026-09-29T04:24:33.503Z",
       "completedAt": "2026-09-29T04:24:33.506Z",
       "closedListingIds": [
-        "l_049a1225746e",
-        "l_438f351ca756"
+        "l_049a1225746e"
       ]
     }
   ],

@@ -154,3 +154,11 @@ After a truck reaches Vehicle Ready, Activity now shows step 4: Payment. The req
 - After fee confirmation, each party can view limited details about the other party and independently confirm `I verified this party`. Both confirmations are required before the deal workflow can continue.
 - Full uploaded ID/licence/selfie files are not exposed by the mutual-profile endpoint. For cash/COD or in-person handover, parties can inspect originals directly.
 - Required server secrets: `STRIPE_SECRET_KEY` and `STRIPE_WEBHOOK_SECRET`. Never expose these in frontend code.
+
+## Registration/account correction (v94 clean revision)
+- Account activation requires email verification only.
+- Phone number is collected but is not verified by SMS and is not used as an activation gate.
+- Phone numbers are not required to be unique.
+- Signed-in users can correct name, phone, country and region from Account.
+- Account email is immutable in the profile UI/API.
+- Forgot/reset password remains email-based.
