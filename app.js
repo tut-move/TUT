@@ -1534,3 +1534,12 @@ async function processEmailVerificationLink(){
   try{const j=await api('/api/email/verify',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});if(j.user)me=j.user;renderAccount();renderAuth();alert(tr(j.message||'Email address verified successfully.'));history.replaceState({},'',location.pathname)}catch(e){alert(tr(e.message))}
 }
 setTimeout(processEmailVerificationLink,350);
+
+function toggleMobileHeader(){
+  const bar=document.querySelector('.topbar');
+  const btn=document.getElementById('mobileMenuBtn');
+  if(!bar||!btn)return;
+  const open=bar.classList.toggle('mobileOpen');
+  btn.setAttribute('aria-expanded',open?'true':'false');
+  btn.textContent=open?'×':'☰';
+}
