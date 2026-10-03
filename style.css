@@ -808,82 +808,52 @@ html,body{max-width:100%;overflow-x:hidden}
 .mutualVerifyBox{margin-top:18px;padding:18px;border:1px solid rgba(184,143,65,.35);border-radius:16px;background:rgba(184,143,65,.06)}
 .mutualVerifyBox h4{margin:0 0 8px}.mutualVerifyBox p{margin:6px 0 12px}.mutualState{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.mutualState span{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06)}
 
-/* HOME HERO — canonical source (v95). No legacy hero overrides below this point. */
+/* HOME HERO — canonical source (v96). No duplicate hero overrides below this point. */
+.mobileMenuBtn{display:none;background:transparent;border:0;color:#f7f3e8;font-size:28px;line-height:1;padding:8px;cursor:pointer}
 #home{padding-top:0}
 .homeHero{
-  position:relative;
-  isolation:isolate;
-  overflow:hidden;
-  min-height:690px;
-  margin:0 calc(50% - 50vw) 48px;
-  padding:clamp(58px,7vw,92px) max(4vw,calc((100vw - 1180px)/2));
-  display:grid;
-  grid-template-columns:minmax(0,1.08fr) minmax(300px,.92fr);
-  align-items:center;
-  gap:clamp(28px,4vw,64px);
+  position:relative;isolation:isolate;overflow:hidden;
+  min-height:650px;margin:0 calc(50% - 50vw) 48px;
+  padding:clamp(54px,6vw,82px) max(4vw,calc((100vw - 1180px)/2));
+  display:grid;grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr);align-items:center;gap:clamp(28px,4vw,58px);
   background:
-    linear-gradient(90deg,rgba(4,5,5,.96) 0%,rgba(4,5,5,.86) 37%,rgba(4,5,5,.34) 68%,rgba(4,5,5,.10) 100%),
-    url('/tut-truck-yard-clean.jpg') center bottom/cover no-repeat,
-    #050606;
+    linear-gradient(90deg,rgba(4,5,5,.98) 0%,rgba(4,5,5,.92) 34%,rgba(4,5,5,.56) 58%,rgba(4,5,5,.16) 100%),
+    linear-gradient(0deg,rgba(4,5,5,.12),rgba(4,5,5,.08)),
+    url('/tut-truck-yard-clean.jpg') center/cover no-repeat;
   border-bottom:1px solid rgba(215,175,69,.18);
 }
-.homeHero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,0,0,.06),rgba(0,0,0,.10));pointer-events:none}
-.homeHeroCopy{position:relative;z-index:2;max-width:760px;min-width:0}
-.homeHero .eyebrow{display:block;margin-bottom:18px;color:var(--gold2);font-weight:800;letter-spacing:.22em}
-.homeHero .legacyHeroTitle{margin:0 0 22px;font-size:clamp(40px,4.05vw,64px);line-height:1.05;letter-spacing:-.045em;max-width:760px}
+.homeHeroCopy{position:relative;z-index:2;min-width:0;max-width:760px}
+.homeHero .eyebrow{display:block;margin:0 0 18px;color:var(--gold2);font-weight:800;letter-spacing:.22em}
+.homeHero .legacyHeroTitle{margin:0 0 22px;font-size:clamp(38px,3.85vw,60px);line-height:1.06;letter-spacing:-.04em}
 .homeHero .legacyHeroTitle .heroSentence{display:block;white-space:nowrap;color:var(--text)}
 .homeHero .legacyHeroTitle .heroSentence:last-child{color:var(--gold2)}
-.homeHeroCopy>p{max-width:690px;margin:0 0 12px;font-size:18px;line-height:1.55;color:#eee9df;text-shadow:0 1px 14px #000}
-.homeHero .legacyHeroLead{font-weight:800;color:#fff;margin-top:18px}
+.homeHeroCopy>p{max-width:680px;margin:0 0 12px;font-size:18px;line-height:1.55;color:#d0cbc1}
+.homeHero .legacyHeroLead{font-weight:800;color:#f0ede6;margin-top:18px}
 .homeHero .heroActions{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
 .homeHero .heroActions button{min-width:176px;padding:15px 22px;border-radius:12px}
-.homeHeroBrand{position:relative;z-index:2;display:flex;justify-content:center;align-self:start;padding-top:8px}
-.homeHeroBrand img{display:block;width:min(100%,390px);filter:drop-shadow(0 20px 46px rgba(0,0,0,.72))}
-
-/* Mobile header is one compact row; controls open only from the menu button. */
-.mobileMenuBtn{display:none;background:transparent;border:0;color:#f7f3e8;font-size:28px;line-height:1;padding:8px;cursor:pointer}
+.homeHeroBrand{position:relative;z-index:2;display:flex;justify-content:center;align-items:center}
+.homeHeroBrand img{display:block;width:min(100%,350px);mix-blend-mode:screen;filter:drop-shadow(0 18px 38px rgba(0,0,0,.75))}
 @media(max-width:980px){
   .topbar{display:grid;grid-template-columns:1fr auto;align-items:center;padding:12px 18px;gap:8px 12px}
-  .brandLockup{grid-column:1;min-width:0}.brandMark{width:42px;height:42px}.brandWords strong{font-size:13px}
-  .mobileMenuBtn{display:block;grid-column:2;grid-row:1}
-  .desktopNav.compactNav,.tools{display:none}
-  .topbar.mobileOpen .desktopNav.compactNav{display:flex;grid-column:1/-1;grid-row:3;flex-direction:column;align-items:stretch;padding:8px 0;border-top:1px solid #26231d}
-  .topbar.mobileOpen .desktopNavGroup{display:flex;flex-direction:column;align-items:stretch}
+  .brandLockup{grid-column:1;min-width:0}.brandMark{width:42px!important;height:42px!important}.brandWords strong{font-size:13px!important}
+  .mobileMenuBtn{display:block;grid-column:2;grid-row:1}.desktopNav.compactNav,.tools{display:none!important}
+  .topbar.mobileOpen .desktopNav.compactNav{display:flex!important;grid-column:1/-1;grid-row:3;flex-direction:column;align-items:stretch;padding:8px 0;border-top:1px solid #26231d}
+  .topbar.mobileOpen .desktopNavGroup{display:flex!important;flex-direction:column;align-items:stretch}
   .topbar.mobileOpen .desktopNav button{width:100%;text-align:left;padding:12px 4px}
-  .topbar.mobileOpen .tools{display:grid;grid-column:1/-1;grid-row:2;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:8px}
-  .topbar.mobileOpen .tools select{width:100%;max-width:none;min-width:0}
-  .topbar.mobileOpen #account{grid-column:1/-1}.topbar.mobileOpen #account button{width:100%}
-
-  .homeHero{
-    min-height:760px;
-    grid-template-columns:1fr;
-    margin-bottom:34px;
-    padding:42px 22px 300px;
-    gap:0;
-    background:
-      linear-gradient(180deg,rgba(4,5,5,.99) 0%,rgba(4,5,5,.96) 48%,rgba(4,5,5,.66) 64%,rgba(4,5,5,.08) 79%,rgba(4,5,5,.02) 100%),
-      url('/tut-truck-yard-clean.jpg') 62% bottom/auto 310px no-repeat,
-      #050606;
-  }
-  .homeHeroBrand{display:none}
-  .homeHeroCopy{width:100%;max-width:700px;margin:0 auto}
-  .homeHero .legacyHeroTitle{font-size:clamp(28px,6.5vw,48px);line-height:1.1;letter-spacing:-.035em;max-width:100%}
-  .homeHero .legacyHeroTitle .heroSentence{white-space:nowrap}
-  .homeHeroCopy>p{font-size:16px;line-height:1.5}
-  .homeHero .heroActions{display:grid;grid-template-columns:1fr;gap:10px}
-  .homeHero .heroActions button{width:100%}
+  .topbar.mobileOpen .tools{display:grid!important;grid-column:1/-1;grid-row:2;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:8px}
+  .topbar.mobileOpen .tools select{width:100%;max-width:none;min-width:0}.topbar.mobileOpen #account{grid-column:1/-1}.topbar.mobileOpen #account button{width:100%}
+  .homeHero{min-height:620px;grid-template-columns:1fr;margin-bottom:34px;padding:42px 22px 230px;gap:0;background:linear-gradient(180deg,rgba(4,5,5,.99) 0%,rgba(4,5,5,.96) 51%,rgba(4,5,5,.68) 67%,rgba(4,5,5,.16) 100%),url('/tut-truck-yard-clean.jpg') center bottom/auto 280px no-repeat,#050606}
+  .homeHeroBrand{display:none}.homeHeroCopy{width:100%;max-width:720px;margin:0 auto}
+  .homeHero .legacyHeroTitle{font-size:clamp(25px,5.5vw,44px);line-height:1.1;letter-spacing:-.03em}
+  .homeHero .heroActions{display:grid;grid-template-columns:1fr;gap:10px}.homeHero .heroActions button{width:100%}
 }
 @media(max-width:560px){
-  main{width:100%}.pane:not(#home){width:calc(100% - 28px);margin-inline:auto}
-  .liveTicker{font-size:12px}.tickerViewport{min-width:0}
-  .homeHero{min-height:720px;padding:34px 20px 260px;background-size:auto,auto 270px,auto;background-position:center,60% bottom,center}
+  main{width:100%}.pane:not(#home){width:calc(100% - 28px);margin-inline:auto}.liveTicker{font-size:12px}.tickerViewport{min-width:0}
+  .homeHero{min-height:690px;padding:34px 18px 235px;background-size:auto 255px;background-position:center bottom}
   .homeHero .eyebrow{font-size:10px;letter-spacing:.16em;margin-bottom:14px}
-  .homeHero .legacyHeroTitle{font-size:clamp(22px,6.45vw,31px);line-height:1.14;letter-spacing:-.025em}
+  .homeHero .legacyHeroTitle{font-size:clamp(20px,5.55vw,28px);line-height:1.14;letter-spacing:-.02em;margin-bottom:20px}
   .homeHero .legacyHeroTitle .heroSentence{white-space:nowrap}
   .homeHeroCopy>p{font-size:15px;line-height:1.5}.homeHero .legacyHeroLead{font-size:15px;margin-top:14px}
   .startChoice,.confidenceStrip{width:calc(100% - 28px);margin-inline:auto}
 }
-@media(max-width:390px){
-  .homeHero{padding-inline:14px}
-  .homeHero .legacyHeroTitle{font-size:clamp(20px,6.1vw,24px)}
-}
+@media(max-width:390px){.homeHero{padding-inline:14px}.homeHero .legacyHeroTitle{font-size:clamp(19px,5.25vw,22px)}}
