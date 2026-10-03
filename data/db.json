@@ -262,7 +262,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.418Z",
-      "closedAt": "2026-09-30T02:56:11.782Z",
+      "closedAt": "2026-10-03T15:11:49.274Z",
       "closedReason": "deal_completed",
       "bookingId": "b_016638298b95"
     },
@@ -296,7 +296,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.441Z",
-      "closedAt": "2026-09-30T02:56:11.783Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_6c2a181cc66d"
     },
@@ -330,7 +330,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.463Z",
-      "closedAt": "2026-09-30T02:56:11.783Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_32772e9ff783"
     },
@@ -364,7 +364,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.474Z",
-      "closedAt": "2026-09-30T02:56:11.783Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_4efde2e60bd4"
     },
@@ -398,7 +398,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.483Z",
-      "closedAt": "2026-09-30T02:56:11.783Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_7ee38304a94c"
     },
@@ -432,7 +432,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.498Z",
-      "closedAt": "2026-09-30T02:56:11.783Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_2769a5481224"
     },
