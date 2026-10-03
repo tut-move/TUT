@@ -741,3 +741,16 @@ html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:righ
  #home .v49Hero .heroActions{grid-template-columns:1fr;gap:9px;margin-top:18px}
  #home .v49Hero .heroActions button{min-height:50px}
 }
+
+
+/* v2.2 HERO framing + agreed copy */
+#home .v49Hero .legacyHeroLead span{display:block}
+@media(min-width:981px){
+  #home .v49Hero{min-height:650px}
+  #home .v49Hero::before{background-size:cover;background-position:center 66%}
+}
+@media(max-width:700px){
+  #home .v49Hero{min-height:760px;padding-bottom:250px}
+  #home .v49Hero::before{background-size:auto 50%;background-position:68% 100%}
+  #home .v49Hero::after{background:linear-gradient(180deg,rgba(3,5,5,.99) 0%,rgba(3,5,5,.96) 49%,rgba(3,5,5,.45) 65%,rgba(3,5,5,.04) 100%)}
+}
