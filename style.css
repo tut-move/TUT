@@ -807,3 +807,46 @@ html,body{max-width:100%;overflow-x:hidden}
 
 .mutualVerifyBox{margin-top:18px;padding:18px;border:1px solid rgba(184,143,65,.35);border-radius:16px;background:rgba(184,143,65,.06)}
 .mutualVerifyBox h4{margin:0 0 8px}.mutualVerifyBox p{margin:6px 0 12px}.mutualState{display:flex;gap:12px;flex-wrap:wrap;margin:12px 0}.mutualState span{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06)}
+
+/* HOME HERO — single canonical layout */
+#home{padding-top:0}
+.homeHero{
+  position:relative; isolation:isolate; overflow:hidden;
+  min-height:680px; margin:0 calc(50% - 50vw) 48px; padding:clamp(58px,7vw,92px) max(4vw,calc((100vw - 1180px)/2));
+  display:grid; grid-template-columns:minmax(0,1.08fr) minmax(320px,.92fr); align-items:center; gap:clamp(28px,4vw,64px);
+  background:
+    linear-gradient(90deg,rgba(4,5,5,.98) 0%,rgba(4,5,5,.90) 38%,rgba(4,5,5,.40) 68%,rgba(4,5,5,.12) 100%),
+    linear-gradient(0deg,rgba(4,5,5,.08),rgba(4,5,5,.30)),
+    url('/tut-truck-hero.jpg') right bottom/70% auto no-repeat,
+    #050606;
+  border-bottom:1px solid rgba(215,175,69,.18);
+}
+.homeHero::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 74% 26%,rgba(224,163,42,.13),transparent 34%);pointer-events:none}
+.homeHeroCopy{position:relative;z-index:2;max-width:760px;min-width:0}
+.homeHero .eyebrow{display:block;margin-bottom:18px;color:var(--gold2);font-weight:800;letter-spacing:.22em}
+.homeHero .legacyHeroTitle{margin:0 0 22px;font-size:clamp(38px,4.1vw,64px);line-height:1.05;letter-spacing:-.045em}
+.homeHero .legacyHeroTitle .heroSentence{display:block;white-space:nowrap;color:var(--text)}
+.homeHero .legacyHeroTitle .heroSentence:last-child{color:var(--gold2)}
+.homeHeroCopy>p{max-width:690px;margin:0 0 12px;font-size:18px;line-height:1.55;color:#d0cbc1}
+.homeHero .legacyHeroLead{font-weight:800;color:#f0ede6;margin-top:18px}
+.homeHero .heroActions{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+.homeHero .heroActions button{min-width:176px;padding:15px 22px;border-radius:12px}
+.homeHeroBrand{position:relative;z-index:2;align-self:start;display:flex;justify-content:center;padding-top:10px}
+.homeHeroBrand img{display:block;width:min(100%,390px);filter:drop-shadow(0 20px 46px rgba(0,0,0,.72))}
+@media(max-width:900px){
+  .homeHero{min-height:0;grid-template-columns:1fr;margin-bottom:34px;padding:42px 22px 300px;background:linear-gradient(180deg,rgba(4,5,5,.99) 0%,rgba(4,5,5,.96) 48%,rgba(4,5,5,.38) 68%,rgba(4,5,5,.08) 100%),url('/tut-truck-hero.jpg') 72% bottom/auto 330px no-repeat,#050606}
+  .homeHeroBrand{display:none}
+  .homeHeroCopy{max-width:680px;margin:0 auto;width:100%}
+  .homeHero .legacyHeroTitle{font-size:clamp(22px,6.3vw,46px);letter-spacing:-.035em;line-height:1.12}
+  .homeHero .legacyHeroTitle .heroSentence{white-space:nowrap!important}
+  .homeHeroCopy>p{font-size:16px;line-height:1.5}
+  .homeHero .heroActions{display:grid;grid-template-columns:1fr;gap:10px}
+  .homeHero .heroActions button{width:100%}
+}
+@media(max-width:430px){
+  .homeHero{padding:34px 18px 250px;background-size:auto 275px}
+  .homeHero .eyebrow{font-size:10px;letter-spacing:.16em;margin-bottom:14px}
+  .homeHero .legacyHeroTitle{font-size:clamp(20px,6vw,26px);line-height:1.16;margin-bottom:18px}
+  .homeHeroCopy>p{font-size:15px}
+  .homeHero .legacyHeroLead{font-size:15px;margin-top:14px}
+}
