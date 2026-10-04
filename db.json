@@ -1,0 +1,1285 @@
+{
+  "users": [
+    {
+      "id": "u_driver",
+      "name": "driver",
+      "email": "driver@example.com",
+      "emailVerifiedAt": "2026-09-29T00:00:00Z",
+      "phone": "123456",
+      "role": "driver",
+      "roles": [
+        "driver"
+      ],
+      "country": "US",
+      "currency": "USD",
+      "verified": false,
+      "verificationStatus": "profile_saved",
+      "verification": {
+        "status": "profile_saved",
+        "role": "driver",
+        "legalName": "driver legal",
+        "phone": "123456",
+        "country": "US",
+        "identityNumber": "ID123456",
+        "licenceNumber": "LIC123456",
+        "licenceClasses": [
+          "C"
+        ],
+        "licenceExpiry": "2030-01-01",
+        "files": {
+          "identity": {
+            "name": "driver_identity.txt"
+          },
+          "selfie": {
+            "name": "driver_selfie.txt"
+          },
+          "license": {
+            "name": "driver_license.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "u_truckowner",
+      "name": "truckowner",
+      "email": "truckowner@example.com",
+      "emailVerifiedAt": "2026-09-29T00:00:00Z",
+      "phone": "123456",
+      "role": "carrier",
+      "roles": [
+        "carrier"
+      ],
+      "country": "US",
+      "currency": "USD",
+      "verified": false,
+      "verificationStatus": "profile_saved",
+      "verification": {
+        "status": "profile_saved",
+        "role": "carrier",
+        "legalName": "truckowner legal",
+        "phone": "123456",
+        "country": "US",
+        "identityNumber": "ID123456",
+        "licenceNumber": "LIC123456",
+        "licenceClasses": [
+          "C"
+        ],
+        "licenceExpiry": "2030-01-01",
+        "files": {
+          "identity": {
+            "name": "truckowner_identity.txt"
+          },
+          "selfie": {
+            "name": "truckowner_selfie.txt"
+          },
+          "license": {
+            "name": "truckowner_license.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "u_warehouseowner",
+      "name": "warehouseowner",
+      "email": "warehouseowner@example.com",
+      "emailVerifiedAt": "2026-09-29T00:00:00Z",
+      "phone": "123456",
+      "role": "warehouse",
+      "roles": [
+        "warehouse"
+      ],
+      "country": "US",
+      "currency": "USD",
+      "verified": false,
+      "verificationStatus": "profile_saved",
+      "verification": {
+        "status": "profile_saved",
+        "role": "warehouse",
+        "legalName": "warehouseowner legal",
+        "phone": "123456",
+        "country": "US",
+        "identityNumber": "ID123456",
+        "licenceNumber": "",
+        "licenceClasses": [],
+        "licenceExpiry": "",
+        "files": {
+          "identity": {
+            "name": "warehouseowner_identity.txt"
+          },
+          "selfie": {
+            "name": "warehouseowner_selfie.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "u_equipmentowner",
+      "name": "equipmentowner",
+      "email": "equipmentowner@example.com",
+      "emailVerifiedAt": "2026-09-29T00:00:00Z",
+      "phone": "123456",
+      "role": "equipment",
+      "roles": [
+        "equipment"
+      ],
+      "country": "US",
+      "currency": "USD",
+      "verified": false,
+      "verificationStatus": "profile_saved",
+      "verification": {
+        "status": "profile_saved",
+        "role": "equipment",
+        "legalName": "equipmentowner legal",
+        "phone": "123456",
+        "country": "US",
+        "identityNumber": "ID123456",
+        "licenceNumber": "",
+        "licenceClasses": [],
+        "licenceExpiry": "",
+        "files": {
+          "identity": {
+            "name": "equipmentowner_identity.txt"
+          },
+          "selfie": {
+            "name": "equipmentowner_selfie.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "u_shipper",
+      "name": "shipper",
+      "email": "shipper@example.com",
+      "emailVerifiedAt": "2026-09-29T00:00:00Z",
+      "phone": "123456",
+      "role": "shipper",
+      "roles": [
+        "shipper"
+      ],
+      "country": "US",
+      "currency": "USD",
+      "verified": false,
+      "verificationStatus": "profile_saved",
+      "verification": {
+        "status": "profile_saved",
+        "role": "shipper",
+        "legalName": "shipper legal",
+        "phone": "123456",
+        "country": "US",
+        "identityNumber": "ID123456",
+        "licenceNumber": "",
+        "licenceClasses": [],
+        "licenceExpiry": "",
+        "files": {
+          "identity": {
+            "name": "shipper_identity.txt"
+          },
+          "selfie": {
+            "name": "shipper_selfie.txt"
+          }
+        }
+      }
+    },
+    {
+      "id": "u_requester",
+      "name": "requester",
+      "email": "requester@example.com",
+      "emailVerifiedAt": "2026-09-29T00:00:00Z",
+      "phone": "123456",
+      "role": "shipper",
+      "roles": [
+        "shipper"
+      ],
+      "country": "US",
+      "currency": "USD",
+      "verified": false,
+      "verificationStatus": "profile_saved",
+      "verification": {
+        "status": "profile_saved",
+        "role": "shipper",
+        "legalName": "requester legal",
+        "phone": "123456",
+        "country": "US",
+        "identityNumber": "ID123456",
+        "licenceNumber": "",
+        "licenceClasses": [],
+        "licenceExpiry": "",
+        "files": {
+          "identity": {
+            "name": "requester_identity.txt"
+          },
+          "selfie": {
+            "name": "requester_selfie.txt"
+          }
+        }
+      }
+    }
+  ],
+  "sessions": [
+    {
+      "id": "s_driver",
+      "userId": "u_driver",
+      "expiresAt": "2030-01-01T00:00:00Z"
+    },
+    {
+      "id": "s_truckowner",
+      "userId": "u_truckowner",
+      "expiresAt": "2030-01-01T00:00:00Z"
+    },
+    {
+      "id": "s_warehouseowner",
+      "userId": "u_warehouseowner",
+      "expiresAt": "2030-01-01T00:00:00Z"
+    },
+    {
+      "id": "s_equipmentowner",
+      "userId": "u_equipmentowner",
+      "expiresAt": "2030-01-01T00:00:00Z"
+    },
+    {
+      "id": "s_shipper",
+      "userId": "u_shipper",
+      "expiresAt": "2030-01-01T00:00:00Z"
+    },
+    {
+      "id": "s_requester",
+      "userId": "u_requester",
+      "expiresAt": "2030-01-01T00:00:00Z"
+    }
+  ],
+  "passwordResets": [],
+  "listings": [
+    {
+      "id": "l_4ea83f12dd14",
+      "userId": "u_driver",
+      "intent": "have",
+      "resource": "driver",
+      "title": "Driver available",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.418Z",
+      "closedAt": "2026-10-03T15:11:49.274Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_016638298b95"
+    },
+    {
+      "id": "l_c31c36901136",
+      "userId": "u_requester",
+      "intent": "need",
+      "resource": "driver",
+      "title": "Driver request",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.423Z",
+      "closedAt": "2026-09-29T04:24:33.436Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_016638298b95"
+    },
+    {
+      "id": "l_a3686c0fd569",
+      "userId": "u_truckowner",
+      "intent": "have",
+      "resource": "truck",
+      "title": "Truck available",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.441Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_6c2a181cc66d"
+    },
+    {
+      "id": "l_f3c9fa165d88",
+      "userId": "u_requester",
+      "intent": "need",
+      "resource": "truck",
+      "title": "Truck request",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.442Z",
+      "closedAt": "2026-09-29T04:24:33.450Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_6c2a181cc66d"
+    },
+    {
+      "id": "l_44c8752ba084",
+      "userId": "u_warehouseowner",
+      "intent": "have",
+      "resource": "warehouse",
+      "title": "Warehouse available",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.463Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_32772e9ff783"
+    },
+    {
+      "id": "l_26dd9f74f489",
+      "userId": "u_requester",
+      "intent": "need",
+      "resource": "warehouse",
+      "title": "Warehouse request",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.464Z",
+      "closedAt": "2026-09-29T04:24:33.470Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_32772e9ff783"
+    },
+    {
+      "id": "l_e9c1027cd864",
+      "userId": "u_warehouseowner",
+      "intent": "have",
+      "resource": "storage",
+      "title": "Storage available",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.474Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_4efde2e60bd4"
+    },
+    {
+      "id": "l_958c7187711a",
+      "userId": "u_requester",
+      "intent": "need",
+      "resource": "storage",
+      "title": "Storage request",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.475Z",
+      "closedAt": "2026-09-29T04:24:33.479Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_4efde2e60bd4"
+    },
+    {
+      "id": "l_155eebdb67bd",
+      "userId": "u_equipmentowner",
+      "intent": "have",
+      "resource": "equipment",
+      "title": "Equipment available",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.483Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_7ee38304a94c"
+    },
+    {
+      "id": "l_62143e0a383b",
+      "userId": "u_requester",
+      "intent": "need",
+      "resource": "equipment",
+      "title": "Equipment request",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.488Z",
+      "closedAt": "2026-09-29T04:24:33.494Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_7ee38304a94c"
+    },
+    {
+      "id": "l_049a1225746e",
+      "userId": "u_shipper",
+      "intent": "have",
+      "resource": "load",
+      "title": "Load transport available",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.498Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_2769a5481224"
+    },
+    {
+      "id": "l_438f351ca756",
+      "userId": "u_truckowner",
+      "intent": "need",
+      "resource": "load",
+      "title": "Load transport request",
+      "country": "US",
+      "currency": "USD",
+      "priceMode": "negotiable",
+      "price": 100,
+      "data": {},
+      "status": "closed",
+      "createdAt": "2026-09-29T04:24:33.499Z",
+      "closedAt": "2026-09-29T04:24:33.506Z",
+      "closedReason": "deal_completed",
+      "bookingId": "b_2769a5481224"
+    }
+  ],
+  "offers": [
+    {
+      "id": "o_cf17044ef078",
+      "listingId": "l_4ea83f12dd14",
+      "fromUserId": "u_requester",
+      "toUserId": "u_driver",
+      "amount": 100,
+      "currency": "USD",
+      "message": "test",
+      "status": "accepted",
+      "parentOfferId": null,
+      "createdAt": "2026-09-29T04:24:33.424Z"
+    },
+    {
+      "id": "o_56cad3287261",
+      "listingId": "l_a3686c0fd569",
+      "fromUserId": "u_requester",
+      "toUserId": "u_truckowner",
+      "amount": 100,
+      "currency": "USD",
+      "message": "test",
+      "status": "accepted",
+      "parentOfferId": null,
+      "createdAt": "2026-09-29T04:24:33.443Z"
+    },
+    {
+      "id": "o_fd36ec2f5e6f",
+      "listingId": "l_44c8752ba084",
+      "fromUserId": "u_requester",
+      "toUserId": "u_warehouseowner",
+      "amount": 100,
+      "currency": "USD",
+      "message": "test",
+      "status": "accepted",
+      "parentOfferId": null,
+      "createdAt": "2026-09-29T04:24:33.465Z"
+    },
+    {
+      "id": "o_7a437b2b9094",
+      "listingId": "l_e9c1027cd864",
+      "fromUserId": "u_requester",
+      "toUserId": "u_warehouseowner",
+      "amount": 100,
+      "currency": "USD",
+      "message": "test",
+      "status": "accepted",
+      "parentOfferId": null,
+      "createdAt": "2026-09-29T04:24:33.475Z"
+    },
+    {
+      "id": "o_aef3901ea685",
+      "listingId": "l_155eebdb67bd",
+      "fromUserId": "u_requester",
+      "toUserId": "u_equipmentowner",
+      "amount": 100,
+      "currency": "USD",
+      "message": "test",
+      "status": "accepted",
+      "parentOfferId": null,
+      "createdAt": "2026-09-29T04:24:33.489Z"
+    },
+    {
+      "id": "o_ec300ac3db22",
+      "listingId": "l_049a1225746e",
+      "fromUserId": "u_truckowner",
+      "toUserId": "u_shipper",
+      "amount": 100,
+      "currency": "USD",
+      "message": "test",
+      "status": "accepted",
+      "parentOfferId": null,
+      "createdAt": "2026-09-29T04:24:33.501Z"
+    }
+  ],
+  "bookings": [
+    {
+      "id": "b_016638298b95",
+      "listingId": "l_4ea83f12dd14",
+      "offerId": "o_cf17044ef078",
+      "dealType": "driver",
+      "buyerUserId": "u_requester",
+      "providerUserId": "u_driver",
+      "agreedPrice": 100,
+      "currency": "USD",
+      "platformFeePct": 5,
+      "platformFee": 5,
+      "buyerTotal": 5,
+      "providerNet": 100,
+      "feeChargedTo": "buyer",
+      "paymentStatus": "paid",
+      "paymentMode": "stripe_fee_only",
+      "commissionLockedAt": "2026-09-29T04:24:33.426Z",
+      "mutualVerification": {
+        "buyerVerifiedProvider": true,
+        "providerVerifiedBuyer": true,
+        "buyerVerifiedAt": "2026-09-29T04:24:33.436Z",
+        "providerVerifiedAt": "2026-09-29T04:24:33.432Z",
+        "complete": true
+      },
+      "payoutStatus": "not_applicable",
+      "status": "completed",
+      "trip": {
+        "driverVerified": false,
+        "licenceVerified": false,
+        "truckVerified": false,
+        "cargoConfirmed": false,
+        "receiverConfirmed": false,
+        "termsConfirmed": false,
+        "warehouseVerified": false,
+        "datesConfirmed": false,
+        "handoverConfirmed": false,
+        "equipmentVerified": false,
+        "pickupConfirmed": false,
+        "providerReady": false,
+        "buyerReady": false,
+        "pickupAt": null,
+        "deliveredAt": null,
+        "updatedAt": "2026-09-29T04:24:33.426Z"
+      },
+      "createdAt": "2026-09-29T04:24:33.426Z",
+      "stripeCheckoutSessionId": "cs_b_016638298b95",
+      "commissionPaidAt": "2026-09-29T04:24:33.429Z",
+      "completedAt": "2026-09-29T04:24:33.436Z",
+      "closedListingIds": [
+        "l_4ea83f12dd14"
+      ]
+    },
+    {
+      "id": "b_6c2a181cc66d",
+      "listingId": "l_a3686c0fd569",
+      "offerId": "o_56cad3287261",
+      "dealType": "truck",
+      "buyerUserId": "u_requester",
+      "providerUserId": "u_truckowner",
+      "agreedPrice": 100,
+      "currency": "USD",
+      "platformFeePct": 5,
+      "platformFee": 5,
+      "buyerTotal": 5,
+      "providerNet": 100,
+      "feeChargedTo": "buyer",
+      "paymentStatus": "paid",
+      "paymentMode": "stripe_fee_only",
+      "commissionLockedAt": "2026-09-29T04:24:33.446Z",
+      "mutualVerification": {
+        "buyerVerifiedProvider": true,
+        "providerVerifiedBuyer": true,
+        "buyerVerifiedAt": "2026-09-29T04:24:33.450Z",
+        "providerVerifiedAt": "2026-09-29T04:24:33.449Z",
+        "complete": true
+      },
+      "payoutStatus": "not_applicable",
+      "status": "completed",
+      "trip": {
+        "driverVerified": false,
+        "licenceVerified": false,
+        "truckVerified": false,
+        "cargoConfirmed": false,
+        "receiverConfirmed": false,
+        "termsConfirmed": false,
+        "warehouseVerified": false,
+        "datesConfirmed": false,
+        "handoverConfirmed": false,
+        "equipmentVerified": false,
+        "pickupConfirmed": false,
+        "providerReady": false,
+        "buyerReady": false,
+        "pickupAt": null,
+        "deliveredAt": null,
+        "updatedAt": "2026-09-29T04:24:33.446Z"
+      },
+      "createdAt": "2026-09-29T04:24:33.446Z",
+      "stripeCheckoutSessionId": "cs_b_6c2a181cc66d",
+      "commissionPaidAt": "2026-09-29T04:24:33.447Z",
+      "completedAt": "2026-09-29T04:24:33.450Z",
+      "closedListingIds": [
+        "l_a3686c0fd569"
+      ]
+    },
+    {
+      "id": "b_32772e9ff783",
+      "listingId": "l_44c8752ba084",
+      "offerId": "o_fd36ec2f5e6f",
+      "dealType": "warehouse",
+      "buyerUserId": "u_requester",
+      "providerUserId": "u_warehouseowner",
+      "agreedPrice": 100,
+      "currency": "USD",
+      "platformFeePct": 5,
+      "platformFee": 5,
+      "buyerTotal": 5,
+      "providerNet": 100,
+      "feeChargedTo": "buyer",
+      "paymentStatus": "paid",
+      "paymentMode": "stripe_fee_only",
+      "commissionLockedAt": "2026-09-29T04:24:33.465Z",
+      "mutualVerification": {
+        "buyerVerifiedProvider": true,
+        "providerVerifiedBuyer": true,
+        "buyerVerifiedAt": "2026-09-29T04:24:33.470Z",
+        "providerVerifiedAt": "2026-09-29T04:24:33.469Z",
+        "complete": true
+      },
+      "payoutStatus": "not_applicable",
+      "status": "completed",
+      "trip": {
+        "driverVerified": false,
+        "licenceVerified": false,
+        "truckVerified": false,
+        "cargoConfirmed": false,
+        "receiverConfirmed": false,
+        "termsConfirmed": false,
+        "warehouseVerified": false,
+        "datesConfirmed": false,
+        "handoverConfirmed": false,
+        "equipmentVerified": false,
+        "pickupConfirmed": false,
+        "providerReady": false,
+        "buyerReady": false,
+        "pickupAt": null,
+        "deliveredAt": null,
+        "updatedAt": "2026-09-29T04:24:33.465Z"
+      },
+      "createdAt": "2026-09-29T04:24:33.465Z",
+      "stripeCheckoutSessionId": "cs_b_32772e9ff783",
+      "commissionPaidAt": "2026-09-29T04:24:33.466Z",
+      "completedAt": "2026-09-29T04:24:33.470Z",
+      "closedListingIds": [
+        "l_44c8752ba084"
+      ]
+    },
+    {
+      "id": "b_4efde2e60bd4",
+      "listingId": "l_e9c1027cd864",
+      "offerId": "o_7a437b2b9094",
+      "dealType": "warehouse",
+      "buyerUserId": "u_requester",
+      "providerUserId": "u_warehouseowner",
+      "agreedPrice": 100,
+      "currency": "USD",
+      "platformFeePct": 5,
+      "platformFee": 5,
+      "buyerTotal": 5,
+      "providerNet": 100,
+      "feeChargedTo": "buyer",
+      "paymentStatus": "paid",
+      "paymentMode": "stripe_fee_only",
+      "commissionLockedAt": "2026-09-29T04:24:33.476Z",
+      "mutualVerification": {
+        "buyerVerifiedProvider": true,
+        "providerVerifiedBuyer": true,
+        "buyerVerifiedAt": "2026-09-29T04:24:33.479Z",
+        "providerVerifiedAt": "2026-09-29T04:24:33.478Z",
+        "complete": true
+      },
+      "payoutStatus": "not_applicable",
+      "status": "completed",
+      "trip": {
+        "driverVerified": false,
+        "licenceVerified": false,
+        "truckVerified": false,
+        "cargoConfirmed": false,
+        "receiverConfirmed": false,
+        "termsConfirmed": false,
+        "warehouseVerified": false,
+        "datesConfirmed": false,
+        "handoverConfirmed": false,
+        "equipmentVerified": false,
+        "pickupConfirmed": false,
+        "providerReady": false,
+        "buyerReady": false,
+        "pickupAt": null,
+        "deliveredAt": null,
+        "updatedAt": "2026-09-29T04:24:33.476Z"
+      },
+      "createdAt": "2026-09-29T04:24:33.476Z",
+      "stripeCheckoutSessionId": "cs_b_4efde2e60bd4",
+      "commissionPaidAt": "2026-09-29T04:24:33.477Z",
+      "completedAt": "2026-09-29T04:24:33.479Z",
+      "closedListingIds": [
+        "l_e9c1027cd864"
+      ]
+    },
+    {
+      "id": "b_7ee38304a94c",
+      "listingId": "l_155eebdb67bd",
+      "offerId": "o_aef3901ea685",
+      "dealType": "equipment",
+      "buyerUserId": "u_requester",
+      "providerUserId": "u_equipmentowner",
+      "agreedPrice": 100,
+      "currency": "USD",
+      "platformFeePct": 5,
+      "platformFee": 5,
+      "buyerTotal": 5,
+      "providerNet": 100,
+      "feeChargedTo": "buyer",
+      "paymentStatus": "paid",
+      "paymentMode": "stripe_fee_only",
+      "commissionLockedAt": "2026-09-29T04:24:33.490Z",
+      "mutualVerification": {
+        "buyerVerifiedProvider": true,
+        "providerVerifiedBuyer": true,
+        "buyerVerifiedAt": "2026-09-29T04:24:33.494Z",
+        "providerVerifiedAt": "2026-09-29T04:24:33.493Z",
+        "complete": true
+      },
+      "payoutStatus": "not_applicable",
+      "status": "completed",
+      "trip": {
+        "driverVerified": false,
+        "licenceVerified": false,
+        "truckVerified": false,
+        "cargoConfirmed": false,
+        "receiverConfirmed": false,
+        "termsConfirmed": false,
+        "warehouseVerified": false,
+        "datesConfirmed": false,
+        "handoverConfirmed": false,
+        "equipmentVerified": false,
+        "pickupConfirmed": false,
+        "providerReady": false,
+        "buyerReady": false,
+        "pickupAt": null,
+        "deliveredAt": null,
+        "updatedAt": "2026-09-29T04:24:33.490Z"
+      },
+      "createdAt": "2026-09-29T04:24:33.490Z",
+      "stripeCheckoutSessionId": "cs_b_7ee38304a94c",
+      "commissionPaidAt": "2026-09-29T04:24:33.491Z",
+      "completedAt": "2026-09-29T04:24:33.494Z",
+      "closedListingIds": [
+        "l_155eebdb67bd"
+      ]
+    },
+    {
+      "id": "b_2769a5481224",
+      "listingId": "l_049a1225746e",
+      "offerId": "o_ec300ac3db22",
+      "dealType": "transport",
+      "buyerUserId": "u_shipper",
+      "providerUserId": "u_truckowner",
+      "agreedPrice": 100,
+      "currency": "USD",
+      "platformFeePct": 5,
+      "platformFee": 5,
+      "buyerTotal": 5,
+      "providerNet": 100,
+      "feeChargedTo": "buyer",
+      "paymentStatus": "paid",
+      "paymentMode": "stripe_fee_only",
+      "commissionLockedAt": "2026-09-29T04:24:33.502Z",
+      "mutualVerification": {
+        "buyerVerifiedProvider": true,
+        "providerVerifiedBuyer": true,
+        "buyerVerifiedAt": "2026-09-29T04:24:33.505Z",
+        "providerVerifiedAt": "2026-09-29T04:24:33.506Z",
+        "complete": true
+      },
+      "payoutStatus": "not_applicable",
+      "status": "completed",
+      "trip": {
+        "driverVerified": false,
+        "licenceVerified": false,
+        "truckVerified": false,
+        "cargoConfirmed": false,
+        "receiverConfirmed": false,
+        "termsConfirmed": false,
+        "warehouseVerified": false,
+        "datesConfirmed": false,
+        "handoverConfirmed": false,
+        "equipmentVerified": false,
+        "pickupConfirmed": false,
+        "providerReady": false,
+        "buyerReady": false,
+        "pickupAt": null,
+        "deliveredAt": null,
+        "updatedAt": "2026-09-29T04:24:33.502Z"
+      },
+      "createdAt": "2026-09-29T04:24:33.502Z",
+      "stripeCheckoutSessionId": "cs_b_2769a5481224",
+      "commissionPaidAt": "2026-09-29T04:24:33.503Z",
+      "completedAt": "2026-09-29T04:24:33.506Z",
+      "closedListingIds": [
+        "l_049a1225746e"
+      ]
+    }
+  ],
+  "matches": [],
+  "verifications": [],
+  "notifications": [
+    {
+      "id": "n_448da72b8673",
+      "userId": "u_driver",
+      "type": "offer",
+      "title": "New offer received",
+      "message": "requester sent you an offer of USD 100.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.425Z"
+    },
+    {
+      "id": "n_c077b90bcbfd",
+      "userId": "u_requester",
+      "type": "agreement",
+      "title": "Agreement accepted",
+      "message": "Your driver agreement is accepted. Test payment is ready.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.426Z"
+    },
+    {
+      "id": "n_beb0545c2231",
+      "userId": "u_driver",
+      "type": "agreement",
+      "title": "You were selected",
+      "message": "Your driver offer/agreement was accepted. Open Activity to continue.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.426Z"
+    },
+    {
+      "id": "n_6400a758fa84",
+      "userId": "u_requester",
+      "type": "payment",
+      "title": "TUT Move fee paid",
+      "message": "The fee is confirmed. Mutual verification is now open.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.430Z"
+    },
+    {
+      "id": "n_ded2bce87b94",
+      "userId": "u_driver",
+      "type": "payment",
+      "title": "Deal verification opened",
+      "message": "The TUT Move fee is confirmed. You can now verify the other party.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.430Z"
+    },
+    {
+      "id": "n_0afd0479c2f0",
+      "userId": "u_requester",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.436Z"
+    },
+    {
+      "id": "n_7441b372eb2c",
+      "userId": "u_driver",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.436Z"
+    },
+    {
+      "id": "n_4cab78b89877",
+      "userId": "u_truckowner",
+      "type": "offer",
+      "title": "New offer received",
+      "message": "requester sent you an offer of USD 100.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.443Z"
+    },
+    {
+      "id": "n_f759df2883dc",
+      "userId": "u_requester",
+      "type": "agreement",
+      "title": "Agreement accepted",
+      "message": "Your truck agreement is accepted. Test payment is ready.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.446Z"
+    },
+    {
+      "id": "n_b1be863039e9",
+      "userId": "u_truckowner",
+      "type": "agreement",
+      "title": "You were selected",
+      "message": "Your truck offer/agreement was accepted. Open Activity to continue.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.446Z"
+    },
+    {
+      "id": "n_0658ff7b1f3a",
+      "userId": "u_requester",
+      "type": "payment",
+      "title": "TUT Move fee paid",
+      "message": "The fee is confirmed. Mutual verification is now open.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.447Z"
+    },
+    {
+      "id": "n_b4e4a6616bd2",
+      "userId": "u_truckowner",
+      "type": "payment",
+      "title": "Deal verification opened",
+      "message": "The TUT Move fee is confirmed. You can now verify the other party.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.447Z"
+    },
+    {
+      "id": "n_ee4c0748da2f",
+      "userId": "u_requester",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.450Z"
+    },
+    {
+      "id": "n_f6a6e4c8ea42",
+      "userId": "u_truckowner",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.450Z"
+    },
+    {
+      "id": "n_868b0f54661f",
+      "userId": "u_warehouseowner",
+      "type": "offer",
+      "title": "New offer received",
+      "message": "requester sent you an offer of USD 100.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.465Z"
+    },
+    {
+      "id": "n_affd40eb92ea",
+      "userId": "u_requester",
+      "type": "agreement",
+      "title": "Agreement accepted",
+      "message": "Your warehouse agreement is accepted. Test payment is ready.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.465Z"
+    },
+    {
+      "id": "n_c9127ebce64a",
+      "userId": "u_warehouseowner",
+      "type": "agreement",
+      "title": "You were selected",
+      "message": "Your warehouse offer/agreement was accepted. Open Activity to continue.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.465Z"
+    },
+    {
+      "id": "n_7ca23fcb1ea6",
+      "userId": "u_requester",
+      "type": "payment",
+      "title": "TUT Move fee paid",
+      "message": "The fee is confirmed. Mutual verification is now open.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.466Z"
+    },
+    {
+      "id": "n_4da727df075c",
+      "userId": "u_warehouseowner",
+      "type": "payment",
+      "title": "Deal verification opened",
+      "message": "The TUT Move fee is confirmed. You can now verify the other party.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.466Z"
+    },
+    {
+      "id": "n_397ec4aecbca",
+      "userId": "u_requester",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.470Z"
+    },
+    {
+      "id": "n_b8cc723d6183",
+      "userId": "u_warehouseowner",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.470Z"
+    },
+    {
+      "id": "n_10edddf47a4c",
+      "userId": "u_warehouseowner",
+      "type": "offer",
+      "title": "New offer received",
+      "message": "requester sent you an offer of USD 100.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.475Z"
+    },
+    {
+      "id": "n_4abed5be6c6e",
+      "userId": "u_requester",
+      "type": "agreement",
+      "title": "Agreement accepted",
+      "message": "Your warehouse agreement is accepted. Test payment is ready.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.476Z"
+    },
+    {
+      "id": "n_f0fd3b72ade9",
+      "userId": "u_warehouseowner",
+      "type": "agreement",
+      "title": "You were selected",
+      "message": "Your warehouse offer/agreement was accepted. Open Activity to continue.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.476Z"
+    },
+    {
+      "id": "n_7a19502074b2",
+      "userId": "u_requester",
+      "type": "payment",
+      "title": "TUT Move fee paid",
+      "message": "The fee is confirmed. Mutual verification is now open.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.477Z"
+    },
+    {
+      "id": "n_6cd43558cbb7",
+      "userId": "u_warehouseowner",
+      "type": "payment",
+      "title": "Deal verification opened",
+      "message": "The TUT Move fee is confirmed. You can now verify the other party.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.477Z"
+    },
+    {
+      "id": "n_51e6ceda6bf1",
+      "userId": "u_requester",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.479Z"
+    },
+    {
+      "id": "n_f1d95b9e9b69",
+      "userId": "u_warehouseowner",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.479Z"
+    },
+    {
+      "id": "n_e4f306d6bcff",
+      "userId": "u_equipmentowner",
+      "type": "offer",
+      "title": "New offer received",
+      "message": "requester sent you an offer of USD 100.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.489Z"
+    },
+    {
+      "id": "n_eed1bec4a488",
+      "userId": "u_requester",
+      "type": "agreement",
+      "title": "Agreement accepted",
+      "message": "Your equipment agreement is accepted. Test payment is ready.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.490Z"
+    },
+    {
+      "id": "n_3cc82990ce0e",
+      "userId": "u_equipmentowner",
+      "type": "agreement",
+      "title": "You were selected",
+      "message": "Your equipment offer/agreement was accepted. Open Activity to continue.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.490Z"
+    },
+    {
+      "id": "n_e9e4dee070c5",
+      "userId": "u_requester",
+      "type": "payment",
+      "title": "TUT Move fee paid",
+      "message": "The fee is confirmed. Mutual verification is now open.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.491Z"
+    },
+    {
+      "id": "n_61250d6060cd",
+      "userId": "u_equipmentowner",
+      "type": "payment",
+      "title": "Deal verification opened",
+      "message": "The TUT Move fee is confirmed. You can now verify the other party.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.491Z"
+    },
+    {
+      "id": "n_88805e6e8fc4",
+      "userId": "u_requester",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.494Z"
+    },
+    {
+      "id": "n_79f71a70ff48",
+      "userId": "u_equipmentowner",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.494Z"
+    },
+    {
+      "id": "n_3db86ba569b6",
+      "userId": "u_shipper",
+      "type": "offer",
+      "title": "New offer received",
+      "message": "truckowner sent you an offer of USD 100.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.501Z"
+    },
+    {
+      "id": "n_8fd3f9b0a23f",
+      "userId": "u_shipper",
+      "type": "agreement",
+      "title": "Agreement accepted",
+      "message": "Your transport agreement is accepted. Test payment is ready.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.502Z"
+    },
+    {
+      "id": "n_cb9353c688d9",
+      "userId": "u_truckowner",
+      "type": "agreement",
+      "title": "You were selected",
+      "message": "Your transport offer/agreement was accepted. Open Activity to continue.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.502Z"
+    },
+    {
+      "id": "n_234a20f750a1",
+      "userId": "u_shipper",
+      "type": "payment",
+      "title": "TUT Move fee paid",
+      "message": "The fee is confirmed. Mutual verification is now open.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.503Z"
+    },
+    {
+      "id": "n_e95cc5c7d3b8",
+      "userId": "u_truckowner",
+      "type": "payment",
+      "title": "Deal verification opened",
+      "message": "The TUT Move fee is confirmed. You can now verify the other party.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.503Z"
+    },
+    {
+      "id": "n_0b394ac131aa",
+      "userId": "u_shipper",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.506Z"
+    },
+    {
+      "id": "n_4c8c092e1226",
+      "userId": "u_truckowner",
+      "type": "verification",
+      "title": "Deal completed",
+      "message": "Both parties reviewed and confirmed each other. This deal is now closed.",
+      "link": "offers",
+      "read": false,
+      "createdAt": "2026-09-29T04:24:33.506Z"
+    }
+  ],
+  "settings": {
+    "brandName": "TUT Move",
+    "siteUrl": "http://127.0.0.1:3100",
+    "platformFeePct": 5,
+    "defaultCurrency": "USD",
+    "ownerName": "",
+    "ownerEmail": "",
+    "legalEntity": "",
+    "supportEmail": "info@tutmove.com",
+    "launchMarkets": [
+      "USA",
+      "Canada",
+      "Europe",
+      "Middle East"
+    ]
+  }
+}
