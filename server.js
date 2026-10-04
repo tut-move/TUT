@@ -132,7 +132,7 @@ function requiredChecks(type){
 function normalizeBookingWorkflow(b,db){b.dealType=bookingDealType(b,db);return b;}
 function userVerificationSummary(u,db){
   const legacy=(db.verifications||[]).find(v=>v.userId===u?.id)||{};const v={...legacy,...(u?.verification||{})};
-  return {status:v.status||u?.verificationStatus||'not_submitted',licenceClass:v.licenceClass||v.licenseClass||'',licenceNumberMasked:maskedLicence(v),licenceExpiry:v.expiry||v.licenceExpiry||'',vehicleId:v.vehicleId||'',verified:!!u?.verified||['verified','manual_verified'].includes(v.status)};
+  return {status:v.status||u?.verificationStatus||'not_submitted',licenceClass:v.licenceClass||v.licenseClass||'',licenceNumberMasked:maskValue(v.licenceNumber||v.licenseNumber||v.licence||v.license||''),licenceExpiry:v.expiry||v.licenceExpiry||'',vehicleId:v.vehicleId||'',verified:!!u?.verified||['verified','manual_verified'].includes(v.status)};
 }
 function latestListingFor(db,userId,resource,intent,excludeId=''){
   return db.listings.filter(x=>x.userId===userId&&x.resource===resource&&x.intent===intent&&x.id!==excludeId).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')))[0]||null;
