@@ -533,12 +533,14 @@ function currencyFor(c){
   return map[c] || 'EUR';
 }
 function syncListingCurrency(){
-  const country=$('listingCountry')?.value || 'United States';
+  const country=$('listingCountry')?.value || '';
+  if(!country)return;
   const cur=currencyFor(country);
   if($('currency')) $('currency').value=cur;
   if($('currencyDisplay')) $('currencyDisplay').textContent=cur;if($('priceCurrencyBadge')) $('priceCurrencyBadge').textContent=currencyLabel(cur);
 }
 function setIntent(v){$('intent').value=v;$('haveBtn').classList.toggle('active',v==='have');$('needBtn').classList.toggle('active',v==='need');renderFields()}
+function choosePostResource(v){$('resource').value=v;document.querySelectorAll('[data-post-resource]').forEach(b=>b.classList.toggle('active',b.dataset.postResource===v));renderFields()}
 let activeMaps=[];
 function destroyActiveMaps(){for(const m of activeMaps){try{m.__tutResizeObserver?.disconnect();m.remove()}catch{}}activeMaps=[]}
 function syncTutDateTime(k,withTime){
@@ -648,9 +650,13 @@ function initListingMap(key){
 }
 async function searchAddress(key){const q=$('addr_'+key)?.value?.trim();if(!q)return;const btn=document.activeElement;try{if(btn)btn.disabled=true;const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q),{headers:{'Accept':'application/json'}});const a=await r.json();if(!a.length){alert(tr('Location not found. Try a more complete address.'));return}const m=activeMaps.find(x=>x.getContainer().id==='map_'+key);if(m)m.__setPoint(Number(a[0].lat),Number(a[0].lon),a[0].display_name)}catch(e){alert(tr('Map search is temporarily unavailable. You can still type the address and click the map.'))}finally{if(btn)btn.disabled=false}}
 function routePair(resource,available){
-  const pickupLabel = resource==='warehouse' ? (available?'Storage / pickup address':'Required pickup / storage address') : (available?'Pickup / start address':'Required pickup / start address');
-  const deliveryLabel = resource==='warehouse' ? (available?'Delivery / release address':'Required delivery / release address') : (available?'Delivery / end address':'Required delivery / end address');
-  return `<div class="routeBlock"><h3>${tr('Pickup and delivery')}</h3><p class="routeHint">${tr('Every listing must include where it starts and where it ends.')}</p>${mapWidget('pickup',pickupLabel,'Street, building number, city, postcode')}${mapWidget('delivery',deliveryLabel,'Street, building number, city, postcode')}</div>`;
+  if(resource==='warehouse'||resource==='equipment'){
+    const label=resource==='warehouse'?(available?'Warehouse location':'Required warehouse location'):(available?'Equipment location':'Required equipment location');
+    return `<div class="routeBlock"><h3>${tr('Location')}</h3><div class="locationOnly">${fld('pickup',label,'text','City, state, region or address')}<input data-k="delivery" type="hidden" value=""></div></div>`;
+  }
+  const fromLabel=available?'From — available from':'From — pickup / start';
+  const toLabel=available?'To — willing to go to':'To — delivery / destination';
+  return `<div class="routeBlock"><h3>${tr('Route / Location')}</h3><div class="routeSimple">${fld('pickup',fromLabel,'text','City, state, region or address')}<div class="routeArrow">→</div>${fld('delivery',toLabel,'text','City, state, region or address')}</div></div>`;
 }
 function categoryFields(r,intent){
  const available=intent==='have';
@@ -682,7 +688,7 @@ function bindTutDateFields(root=document){
     });
   });
 }
-function renderFields(){destroyActiveMaps();const r=$('resource').value,i=$('intent').value;$('fields').innerHTML=`<div class="hint">${tr(i==='have'?'Publish an available resource with its real specifications.':'Publish exactly what you are looking for.')}</div>`+categoryFields(r,i);$('fields').querySelectorAll('.listingMap').forEach(el=>initListingMap(el.id.replace('map_','')));translateNodeTree($('fields'));$('fields').querySelectorAll('option').forEach(o=>{o.textContent=tr(canonicalEnglish(o.textContent))});bindTutDateFields($('fields'));bindConditionalSpecFields($('fields'))}
+function renderFields(){destroyActiveMaps();const r=$('resource').value,i=$('intent').value;const available=i==='have';const names={driver:available?'Driver details':'Driver requirements',truck:available?'Truck details':'Truck requirements',load:available?'Load details':'Load requirements',warehouse:available?'Warehouse details':'Warehouse requirements',equipment:available?'Equipment details':'Equipment requirements'};$('fields').innerHTML=`<div class="postStep"><span class="postStepNo">4</span><div class="postStepBody"><h2>${tr(names[r]||'Details')}</h2>${categoryFields(r,i)}</div></div>`;if($('termsHeading'))$('termsHeading').textContent=available?'Price & terms':'Budget & terms';if($('priceLabel'))$('priceLabel').textContent=available?'Your asking price':'Your budget';translateNodeTree($('fields'));$('fields').querySelectorAll('option').forEach(o=>{o.textContent=tr(canonicalEnglish(o.textContent))});bindTutDateFields($('fields'));bindConditionalSpecFields($('fields'))}
 function setIntent(v){$('intent').value=v;$('haveBtn').classList.toggle('active',v==='have');$('needBtn').classList.toggle('active',v==='need');renderFields()}
 function startListing(resource,intent){go('post');$('resource').value=resource;setIntent(intent);setTimeout(()=>$('listingTitle')?.focus(),120)}
 function browseResource(resource,intent){go('market');$('filterResource').value=resource;$('filterIntent').value=intent;loadMarket()}
@@ -690,8 +696,11 @@ function togglePrice(){const m=$('priceMode').value;$('priceWrap').style.display
 async function submitListing(){
  if(!me){go('accountPane');return}
  const data={};$('fields').querySelectorAll('[data-k]').forEach(el=>data[el.dataset.k]=el.type==='number'?Number(el.value||0):el.value);$('fields').querySelectorAll('[data-check-key]').forEach(fs=>data[fs.dataset.checkKey]=[...fs.querySelectorAll('input:checked')].map(x=>x.value).join(', '));
+ if(!String($('listingTitle').value||'').trim()){$('postMsg').textContent=tr('Please enter a listing title.');return}
+ if(!String($('listingCountry').value||'').trim()){$('postMsg').textContent=tr('Please select a country.');return}
  if(!String(data.pickup||'').trim()){$('postMsg').textContent=tr('Pickup / start address is required.');return}
- if(!String(data.delivery||'').trim()){$('postMsg').textContent=tr('Delivery / end address is required.');return}
+ if(['driver','truck','load'].includes($('resource').value)&&!String(data.delivery||'').trim()){$('postMsg').textContent=tr('Delivery / end address is required.');return}
+ if(['warehouse','equipment'].includes($('resource').value)&&!String(data.delivery||'').trim())data.delivery=data.pickup;
  if($('resource').value==='driver'&&!String(data.licenseClasses||'').trim()){$('postMsg').textContent=tr('Choose at least one licence class.');return}
  if($('resource').value==='load'){
    if(!data.pickupDate){$('postMsg').textContent=tr('Please enter pickup date and time.');return}
@@ -721,11 +730,10 @@ function updateLiveTicker(rows=listings){
   const recent=(rows||[]).filter(x=>x&&x.status==='open').slice(0,12);
   if(!recent.length){track.innerHTML='';feed.hidden=true;return}
   const resourceName=x=>tr(({driver:'Driver',truck:'Truck',load:'Load',warehouse:'Warehouse',storage:'Warehouse',equipment:'Equipment'})[x.resource]||x.resource||'Listing');
-  const detail=x=>{const s=summary(x);return [s,priceText(x)].filter(Boolean).join(' · ')};
+  const detail=x=>{const d=x.data||{},route=(d.pickup&&d.delivery&&d.pickup!==d.delivery)?`${d.pickup} → ${d.delivery}`:(d.pickup||'');return [x.title,route,priceText(x)].filter(Boolean).join(' · ')};
   const item=x=>{const urgent=!!(x.urgent||x.data?.urgent||x.data?.isUrgent||x.priority==='urgent'||x.data?.priority==='urgent');return `<span class="liveItem"><b>${esc(resourceName(x))}:</b><span>${esc(detail(x))}${urgent?' · <em class="liveUrgent">Urgent</em>':''}</span></span>`};
   const sep='<span class="liveSep" aria-hidden="true"></span>';
-  const set=recent.map(item).join(sep);
-  track.innerHTML=set+sep+set;
+  track.innerHTML=recent.map(item).join(sep);
   feed.hidden=false;
 }
 async function loadMarket(){const j=await api('/api/listings');listings=j.listings;updateLiveTicker(listings);const fi=$('filterIntent')?.value||'',fr=$('filterResource')?.value||'',fc=($('filterCountry')?.value||'').toLowerCase();const rows=listings.filter(x=>(!fi||x.intent===fi)&&(!fr||x.resource===fr)&&(!fc||(x.country||'').toLowerCase().includes(fc)));$('marketList').innerHTML=rows.length?rows.map(x=>`<article class="card marketCard"><div class="row"><span class="tag">${listingLabel(x)}</span>${x.user?.verified?`<span class="verified">✓ ${tr('Verified')}</span>`:''}</div><h3>${esc(listingLabel(x))}</h3><p>${esc(summary(x))}</p><p class="price">${esc(priceText(x))}</p><small>${esc(tr(x.country||''))} · ${tr('by')} ${esc(x.user?.name||tr('Member'))}</small><div class="actions">${(!me||me.id!==x.userId)?`<button class="goldBtn mini" onclick="openOffer('${x.id}','${x.currency}')">${tr('Make offer')}</button><button class="outlineBtn mini" onclick="contactListing('${x.id}')">${tr('Contact')}</button>`:''}${me&&me.id===x.userId?`<button class="outlineBtn mini" onclick="closeListing('${x.id}')">${tr('Close')}</button>`:''}</div><div id="offer_${x.id}"></div></article>`).join(''):`<div class="card">${tr('No open listings match these filters.')}</div>`}

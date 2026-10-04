@@ -162,31 +162,17 @@
       <div id="marketList" class="cards"></div>
     </section>
 
-    <section id="post" class="pane hidden">
-      <div class="pageHead"><div><span class="eyebrow">PUBLISH TO THE MARKET</span><h1>List availability or demand</h1><p>Choose a category and describe the exact specification. TUT Move does not set the price.</p></div></div>
-      <div class="panel formPanel specForm"><div id="quickNeedBanner" class="quickNeedBanner hidden"></div>
-        <div class="segmented"><button id="haveBtn" class="active" onclick="setIntent('have')" data-ui-key="AVAILABLE">AVAILABLE</button><button id="needBtn" onclick="setIntent('need')" data-ui-key="WANTED">WANTED</button></div>
-        <input type="hidden" id="intent" value="have">
-        <label>Category</label>
-        <select id="resource" onchange="renderFields()"><option value="driver">Driver / Operator</option><option value="truck">Truck / Vehicle</option><option value="load">Load / Cargo</option><option value="warehouse">Warehouse / Storage</option><option value="equipment">Equipment</option></select>
-        <label>Listing title</label><input id="listingTitle" placeholder="Example: Refrigerated warehouse space available near Frankfurt">
-        <div class="autoMarketRow">
-      <div class="marketBadge"><span>Local market</span><b id="marketDisplay">Detecting…</b></div>
-      <input id="listingCountry" type="hidden" value="United States">
-      <input id="currency" type="hidden" value="USD">
-      <span id="currencyDisplay" class="hidden">USD</span>
-    </div>
-        <label>Commercial terms</label>
-        <select id="priceMode" onchange="togglePrice()"><option value="negotiable">Negotiable</option><option value="fixed">Fixed price</option><option value="request_quotes">Request quotes</option><option value="open_bidding">Open bidding</option></select>
-        <div id="priceWrap">
-      <label>Your asking price / budget</label>
-      <div class="priceWithCurrency">
-        <input id="price" type="number" min="0" step="0.01" placeholder="Optional">
-        <div id="priceCurrencyBadge" class="currencyBadge">USD</div>
-      </div>
-    </div>
+    <section id="post" class="pane hidden postV2">
+      <div class="pageHead postHead"><div><span class="eyebrow">POST TO TUT MOVE</span><h1>Post to TUT MOVE</h1><p>Publish an offer or request with only the details that matter.</p></div></div>
+      <div class="panel formPanel smartPostForm"><div id="quickNeedBanner" class="quickNeedBanner hidden"></div>
+        <div class="postStep"><span class="postStepNo">1</span><div class="postStepBody"><h2>What are you posting?</h2><div class="segmented postIntent"><button id="haveBtn" class="active" onclick="setIntent('have')">Available<small>I have something to offer</small></button><button id="needBtn" onclick="setIntent('need')">Wanted<small>I am looking for something</small></button></div><input type="hidden" id="intent" value="have"></div></div>
+        <div class="postStep"><span class="postStepNo">2</span><div class="postStepBody"><h2>Choose a category</h2><div class="postCategories">
+          <button type="button" class="active" data-post-resource="driver" onclick="choosePostResource('driver')">Driver</button><button type="button" data-post-resource="truck" onclick="choosePostResource('truck')">Truck / Vehicle</button><button type="button" data-post-resource="load" onclick="choosePostResource('load')">Load / Cargo</button><button type="button" data-post-resource="warehouse" onclick="choosePostResource('warehouse')">Warehouse / Storage</button><button type="button" data-post-resource="equipment" onclick="choosePostResource('equipment')">Equipment</button>
+        </div><select id="resource" class="hidden" onchange="renderFields()"><option value="driver">Driver / Operator</option><option value="truck">Truck / Vehicle</option><option value="load">Load / Cargo</option><option value="warehouse">Warehouse / Storage</option><option value="equipment">Equipment</option></select></div></div>
+        <div class="postStep"><span class="postStepNo">3</span><div class="postStepBody"><h2>Listing title</h2><input id="listingTitle" placeholder="Enter a clear title for your listing"><div class="postMarketRow"><label>Market / Country<select id="listingCountry" onchange="syncListingCurrency()"><option value="">Select country</option><option>United States</option><option>Canada</option><option>Germany</option><option>France</option><option>Netherlands</option><option>Belgium</option><option>Spain</option><option>Italy</option><option>Poland</option><option>Austria</option><option>Switzerland</option><option>United Kingdom</option><option>Ireland</option><option>Sweden</option><option>Norway</option><option>Denmark</option><option>Finland</option><option>Czechia</option><option>Portugal</option><option>Greece</option><option>Romania</option><option>United Arab Emirates</option><option>Saudi Arabia</option><option>Qatar</option><option>Kuwait</option><option>Bahrain</option><option>Oman</option><option>Jordan</option><option>Egypt</option></select></label></div><input id="currency" type="hidden" value="USD"><span id="currencyDisplay" class="hidden">USD</span></div></div>
         <div id="fields"></div>
-        <button class="goldBtn full" onclick="submitListing()">Publish to TUT Move</button><div id="postMsg" class="msg"></div>
+        <div class="postStep"><span class="postStepNo">6</span><div class="postStepBody"><h2 id="termsHeading">Price & terms</h2><div class="postTerms"><div><label>Commercial terms</label><select id="priceMode" onchange="togglePrice()"><option value="negotiable">Negotiable</option><option value="fixed">Fixed price</option><option value="request_quotes">Request quotes</option><option value="open_bidding">Open bidding</option></select></div><div id="priceWrap"><label id="priceLabel">Your asking price</label><div class="priceWithCurrency"><input id="price" type="number" min="0" step="0.01" placeholder="Optional"><div id="priceCurrencyBadge" class="currencyBadge">USD</div></div></div></div></div></div>
+        <button class="goldBtn full postPublish" onclick="submitListing()">Publish to TUT MOVE</button><div id="postMsg" class="msg"></div>
       </div>
     </section>
 
