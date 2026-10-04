@@ -129,6 +129,23 @@ function requiredChecks(type){
   if(type==='equipment')return ['equipmentVerified','handoverConfirmed'];
   return ['driverVerified','licenceVerified','truckVerified','cargoConfirmed','receiverConfirmed'];
 }
+function acceptedDealParties(db,o){
+  const listing=db.listings.find(x=>x.id===o.listingId);if(!listing)return null;
+  const otherUserId=o.fromUserId===listing.userId?o.toUserId:o.fromUserId;
+  const isLoad=listing.resource==='load';
+  const buyerUserId=isLoad?(listing.intent==='have'?listing.userId:otherUserId):(listing.intent==='need'?listing.userId:otherUserId);
+  const providerUserId=isLoad?(listing.intent==='need'?listing.userId:otherUserId):(listing.intent==='have'?listing.userId:otherUserId);
+  return {listing,buyerUserId,providerUserId};
+}
+function ensureAcceptedDeal(db,o){
+  if(!o||o.status!=='accepted')return null;const parties=acceptedDealParties(db,o);if(!parties)return null;
+  const {listing,buyerUserId,providerUserId}=parties;let b=(db.bookings||[]).find(x=>x.offerId===o.id);
+  if(b){b.buyerUserId=buyerUserId;b.providerUserId=providerUserId;b.dealType=dealTypeForListing(listing);if(!b.basicVerification)b.basicVerification={buyerContinue:false,providerContinue:false,buyerAt:null,providerAt:null,rejectedBy:null};if(!b.completion)b.completion={buyer:false,provider:false,buyerAt:null,providerAt:null};if(!b.status||b.status==='accepted')b.status='basic_verification';return b;}
+  const feePct=Number(db.settings.platformFeePct??5),fee=+(Number(o.amount||0)*feePct/100).toFixed(2);
+  b={id:id('b'),listingId:o.listingId,offerId:o.id,dealType:dealTypeForListing(listing),buyerUserId,providerUserId,agreedPrice:Number(o.amount||0),currency:o.currency,platformFeePct:feePct,platformFee:fee,buyerTotal:fee,providerNet:+Number(o.amount||0).toFixed(2),feeChargedTo:'buyer',paymentStatus:'unpaid',paymentMode:'stripe_fee_only',commissionLockedAt:new Date().toISOString(),basicVerification:{buyerContinue:false,providerContinue:false,buyerAt:null,providerAt:null,rejectedBy:null},mutualVerification:{buyerVerifiedProvider:false,providerVerifiedBuyer:false,buyerVerifiedAt:null,providerVerifiedAt:null,complete:false},completion:{buyer:false,provider:false,buyerAt:null,providerAt:null},payoutStatus:'not_applicable',status:'basic_verification',createdAt:o.createdAt||new Date().toISOString()};
+  db.bookings=db.bookings||[];db.bookings.push(b);listing.status='booked';return b;
+}
+function reconcileAcceptedDeals(db){for(const o of (db.offers||[]))if(o.status==='accepted')ensureAcceptedDeal(db,o);}
 function normalizeBookingWorkflow(b,db){b.dealType=bookingDealType(b,db);return b;}
 function userVerificationSummary(u,db){
   const legacy=(db.verifications||[]).find(v=>v.userId===u?.id)||{};const v={...legacy,...(u?.verification||{})};
@@ -502,7 +519,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   if(p==='/api/notifications/read'&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();for(const n of (db.notifications||[]))if(n.userId===u.id)n.read=true;await writeDB(db);return json(res,200,{ok:true});
   }
-  if(p==='/api/bookings'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();db.bookings.forEach(b=>normalizeBookingWorkflow(b,db));const visible=isOwner(u)?db.bookings:db.bookings.filter(b=>b.buyerUserId===u.id||b.providerUserId===u.id);const bookings=visible.filter(b=>!['completed','cancelled'].includes(b.status)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(b=>bookingView(b,db));await writeDB(db);return json(res,200,{bookings});}
+  if(p==='/api/bookings'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();reconcileAcceptedDeals(db);db.bookings.forEach(b=>normalizeBookingWorkflow(b,db));const visible=isOwner(u)?db.bookings:db.bookings.filter(b=>b.buyerUserId===u.id||b.providerUserId===u.id);const bookings=visible.filter(b=>!['completed','cancelled'].includes(b.status)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(b=>bookingView(b,db));await writeDB(db);return json(res,200,{bookings});}
   // v94: obsolete payment/trip/pickup/delivery and post-payment mutual-document flows are removed.
   // v94: verification profile exists only for an accepted preliminary deal.
   if(p==='/api/admin/summary'&&req.method==='GET'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const db=readDB();const marketplaceUsers=db.users.filter(x=>x.role!=='owner');const roleCounts={driver:0,carrier:0,shipper:0,warehouse:0,equipment:0,other:0};for(const x of marketplaceUsers){const roles=(x.roles&&x.roles.length?x.roles:[x.role]).filter(r=>r&&r!=='owner');if(!roles.length)roleCounts.other++;else for(const r of new Set(roles)){if(Object.prototype.hasOwnProperty.call(roleCounts,r))roleCounts[r]++;else roleCounts.other++;}}const pendingVerifications=(db.verifications||[]).filter(v=>['pending','pending_review','submitted','not_started'].includes(v.status)).length;return json(res,200,{users:marketplaceUsers.map(safeUser),listings:db.listings,offers:db.offers,bookings:db.bookings,verifications:db.verifications,settings:db.settings,stats:{users:marketplaceUsers.length,roleCounts,pendingVerifications,verifiedUsers:marketplaceUsers.filter(x=>x.verified||x.verificationStatus==='verified').length,openListings:db.listings.filter(x=>x.status==='open').length,offers:db.offers.length,bookings:db.bookings.length,platformRevenue:+db.bookings.reduce((s,b)=>s+(b.platformFee||0),0).toFixed(2)}});}
