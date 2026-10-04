@@ -716,11 +716,17 @@ function summary(x){
   return tr(x.country||'Country')
 }
 function updateLiveTicker(rows=listings){
-  const t=$('liveTickerTrack');if(!t)return;
-  const recent=(rows||[]).slice(-8).reverse();
-  t.textContent=recent.length
-    ? recent.map(x=>`${x.intent==='have'?tr('New available'):tr('New wanted')}: ${listingLabel(x)} · ${tr(x.country||'')}`).join('   •   ')
-    : tr('TUT Move live market — new activity will appear here');
+  const track=$('liveFeedTrack'),feed=$('liveFeed');
+  if(!track||!feed)return;
+  const recent=(rows||[]).filter(x=>x&&x.status==='open').slice(0,12);
+  if(!recent.length){track.innerHTML='';feed.hidden=true;return}
+  const resourceName=x=>tr(({driver:'Driver',truck:'Truck',load:'Load',warehouse:'Warehouse',storage:'Warehouse',equipment:'Equipment'})[x.resource]||x.resource||'Listing');
+  const detail=x=>{const s=summary(x);return [s,priceText(x)].filter(Boolean).join(' · ')};
+  const item=x=>{const urgent=!!(x.urgent||x.data?.urgent||x.data?.isUrgent||x.priority==='urgent'||x.data?.priority==='urgent');return `<span class="liveItem"><b>${esc(resourceName(x))}:</b><span>${esc(detail(x))}${urgent?' · <em class="liveUrgent">Urgent</em>':''}</span></span>`};
+  const sep='<span class="liveSep" aria-hidden="true"></span>';
+  const set=recent.map(item).join(sep);
+  track.innerHTML=set+sep+set;
+  feed.hidden=false;
 }
 async function loadMarket(){const j=await api('/api/listings');listings=j.listings;updateLiveTicker(listings);const fi=$('filterIntent')?.value||'',fr=$('filterResource')?.value||'',fc=($('filterCountry')?.value||'').toLowerCase();const rows=listings.filter(x=>(!fi||x.intent===fi)&&(!fr||x.resource===fr)&&(!fc||(x.country||'').toLowerCase().includes(fc)));$('marketList').innerHTML=rows.length?rows.map(x=>`<article class="card marketCard"><div class="row"><span class="tag">${listingLabel(x)}</span>${x.user?.verified?`<span class="verified">✓ ${tr('Verified')}</span>`:''}</div><h3>${esc(listingLabel(x))}</h3><p>${esc(summary(x))}</p><p class="price">${esc(priceText(x))}</p><small>${esc(tr(x.country||''))} · ${tr('by')} ${esc(x.user?.name||tr('Member'))}</small><div class="actions">${(!me||me.id!==x.userId)?`<button class="goldBtn mini" onclick="openOffer('${x.id}','${x.currency}')">${tr('Make offer')}</button><button class="outlineBtn mini" onclick="contactListing('${x.id}')">${tr('Contact')}</button>`:''}${me&&me.id===x.userId?`<button class="outlineBtn mini" onclick="closeListing('${x.id}')">${tr('Close')}</button>`:''}</div><div id="offer_${x.id}"></div></article>`).join(''):`<div class="card">${tr('No open listings match these filters.')}</div>`}
 function requireAccountFor(action){sessionStorage.setItem('tut_after_login',action);go('accountPane')}

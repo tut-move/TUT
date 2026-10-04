@@ -889,24 +889,25 @@ html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:righ
   }
 }
 
-/* LIVE BOARD — visual shell only; marketplace data hookup comes later */
-.liveBoard{background:#071018;border-bottom:1px solid rgba(215,175,69,.22);overflow:hidden}
-.liveBoard .liveTicker{min-height:38px;padding-top:8px;padding-bottom:7px;border-top:0;border-bottom:1px solid rgba(255,255,255,.08);background:#071018}
-.liveFeed{height:38px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;background:#071018;border-bottom:1px solid rgba(255,255,255,.04)}
-.liveFeedTrack{display:inline-flex;align-items:center;gap:20px;width:max-content;padding-left:100%;animation:tutLiveFeed 38s linear infinite;will-change:transform}
+/* LIVE BOARD — real published listings only */
+.liveBoard{height:40px;display:flex;align-items:center;background:#071018;border-bottom:1px solid rgba(215,175,69,.22);overflow:hidden}
+.liveBoard .liveTicker{height:40px;min-width:126px;flex:0 0 126px;display:flex;align-items:center;justify-content:center;gap:9px;padding:0 16px;background:#071018;border:0;border-right:1px solid rgba(215,175,69,.45);position:relative;z-index:2}
+.liveFeed{height:40px;min-width:0;flex:1;align-items:center;overflow:hidden;white-space:nowrap;background:#071018}
+.liveFeed:not([hidden]){display:flex}
+.liveFeedTrack{display:inline-flex;align-items:center;gap:18px;width:max-content;padding-left:100%;animation:tutLiveFeed 36s linear infinite;will-change:transform}
 .liveFeed:hover .liveFeedTrack{animation-play-state:paused}
-.liveItem{display:inline-flex;align-items:center;gap:5px;color:#f4f4f4;font-size:12px}
+.liveItem{display:inline-flex;align-items:center;gap:6px;color:#f4f4f4;font-size:12px}
 .liveItem b{color:#f1c93f;font-size:12px}
 .liveItem>span{color:#f4f4f4}
 .liveUrgent{color:#ff3b30;font-style:normal;font-weight:800}
 .liveSep{display:inline-block;width:1px;height:20px;background:rgba(215,175,69,.72)}
 @keyframes tutLiveFeed{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-/* Mobile: keep the existing header/hero intact, but show the moving LIVE offers feed. */
 @media(max-width:700px){
-  .liveBoard .liveTicker{min-height:38px;padding:8px 18px}
-  .liveFeed{display:flex;height:34px}
-  .liveFeedTrack{gap:16px;animation-duration:34s}
+  .liveBoard{height:38px}
+  .liveBoard .liveTicker{height:38px;min-width:92px;flex-basis:92px;padding:0 10px;gap:7px}
+  .liveFeed{height:38px}
+  .liveFeedTrack{gap:14px;animation-duration:30s}
   .liveItem,.liveItem b{font-size:11px}
-  .liveSep{height:18px}
+  .liveSep{height:17px}
 }
-@media(prefers-reduced-motion:reduce){.liveFeedTrack{animation:none;padding-left:18px}}
+@media(prefers-reduced-motion:reduce){.liveFeedTrack{animation:none;padding-left:14px}}
