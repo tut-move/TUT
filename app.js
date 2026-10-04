@@ -749,16 +749,23 @@ async function loadNotifications(showPanel=true){
 async function markNotificationsRead(){try{await api('/api/notifications/read',{method:'POST',body:'{}'});await loadNotifications(true)}catch(e){}}
 async function loadOffers(){if(!me){$('offerList').innerHTML=`<div class="card">${tr('Login to view offers.')}</div>`;return}const j=await api('/api/offers');$('offerList').innerHTML=j.offers.length?j.offers.map(o=>`<article class="card"><span class="tag">${esc(tr(o.status))}</span><h3>${o.currency} ${o.amount}</h3><p>${esc(o.message||tr('No message'))}</p>${o.status==='pending'&&o.toUserId===me.id?`<div class="actions"><button class="goldBtn mini" onclick="offerAction('${o.id}','accept')">${tr('Accept')}</button><button class="outlineBtn mini" onclick="counterOffer('${o.id}')">${tr('Counter')}</button><button class="linkBtn" onclick="offerAction('${o.id}','reject')">${tr('Reject')}</button></div>`:''}<div id="counter_${o.id}"></div></article>`).join(''):`<div class="card">${tr('No offers yet.')}</div>`}
 async function offerAction(id,action){
- try{
-  const result=await api(`/api/offers/${id}/${action}`,{method:'POST',body:'{}'});
-  await Promise.all([loadOffers(),loadBookings(),loadMarket(),loadNotifications(false)]);
-  if(action==='accept'&&result?.booking){
-   const dealId=result.booking.id;
-   const dealCard=document.querySelector(`[data-deal-id=\"${dealId}\"]`);
-   if(dealCard){dealCard.scrollIntoView({behavior:'smooth',block:'center'});dealCard.classList.add('dealJustCreated');setTimeout(()=>dealCard.classList.remove('dealJustCreated'),2200)}
-   alert(`Offer accepted. Deal ${dealId} was created and is now in Active Deals. Next step: Basic Verification.`);
+  const msg=$('dealActionMsg');
+  try{
+    const result=await api(`/api/offers/${id}/${action}`,{method:'POST',body:'{}'});
+    if(action==='accept'){
+      const dealId=result?.booking?.id||'';
+      go('offers');
+      await Promise.all([loadBookings(),loadOffers(),loadMarket(),loadNotifications(false)]);
+      if(msg)msg.innerHTML=`<b>Deal created successfully.</b> The accepted offer is now an Active Deal. Continue with Basic Verification below.`;
+      const card=dealId?document.querySelector(`[data-deal-id=\"${dealId}\"]`):$('bookingList')?.querySelector('.dealCard');
+      if(card){card.classList.add('dealJustCreated');card.scrollIntoView({behavior:'smooth',block:'center'})}
+      return;
+    }
+    await Promise.all([loadOffers(),loadBookings(),loadMarket(),loadNotifications(false)]);
+  }catch(e){
+    if(msg)msg.textContent=`Accept failed: ${e.message}`;
+    else alert(`Accept failed: ${e.message}`);
   }
- }catch(e){alert(e.message||'Could not update this offer.')}
 }
 function counterOffer(id){$('counter_'+id).innerHTML=`<div class="offerBox"><input id="ca_${id}" type="number" placeholder="${esc(tr('Counter amount'))}"><input id="cm_${id}" placeholder="${esc(tr('Terms'))}"><button class="goldBtn mini" onclick="sendCounter('${id}')">${tr('Send counter')}</button></div>`}
 async function sendCounter(id){await api(`/api/offers/${id}/counter`,{method:'POST',body:JSON.stringify({amount:Number($('ca_'+id).value),message:$('cm_'+id).value})});loadOffers();loadNotifications(false)}
