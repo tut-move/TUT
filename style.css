@@ -708,7 +708,7 @@ html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:righ
   display:flex;align-items:center;overflow:hidden;background:#080909;
 }
 #home .v49Hero::before{
-  content:"";position:absolute;inset:0;background-image:url('/tut-hero-logistics.jpg');
+  content:"";position:absolute;inset:0;background-image:url('./tut-hero-logistics.jpg');
   background-size:cover;background-position:center center;background-repeat:no-repeat;z-index:0;
 }
 #home .v49Hero::after{
