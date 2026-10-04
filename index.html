@@ -44,6 +44,7 @@
       </span>
       <span id="ownerNav" class="desktopNavGroup hidden"><button id="adminNav" onclick="go('adminPane')" data-ui-key="Owner">Owner Dashboard</button></span>
     </nav>
+    <button class="mobileMenuToggle" type="button" aria-label="Menu" onclick="document.body.classList.toggle('mobileMenuOpen')">☰</button>
     <div class="tools">
       <select id="headerCountry" onchange="manualCountryOverride(this.value)" aria-label="Country / market"></select>
       <select id="headerCurrency" onchange="manualCurrencyOverride(this.value)" aria-label="Currency"></select>
@@ -56,7 +57,6 @@
   </header>
   <div class="liveTicker" aria-live="polite">
     <span class="liveDot"></span><b>LIVE</b>
-    <div class="tickerViewport"><div id="liveTickerTrack" class="tickerTrack">TUT Move live market</div></div>
   </div>
 
   <main>
@@ -65,7 +65,7 @@
         <div class="heroCopy">
           <span class="eyebrow" data-ui-key="THE LOGISTICS MARKETPLACE">THE LOGISTICS MARKETPLACE</span>
           <h1 class="legacyHeroTitle"><span class="heroSentence" data-ui-key="The World Has More to Move.">The World Has More to Move.</span><span class="heroSentence" data-ui-key="We Make It Happen.">We Make It Happen.</span></h1>
-          <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space — one marketplace built for all of logistics.">Drivers, trucks, trailers, loads and warehouse space — one marketplace built for all of logistics.</p>
+          <p data-ui-key="Drivers, trucks, trailers, loads and warehouse space one marketplace built for all of logistics.">Drivers, trucks, trailers, loads and warehouse space one marketplace built for all of logistics.</p>
           <p class="legacyHeroLead" data-ui-key="Find what you need. Offer what you have. Connect. Agree. Move."><span>Find what you need. Offer what you have.</span><span>Connect. Agree. Move.</span></p>
           <div class="heroActions">
             <button class="goldBtn" onclick="document.getElementById('startChoice')?.scrollIntoView({behavior:'smooth'})" data-ui-key="Start now">Start now</button>
