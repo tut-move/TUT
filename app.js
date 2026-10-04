@@ -341,7 +341,7 @@ function renderAuth(){setTimeout(enforceOwnerPrivacy,0);
      <span class="eyebrow">${tr('NEW ACCOUNT')}</span>
      <h3>${tr('Create your TUT Move account')}</h3>
      <p class="muted">${tr('Choose your main role. TUT Move will tailor the forms and matches to you.')}</p>
-     <div class="authFields"><input id="rname" placeholder="${esc(tr('Name'))}"><input id="remail" type="email" placeholder="${esc(tr('Email'))}"><input id="rphone" type="tel" placeholder="${esc(tr('Phone number with country code'))}"><input id="rpass" type="password" placeholder="${esc(tr('Password (8+ characters)'))}"></div>
+     <div class="authFields"><input id="rname" placeholder="${esc(tr('Name'))}"><input id="remail" type="email" placeholder="${esc(tr('Email'))} (verification code sent here)"><input id="rphone" type="tel" placeholder="${esc(tr('Phone number'))}"><input id="rpass" type="password" placeholder="${esc(tr('Password (8+ characters)'))}"></div>
      <label class="roleQuestion">${tr('I am joining as')}</label>
      <input id="rrole" type="hidden" value="">
      <div class="roleChoiceGrid compactRoles">${roles.map(r=>`<button type="button" class="roleChoice" data-role="${r}" aria-pressed="false" onclick="choosePrimaryRole('${r}')"><span class="roleMark" aria-hidden="true"></span><b>${esc(roleLabel(r))}</b></button>`).join('')}</div>
@@ -533,12 +533,14 @@ function currencyFor(c){
   return map[c] || 'EUR';
 }
 function syncListingCurrency(){
-  const country=$('listingCountry')?.value || 'United States';
+  const country=$('listingCountry')?.value || '';
+  if(!country)return;
   const cur=currencyFor(country);
   if($('currency')) $('currency').value=cur;
   if($('currencyDisplay')) $('currencyDisplay').textContent=cur;if($('priceCurrencyBadge')) $('priceCurrencyBadge').textContent=currencyLabel(cur);
 }
 function setIntent(v){$('intent').value=v;$('haveBtn').classList.toggle('active',v==='have');$('needBtn').classList.toggle('active',v==='need');renderFields()}
+function choosePostResource(v){$('resource').value=v;document.querySelectorAll('[data-post-resource]').forEach(b=>b.classList.toggle('active',b.dataset.postResource===v));renderFields()}
 let activeMaps=[];
 function destroyActiveMaps(){for(const m of activeMaps){try{m.__tutResizeObserver?.disconnect();m.remove()}catch{}}activeMaps=[]}
 function syncTutDateTime(k,withTime){
@@ -648,9 +650,13 @@ function initListingMap(key){
 }
 async function searchAddress(key){const q=$('addr_'+key)?.value?.trim();if(!q)return;const btn=document.activeElement;try{if(btn)btn.disabled=true;const r=await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q='+encodeURIComponent(q),{headers:{'Accept':'application/json'}});const a=await r.json();if(!a.length){alert(tr('Location not found. Try a more complete address.'));return}const m=activeMaps.find(x=>x.getContainer().id==='map_'+key);if(m)m.__setPoint(Number(a[0].lat),Number(a[0].lon),a[0].display_name)}catch(e){alert(tr('Map search is temporarily unavailable. You can still type the address and click the map.'))}finally{if(btn)btn.disabled=false}}
 function routePair(resource,available){
-  const pickupLabel = resource==='warehouse' ? (available?'Storage / pickup address':'Required pickup / storage address') : (available?'Pickup / start address':'Required pickup / start address');
-  const deliveryLabel = resource==='warehouse' ? (available?'Delivery / release address':'Required delivery / release address') : (available?'Delivery / end address':'Required delivery / end address');
-  return `<div class="routeBlock"><h3>${tr('Pickup and delivery')}</h3><p class="routeHint">${tr('Every listing must include where it starts and where it ends.')}</p>${mapWidget('pickup',pickupLabel,'Street, building number, city, postcode')}${mapWidget('delivery',deliveryLabel,'Street, building number, city, postcode')}</div>`;
+  if(resource==='warehouse'||resource==='equipment'){
+    const label=resource==='warehouse'?(available?'Warehouse location':'Required warehouse location'):(available?'Equipment location':'Required equipment location');
+    return `<div class="routeBlock"><h3>${tr('Location')}</h3><div class="locationOnly">${fld('pickup',label,'text','City, state, region or address')}<input data-k="delivery" type="hidden" value=""></div></div>`;
+  }
+  const fromLabel=available?'From — available from':'From — pickup / start';
+  const toLabel=available?'To — willing to go to':'To — delivery / destination';
+  return `<div class="routeBlock"><h3>${tr('Route / Location')}</h3><div class="routeSimple">${fld('pickup',fromLabel,'text','City, state, region or address')}<div class="routeArrow">→</div>${fld('delivery',toLabel,'text','City, state, region or address')}</div></div>`;
 }
 function categoryFields(r,intent){
  const available=intent==='have';
@@ -682,7 +688,7 @@ function bindTutDateFields(root=document){
     });
   });
 }
-function renderFields(){destroyActiveMaps();const r=$('resource').value,i=$('intent').value;$('fields').innerHTML=`<div class="hint">${tr(i==='have'?'Publish an available resource with its real specifications.':'Publish exactly what you are looking for.')}</div>`+categoryFields(r,i);$('fields').querySelectorAll('.listingMap').forEach(el=>initListingMap(el.id.replace('map_','')));translateNodeTree($('fields'));$('fields').querySelectorAll('option').forEach(o=>{o.textContent=tr(canonicalEnglish(o.textContent))});bindTutDateFields($('fields'));bindConditionalSpecFields($('fields'))}
+function renderFields(){destroyActiveMaps();const r=$('resource').value,i=$('intent').value;const available=i==='have';const names={driver:available?'Driver details':'Driver requirements',truck:available?'Truck details':'Truck requirements',load:available?'Load details':'Load requirements',warehouse:available?'Warehouse details':'Warehouse requirements',equipment:available?'Equipment details':'Equipment requirements'};$('fields').innerHTML=`<div class="postStep"><span class="postStepNo">4</span><div class="postStepBody"><h2>${tr(names[r]||'Details')}</h2>${categoryFields(r,i)}</div></div>`;if($('termsHeading'))$('termsHeading').textContent=available?'Price & terms':'Budget & terms';if($('priceLabel'))$('priceLabel').textContent=available?'Your asking price':'Your budget';translateNodeTree($('fields'));$('fields').querySelectorAll('option').forEach(o=>{o.textContent=tr(canonicalEnglish(o.textContent))});bindTutDateFields($('fields'));bindConditionalSpecFields($('fields'))}
 function setIntent(v){$('intent').value=v;$('haveBtn').classList.toggle('active',v==='have');$('needBtn').classList.toggle('active',v==='need');renderFields()}
 function startListing(resource,intent){go('post');$('resource').value=resource;setIntent(intent);setTimeout(()=>$('listingTitle')?.focus(),120)}
 function browseResource(resource,intent){go('market');$('filterResource').value=resource;$('filterIntent').value=intent;loadMarket()}
@@ -690,8 +696,11 @@ function togglePrice(){const m=$('priceMode').value;$('priceWrap').style.display
 async function submitListing(){
  if(!me){go('accountPane');return}
  const data={};$('fields').querySelectorAll('[data-k]').forEach(el=>data[el.dataset.k]=el.type==='number'?Number(el.value||0):el.value);$('fields').querySelectorAll('[data-check-key]').forEach(fs=>data[fs.dataset.checkKey]=[...fs.querySelectorAll('input:checked')].map(x=>x.value).join(', '));
+ if(!String($('listingTitle').value||'').trim()){$('postMsg').textContent=tr('Please enter a listing title.');return}
+ if(!String($('listingCountry').value||'').trim()){$('postMsg').textContent=tr('Please select a country.');return}
  if(!String(data.pickup||'').trim()){$('postMsg').textContent=tr('Pickup / start address is required.');return}
- if(!String(data.delivery||'').trim()){$('postMsg').textContent=tr('Delivery / end address is required.');return}
+ if(['driver','truck','load'].includes($('resource').value)&&!String(data.delivery||'').trim()){$('postMsg').textContent=tr('Delivery / end address is required.');return}
+ if(['warehouse','equipment'].includes($('resource').value)&&!String(data.delivery||'').trim())data.delivery=data.pickup;
  if($('resource').value==='driver'&&!String(data.licenseClasses||'').trim()){$('postMsg').textContent=tr('Choose at least one licence class.');return}
  if($('resource').value==='load'){
    if(!data.pickupDate){$('postMsg').textContent=tr('Please enter pickup date and time.');return}
@@ -716,11 +725,16 @@ function summary(x){
   return tr(x.country||'Country')
 }
 function updateLiveTicker(rows=listings){
-  const t=$('liveTickerTrack');if(!t)return;
-  const recent=(rows||[]).slice(-8).reverse();
-  t.textContent=recent.length
-    ? recent.map(x=>`${x.intent==='have'?tr('New available'):tr('New wanted')}: ${listingLabel(x)} · ${tr(x.country||'')}`).join('   •   ')
-    : tr('TUT Move live market — new activity will appear here');
+  const track=$('liveFeedTrack'),feed=$('liveFeed');
+  if(!track||!feed)return;
+  const recent=(rows||[]).filter(x=>x&&x.status==='open').slice(0,12);
+  if(!recent.length){track.innerHTML='';feed.hidden=true;return}
+  const resourceName=x=>tr(({driver:'Driver',truck:'Truck',load:'Load',warehouse:'Warehouse',storage:'Warehouse',equipment:'Equipment'})[x.resource]||x.resource||'Listing');
+  const detail=x=>{const d=x.data||{},route=(d.pickup&&d.delivery&&d.pickup!==d.delivery)?`${d.pickup} → ${d.delivery}`:(d.pickup||'');return [x.title,route,priceText(x)].filter(Boolean).join(' · ')};
+  const item=x=>{const urgent=!!(x.urgent||x.data?.urgent||x.data?.isUrgent||x.priority==='urgent'||x.data?.priority==='urgent');return `<span class="liveItem"><b>${esc(resourceName(x))}:</b><span>${esc(detail(x))}${urgent?' · <em class="liveUrgent">Urgent</em>':''}</span></span>`};
+  const sep='<span class="liveSep" aria-hidden="true"></span>';
+  track.innerHTML=recent.map(item).join(sep);
+  feed.hidden=false;
 }
 async function loadMarket(){const j=await api('/api/listings');listings=j.listings;updateLiveTicker(listings);const fi=$('filterIntent')?.value||'',fr=$('filterResource')?.value||'',fc=($('filterCountry')?.value||'').toLowerCase();const rows=listings.filter(x=>(!fi||x.intent===fi)&&(!fr||x.resource===fr)&&(!fc||(x.country||'').toLowerCase().includes(fc)));$('marketList').innerHTML=rows.length?rows.map(x=>`<article class="card marketCard"><div class="row"><span class="tag">${listingLabel(x)}</span>${x.user?.verified?`<span class="verified">✓ ${tr('Verified')}</span>`:''}</div><h3>${esc(listingLabel(x))}</h3><p>${esc(summary(x))}</p><p class="price">${esc(priceText(x))}</p><small>${esc(tr(x.country||''))} · ${tr('by')} ${esc(x.user?.name||tr('Member'))}</small><div class="actions">${(!me||me.id!==x.userId)?`<button class="goldBtn mini" onclick="openOffer('${x.id}','${x.currency}')">${tr('Make offer')}</button><button class="outlineBtn mini" onclick="contactListing('${x.id}')">${tr('Contact')}</button>`:''}${me&&me.id===x.userId?`<button class="outlineBtn mini" onclick="closeListing('${x.id}')">${tr('Close')}</button>`:''}</div><div id="offer_${x.id}"></div></article>`).join(''):`<div class="card">${tr('No open listings match these filters.')}</div>`}
 function requireAccountFor(action){sessionStorage.setItem('tut_after_login',action);go('accountPane')}
@@ -743,23 +757,18 @@ function dealStageBlock(b){
  const basic=b.basicVerification||{},mine=me.id===b.buyerUserId?basic.buyerContinue:basic.providerContinue,other=me.id===b.buyerUserId?basic.providerContinue:basic.buyerContinue;
  if(b.paymentStatus!=='paid'){
    const ready=mine&&other;
-   return `<section class="mutualVerifyBox"><h4>1. Basic verification</h4><p>Before payment, both parties provide the required identity details. Contact details and full document numbers stay hidden.</p><div id="basicProfile_${b.id}"><button class="outlineBtn mini" onclick="loadBasicProfile('${b.id}')">Open basic verification</button></div><div class="mutualState"><span>${mine?'✓ You chose Continue':'○ Your decision pending'}</span><span>${other?'✓ Other party chose Continue':'○ Waiting for other party'}</span></div>${mine?'':`<div class="actions"><button class="goldBtn mini" onclick="basicContinue('${b.id}')">Continue with this party</button><button class="outlineBtn mini" onclick="basicReject('${b.id}')">Reject</button></div>`}${ready?(me.id===b.buyerUserId?`<hr><h4>2. TUT Move fee</h4><p>Both parties chose Continue. Pay only the TUT Move fee: <b>${esc(b.currency)} ${esc(b.platformFee)}</b>. The underlying service amount is paid directly between the parties.</p><button class="goldBtn mini" onclick="startStripeCheckout('${b.id}')">Pay TUT Move fee</button>`:`<p>Basic verification is complete. Waiting for the responsible party to pay the TUT Move fee.</p>`):''}</section>`;
- }
- const mv=b.mutualVerification||{},myVerified=me.id===b.buyerUserId?mv.buyerVerifiedProvider:mv.providerVerifiedBuyer,otherVerified=me.id===b.buyerUserId?mv.providerVerifiedBuyer:mv.buyerVerifiedProvider;
- if(!mv.complete){
-   return `<section class="mutualVerifyBox"><h4>3. Mutual verification</h4><p>The TUT Move fee is paid. Review the other party's limited details. Sensitive document numbers remain masked; originals should be checked directly where required.</p><div id="dealProfile_${b.id}"><button class="outlineBtn mini" onclick="loadDealProfile('${b.id}')">View other party details</button></div><div class="mutualState"><span>${myVerified?'✓ You verified the other party':'○ Your verification pending'}</span><span>${otherVerified?'✓ Other party verified you':'○ Waiting for other party'}</span></div>${myVerified?'':`<button class="goldBtn mini" onclick="confirmOtherParty('${b.id}')">Confirm other party</button>`}${myVerified&&otherVerified?`<div class="msg">✓ Both parties verified each other. Deal unlocked.</div>`:''}</section>`;
+   return `<section class="mutualVerifyBox"><h4>1. Basic verification</h4><p>Before payment, both parties provide the required identity details. Contact details and full document numbers stay hidden.</p><div id="basicProfile_${b.id}"><button class="outlineBtn mini" onclick="loadBasicProfile('${b.id}')">Open basic verification</button></div><div class="mutualState"><span>${mine?'✓ You chose Continue':'○ Your decision pending'}</span><span>${other?'✓ Other party chose Continue':'○ Waiting for other party'}</span></div>${mine?'':`<div class="actions"><button class="goldBtn mini" onclick="basicContinue('${b.id}')">Continue with this party</button><button class="outlineBtn mini" onclick="basicReject('${b.id}')">Reject</button></div>`}${ready?(me.id===b.buyerUserId?`<hr><h4>2. TUT Move fee</h4><p>Both parties chose Continue. Pay only the TUT Move fee: <b>${esc(b.currency)} ${esc(b.platformFee)}</b>.</p><button class="goldBtn mini" onclick="startStripeCheckout('${b.id}')">Pay TUT Move fee</button>`:`<p>Basic verification is complete. Waiting for the responsible party to pay the TUT Move fee.</p>`):''}</section>`;
  }
  const comp=b.completion||{},myDone=me.id===b.buyerUserId?comp.buyer:comp.provider,otherDone=me.id===b.buyerUserId?comp.provider:comp.buyer;
- return `<section class="mutualVerifyBox"><h4>4. Deal in progress</h4><p>Both parties verified each other. The deal is unlocked. Complete the service/payment directly between the parties; TUT Move does not hold the underlying deal amount.</p><div id="dealProfile_${b.id}"><button class="outlineBtn mini" onclick="loadDealProfile('${b.id}')">Open deal details</button></div><div class="mutualState"><span>${myDone?'✓ You confirmed completion':'○ Your completion pending'}</span><span>${otherDone?'✓ Other party confirmed completion':'○ Waiting for other party'}</span></div>${myDone?'':`<button class="goldBtn mini" onclick="completeDeal('${b.id}')">Confirm deal completed</button>`}</section>`;
+ return `<section class="mutualVerifyBox"><h4>Deal open</h4><p>The fee is paid. Limited contact and masked document numbers are available. Full document verification happens in person at meeting / pickup / delivery.</p><div id="dealProfile_${b.id}"><button class="outlineBtn mini" onclick="loadDealProfile('${b.id}')">Open deal details</button></div><div class="mutualState"><span>${myDone?'✓ You confirmed completion':'○ Your completion pending'}</span><span>${otherDone?'✓ Other party confirmed completion':'○ Waiting for other party'}</span></div>${myDone?'':`<button class="goldBtn mini" onclick="completeDeal('${b.id}')">Confirm real-world check & complete</button>`}</section>`;
 }
 async function startStripeCheckout(id){try{const j=await api(`/api/bookings/${id}/checkout`,{method:'POST'});if(j.url)location.href=j.url}catch(e){alert(e.message)}}
 async function loadBasicProfile(id){try{const j=await api(`/api/bookings/${id}/basic-profile`),p=j.profile||{},el=$(`basicProfile_${id}`);if(!el)return;el.innerHTML=`<div class="dealFacts">${valueLine('Name',p.displayName)}${valueLine('Country',p.country)}${valueLine('Role',p.role)}${valueLine('Email verified',p.emailVerified?'Yes':'No')}${valueLine('Phone verified',p.phoneVerified?'Yes':'No')}${valueLine('Identity document',p.identityProvided?'Provided':'Missing')}${valueLine('Photo / selfie',p.selfieProvided?'Provided':'Missing')}${valueLine('Driving licence',p.licenceProvided?'Provided':'Not required / missing')}${valueLine('Licence expiry',p.licenceExpiry)}${valueLine('Licence class',listValue(p.licenceClasses))}</div><p class="muted">No phone, email, full ID number, full licence number or document image is exposed at this stage.</p>`}catch(e){alert(e.message)}}
 async function basicContinue(id){try{await api(`/api/bookings/${id}/basic-continue`,{method:'POST',body:'{}'});await loadBookings();await loadNotifications(false)}catch(e){alert(e.message)}}
 async function basicReject(id){if(!confirm('Reject this preliminary deal? No TUT Move fee will be charged.'))return;try{await api(`/api/bookings/${id}/basic-reject`,{method:'POST',body:'{}'});await Promise.all([loadBookings(),loadOffers(),loadMarket()])}catch(e){alert(e.message)}}
 async function loadDealProfile(id){try{const j=await api(`/api/bookings/${id}/deal-profile`),p=j.profile||{},el=$(`dealProfile_${id}`);if(!el)return;el.innerHTML=`<div class="dealFacts">${valueLine('Legal name',p.legalName)}${valueLine('Phone',p.phone)}${valueLine('Country',p.country)}${valueLine('Role',p.role)}${valueLine('Government ID',p.identityNumberMasked)}${valueLine('Licence number',p.licenceNumberMasked)}${valueLine('Licence class',listValue(p.licenceClasses))}${valueLine('Licence expiry',p.licenceExpiry)}</div><p class="muted">Sensitive numbers are deliberately masked in separated positions. Check the original document in person.</p>`}catch(e){alert(e.message)}}
-async function confirmOtherParty(id){if(!confirm('Confirm that you reviewed and verified the other party?'))return;try{await api(`/api/bookings/${id}/mutual-confirm`,{method:'POST',body:'{}'});await Promise.all([loadBookings(),loadNotifications(false)])}catch(e){alert(e.message)}}
 async function completeDeal(id){if(!confirm('Confirm only after the real-world identity/document check and handover/service step.'))return;try{const j=await api(`/api/bookings/${id}/complete`,{method:'POST',body:'{}'});await Promise.all([loadBookings(),loadOffers(),loadMarket(),loadNotifications(false)])}catch(e){alert(e.message)}}
-function renderActiveDeal(b){const stage=b.paymentStatus!=='paid'?(b.basicVerification?.buyerContinue&&b.basicVerification?.providerContinue?'Fee due':'Basic verification'):(b.mutualVerification?.complete?'In progress':'Mutual verification');return `<article class="card dealCard"><div class="row"><span class="tag">${esc(dealTypeTitle(b.dealType||'transport'))}</span><span class="tag">${esc(stage)}</span></div><h3>${esc(dealContextSummary(b))}</h3><div class="dealFacts">${valueLine('Agreed price',`${b.currency} ${money(b.agreedPrice)}`)}${valueLine('TUT Move fee',`${b.currency} ${money(b.platformFee)}`)}${valueLine('Underlying deal amount',`Paid directly between the parties`)}</div>${dealStageBlock(b)}</article>`}
+function renderActiveDeal(b){const stage=b.paymentStatus==='paid'?'Deal open':(b.basicVerification?.buyerContinue&&b.basicVerification?.providerContinue?'Fee due':'Basic verification');return `<article class="card dealCard"><div class="row"><span class="tag">${esc(dealTypeTitle(b.dealType||'transport'))}</span><span class="tag">${esc(stage)}</span></div><h3>${esc(dealContextSummary(b))}</h3><div class="dealFacts">${valueLine('Agreed price',`${b.currency} ${money(b.agreedPrice)}`)}${valueLine('TUT Move fee',`${b.currency} ${money(b.platformFee)}`)}${valueLine('Underlying deal amount',`Paid directly between the parties`)}</div>${dealStageBlock(b)}</article>`}
 async function loadBookings(){if(!me){$('bookingList').innerHTML='';return}const j=await api('/api/bookings');$('bookingList').innerHTML=j.bookings.length?j.bookings.map(renderActiveDeal).join(''):`<div class="card">${tr('No active deals.')}</div>`;translateNodeTree($('bookingList'))}
 async function loadVerification(){if(me?.role==='owner'){go('adminPane');return}if(!me){$('verifyMsg').textContent=tr('Login first.');return}const j=await api('/api/verification');if(j.verification)$('verifyMsg').innerHTML=`${tr('Current status')}: <b>${esc(tr(j.verification.status))}</b><br>${esc(tr(j.verification.message||''))}`}
 async function loadAdmin(){
