@@ -283,9 +283,9 @@
               <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Take a selfie</small><input id="verifySelfieFile" type="file" accept="image/*" capture="user"></label>
               <label class="uploadCard" data-role-field="driver"><span class="uploadIcon">DL</span><b>Driving licence</b><small>Take a photo</small><input id="verifyLicenceFile" type="file" accept="image/*" capture="environment"></label>
             </div>
-            <div id="verifyMaskEditor" style="display:none;padding:12px;border:1px solid #b89a58;border-radius:8px;margin:12px 0"><b>Mask sensitive numbers before sending</b><p>Drag over ID numbers, address, date of birth, document numbers and machine-readable zones. The covered pixels will be permanently blacked out in the image sent.</p><canvas id="verifyMaskCanvas" style="width:100%;touch-action:none;border:1px solid #999"></canvas><button type="button" class="outlineBtn" onclick="resetVerificationMask()">Reset photo masking</button><p id="verifyMaskStatus"></p></div>
+            <div id="verifyMaskEditor" style="display:none;padding:12px;border:1px solid #b89a58;border-radius:8px;margin:12px 0"><b>Automatic privacy protection</b><p>The entire document image is hidden automatically on the server. This privacy-safe fallback does not yet preserve the document portrait or text. Your selfie remains available separately.</p><p id="verifyMaskStatus"></p></div>
             <label><span>Profile notes</span><textarea id="verifyNotes" rows="3" placeholder="Optional information for the other party"></textarea></label>
-            <div class="privacyNote"><b>Privacy</b><span>Before sending an ID or licence, cover sensitive numbers using the black masking tool below. Only the masked image is sent and shown to the other party.</span></div>
+            <div class="privacyNote"><b>Privacy</b><span>Document images are never saved or shared. The server creates a safe redacted confirmation card automatically. Your selfie is handled separately.</span></div>
             <div class="wizardActions"><button class="outlineBtn" type="button" onclick="verifyPrevStep()">Back</button><button class="goldBtn" type="submit">Send photos for verification</button></div>
             <div id="verifySubmitMsg" class="formMessage" aria-live="polite"></div>
           </section>

@@ -879,11 +879,11 @@ async function submitVerificationV1(e){
   e.preventDefault();if(!me){alert(tr('Sign in to submit verification.'));return}
   try{
     const role=$('verifyRole').value;
-    const [identityRaw,selfieFile,licenceRaw]=await Promise.all([verifyFileData('verifyIdentityFile'),verifyFileData('verifySelfieFile'),verifyFileData('verifyLicenceFile')]);const identityFile=verificationMaskedPhotos.verifyIdentityFile||'';const licenceFile=verificationMaskedPhotos.verifyLicenceFile||'';if(identityRaw&&!identityFile)throw new Error('Mask sensitive numbers on your identity photo before sending.');if(licenceRaw&&!licenceFile&&role==='driver')throw new Error('Mask sensitive numbers on your licence photo before sending.');
+    const [identityRaw,selfieFile,licenceRaw]=await Promise.all([verifyFileData('verifyIdentityFile'),verifyFileData('verifySelfieFile'),verifyFileData('verifyLicenceFile')]);const identityFile=identityRaw;const licenceFile=licenceRaw;
     const licenceClasses=[...document.querySelectorAll('#verifyLicenceClasses input:checked')].map(x=>x.value);
     if(role==='driver'&&!licenceClasses.length){$('verifySubmitMsg').textContent=tr('Choose at least one licence class.');return}
     const registration=$('verifyRegistration')?.value||$('verifyBusinessRegistration')?.value||'';
-    const body={role,legalName:$('verifyLegalName').value,phone:$('verifyPhone')?.value||'',country:$('verifyCountry').value,identityNumber:$('verifyIdentityNumber').value,licenceNumber:$('verifyLicence')?.value||'',licenceClasses,licenceExpiry:$('verifyLicenceExpiry')?.value||'',endorsements:$('verifyEndorsements')?.value||'',registrationNumber:registration,vehicleId:$('verifyVehicle')?.value||'',notes:$('verifyNotes').value,files:{identity:identityFile,selfie:selfieFile,license:role==='driver'?licenceFile:''},maskedPhotos:{identity:!!identityFile,license:role==='driver'&&!!licenceFile}};
+    const body={role,legalName:$('verifyLegalName').value,phone:$('verifyPhone')?.value||'',country:$('verifyCountry').value,identityNumber:$('verifyIdentityNumber').value,licenceNumber:$('verifyLicence')?.value||'',licenceClasses,licenceExpiry:$('verifyLicenceExpiry')?.value||'',endorsements:$('verifyEndorsements')?.value||'',registrationNumber:registration,vehicleId:$('verifyVehicle')?.value||'',notes:$('verifyNotes').value,files:{identity:identityFile,selfie:selfieFile,license:role==='driver'?licenceFile:''}};
     const j=await api('/api/verification/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     $('verifySubmitMsg').textContent=tr(j.message||'Verification submitted for review.');await loadVerification();if(j.ready){setTimeout(async()=>{go('offers');await loadBookings();},500)}
   }catch(e){$('verifySubmitMsg').textContent=tr(e.message)}
@@ -921,24 +921,32 @@ async function submitTrustVerification(e){e.preventDefault();if(!me){go('account
 const _v30Go=go;go=function(id){_v30Go(id);if(id==='verify')setTimeout(loadTrustVerification,0)};
 window.addEventListener('DOMContentLoaded',()=>{renderTrustFields();setTimeout(loadTrustVerification,350)});
 
-const verificationMaskedPhotos={};
-let currentMaskId='',currentMaskOriginal=null;
-function resetVerificationMask(){if(currentMaskOriginal){const c=document.getElementById('verifyMaskCanvas');c.getContext('2d').drawImage(currentMaskOriginal,0,0,c.width,c.height);verificationMaskedPhotos[currentMaskId]=null;document.getElementById('verifyMaskStatus').textContent='Drag across the sensitive fields to mask them.';}}
+// Document privacy is enforced on the server; no manual masking or raw document previews.
 function prepareVerificationMask(input){
- const f=input.files?.[0],id=input.id;if(id)delete verificationMaskedPhotos[id];if(!f||id==='verifySelfieFile')return;
- if(!f.type.startsWith('image/')){alert('Please take a photo, not a PDF.');input.value='';return;}
- const img=new Image(),url=URL.createObjectURL(f);img.onload=()=>{
- URL.revokeObjectURL(url);currentMaskId=id;currentMaskOriginal=img;
- const c=document.getElementById('verifyMaskCanvas'),scale=Math.min(1,1400/img.width);c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);c.getContext('2d').drawImage(img,0,0,c.width,c.height);
- document.getElementById('verifyMaskEditor').style.display='block';document.getElementById('verifyMaskStatus').textContent='Cover every sensitive number before sending.';
- let start=null;const coords=e=>{const rect=c.getBoundingClientRect();return {x:(e.clientX-rect.left)*c.width/rect.width,y:(e.clientY-rect.top)*c.height/rect.height}};
- c.onpointerdown=e=>{start=coords(e);c.setPointerCapture(e.pointerId)};
- c.onpointerup=e=>{if(!start)return;const end=coords(e),ctx=c.getContext('2d');ctx.fillStyle='#000';ctx.fillRect(Math.min(start.x,end.x),Math.min(start.y,end.y),Math.max(12,Math.abs(end.x-start.x)),Math.max(12,Math.abs(end.y-start.y)));start=null;verificationMaskedPhotos[id]=c.toDataURL('image/jpeg',.85);document.getElementById('verifyMaskStatus').textContent='Mask applied. Check the photo before sending.';};
- };img.src=url;
+ const f=input.files?.[0];if(!f)return;
+ if(!['image/jpeg','image/png','image/webp'].includes(f.type)){alert('Please choose a JPG, PNG or WebP photo.');input.value='';return;}
+ const status=document.getElementById('verifyMaskStatus');if(status)status.textContent='The server will automatically hide the entire document image. Only your entered name and a safe confirmation card will be shared.';
+ const editor=document.getElementById('verifyMaskEditor');if(editor)editor.style.display='block';
 }
 ['verifyIdentityFile','verifyLicenceFile'].forEach(id=>document.getElementById(id)?.addEventListener('change',e=>prepareVerificationMask(e.target)));
-function verifyFileData(id){
-  return new Promise((resolve,reject)=>{const f=$(id)?.files?.[0];if(!f)return resolve('');if(f.size>8*1024*1024)return reject(new Error(tr('Each file must be 8MB or less.')));const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error(tr('Could not read file.')));r.readAsDataURL(f);});
+async function verifyFileData(id){
+  const f=$(id)?.files?.[0];if(!f)return '';
+  if(!['image/jpeg','image/png','image/webp'].includes(f.type))throw new Error('Choose a JPG, PNG or WebP photo.');
+  if(f.size>8*1024*1024)throw new Error('Each photo must be 8MB or less.');
+  const read=file=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('Could not read photo.'));r.readAsDataURL(file)});
+  if(f.size<450*1024)return read(f);
+  try{
+    const bitmap=await createImageBitmap(f);
+    const scale=Math.min(1,1600/Math.max(bitmap.width,bitmap.height));
+    const canvas=document.createElement('canvas');
+    canvas.width=Math.max(1,Math.round(bitmap.width*scale));
+    canvas.height=Math.max(1,Math.round(bitmap.height*scale));
+    canvas.getContext('2d').drawImage(bitmap,0,0,canvas.width,canvas.height);
+    bitmap.close?.();
+    const compressed=canvas.toDataURL('image/jpeg',0.78);
+    canvas.width=canvas.height=0;
+    return compressed.length<f.size*1.37?compressed:read(f);
+  }catch{return read(f)}
 }
 function renderVerifyLicenceClasses(){
   const host=$('verifyLicenceClasses'); if(!host)return;
