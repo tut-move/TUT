@@ -306,17 +306,17 @@ function dealPartyLabels(b,db){
   const [buyerRole,providerRole]=labels[type]||['REQUESTER','PROVIDER'];return {buyer,provider,buyerRole,providerRole};
 }
 function dealPdfBuffer(b,db){
-  const {buyer,provider}=dealPartyLabels(b,db),offer=db.offers.find(x=>x.id===b.offerId),feePayer=db.users.find(x=>x.id===(b.feePayerUserId||b.buyerUserId));
+  const {buyer,provider,buyerRole,providerRole}=dealPartyLabels(b,db),offer=db.offers.find(x=>x.id===b.offerId),feePayer=db.users.find(x=>x.id===(b.feePayerUserId||b.buyerUserId));
   const bv=buyer?.verification||{},pv=provider?.verification||{},terms=b.dealTerms||{},method=terms.settlementMethod||'Not specified',timing=terms.paymentTiming||'Not specified';
   const gold='.92 .65 .20',white='.96 .96 .94',muted='.68 .68 .66',c=[];c.push('0 0 0 rg 0 0 595 842 re f');
   c.push(pdfText(225,795,27,'TUT MOVE','F2',gold),pdfText(205,775,8,'VEHICLE TRANSPORT MADE SIMPLE','F1',white),`${gold} RG 1.3 w 45 758 m 550 758 l S`);
   c.push(pdfText(218,735,10,'FINAL DEAL RECORD','F1',white),pdfText(218,703,24,'COMPLETED','F2',gold),pdfText(190,685,8,'OFFICIAL TUT MOVE TRANSACTION RECORD','F1',white),`${gold} RG 1.3 w 45 668 m 550 668 l S`);
-  c.push(pdfText(50,640,16,buyer?.name||'—','F2',white),pdfText(385,640,16,provider?.name||'—','F2',white),pdfText(225,640,8,`${String(b.dealType||'DEAL').toUpperCase()} DEAL`,'F1',white));
+  c.push(pdfText(50,640,16,buyer?.name||'—','F2',white),pdfText(385,640,16,provider?.name||'—','F2',white),pdfText(225,640,8,`${String(b.dealType||'DEAL').toUpperCase()} DEAL`,'F1',white),pdfText(50,624,8,buyerRole,'F1',gold),pdfText(385,624,8,providerRole,'F1',gold));
   c.push(`${gold} RG 1 w 45 620 m 550 620 l S`,pdfText(72,596,8,'AGREED DEAL PRICE','F1',white),pdfText(82,568,21,`${b.currency} ${Number(b.agreedPrice||0).toFixed(2)}`,'F2',gold),pdfText(54,550,8,'Paid directly between the parties','F1',white));
-  c.push(pdfText(310,606,8,'CUSTOMER PLATFORM FEE','F1',white),pdfText(320,586,15,`USD ${Number(b.customerFeeUSD??b.platformFee??0).toFixed(2)}`,'F2',gold),pdfText(310,569,8,`Paid by ${buyer?.name||'—'}`,'F1',white),pdfText(310,549,8,'PROVIDER PLATFORM FEE','F1',white),pdfText(320,532,15,`USD ${Number(b.providerFeeUSD??0).toFixed(2)}`,'F2',gold),pdfText(430,532,8,b.paymentStatus==='paid'?'PAID':'UNPAID','F2',gold));
+  c.push(pdfText(310,606,8,'CUSTOMER PLATFORM FEE','F1',white),pdfText(320,586,15,`USD ${Number(b.customerFeeUSD??b.platformFee??0).toFixed(2)}`,'F2',gold),pdfText(310,569,8,`Paid by ${buyer?.name||'—'} - ${b.feePayments?.buyer?.status==='paid'?'PAID':'UNPAID'}`,'F1',white),pdfText(310,549,8,'PROVIDER PLATFORM FEE','F1',white),pdfText(320,532,15,`USD ${Number(b.providerFeeUSD??0).toFixed(2)}`,'F2',gold),pdfText(430,532,8,b.feePayments?.provider?.status==='paid'?'PAID':'UNPAID','F2',gold));
   c.push(`${gold} RG 1.3 w 45 515 m 550 515 l S`,pdfText(50,494,12,'CONTACT DETAILS','F2',gold));
-  const contact=(x,v)=>[['LEGAL NAME',v.legalName||x?.name||'—'],['PHONE',v.phone||x?.phone||'—'],['EMAIL',x?.email||'—'],['COUNTRY',v.country||x?.country||'—'],['ROLE',v.role||x?.role||'—']];
-  let y=472; for(const [k,v] of contact(buyer,bv)){c.push(pdfText(52,y,7,k,'F1',muted),pdfText(125,y,8,String(v).slice(0,28),'F1',white));y-=18} y=472; for(const [k,v] of contact(provider,pv)){c.push(pdfText(310,y,7,k,'F1',muted),pdfText(385,y,8,String(v).slice(0,28),'F1',white));y-=18}
+  const contact=(x,v)=>[['LEGAL NAME',v.legalName||x?.name||'—'],['PHONE',v.phone||x?.phone||'—'],['EMAIL',x?.email||'—'],['COUNTRY',v.country||x?.country||'—'],['ACCOUNT ROLE',v.role||x?.role||'—']];
+  let y=472; for(const [k,v] of [...contact(buyer,bv).slice(0,4),['DEAL ROLE',buyerRole]] ){c.push(pdfText(52,y,7,k,'F1',muted),pdfText(125,y,8,String(v).slice(0,28),'F1',white));y-=18} y=472; for(const [k,v] of [...contact(provider,pv).slice(0,4),['DEAL ROLE',providerRole]] ){c.push(pdfText(310,y,7,k,'F1',muted),pdfText(385,y,8,String(v).slice(0,28),'F1',white));y-=18}
   c.push(`${gold} RG 1.3 w 45 370 m 550 370 l S`,pdfText(50,349,12,'DEAL DETAILS','F2',gold));
   const rows=[['DEAL REFERENCE',b.id],['DEAL TYPE',String(b.dealType||'deal').toUpperCase()],['SETTLEMENT METHOD',method],['PAYMENT TIMING',timing],['CONFIRMATION','Confirmed by both parties'],['ADDITIONAL TERMS',offer?.message||'No additional written terms']]; y=328;
   for(const [k,v] of rows){c.push(pdfText(52,y,7,k,'F1',muted),pdfText(305,y,8,String(v).slice(0,48),'F1',white),`${muted} RG .35 w 48 ${y-8} m 547 ${y-8} l S`);y-=27}
@@ -325,7 +325,7 @@ function dealPdfBuffer(b,db){
 }
 async function emailDealRecord(b,db,pdf){const host=process.env.SMTP_HOST||'mail.privateemail.com',port=Number(process.env.SMTP_PORT||465),user=process.env.SMTP_USER||'',pass=process.env.SMTP_PASS||'',from=process.env.SMTP_FROM||user||'info@tutmove.com';if(!user||!pass)return;const parties=[db.users.find(x=>x.id===b.buyerUserId),db.users.find(x=>x.id===b.providerUserId)].filter(Boolean);for(const party of parties){try{await smtpSend({host,port,user,pass,from,to:party.email,subject:`TUT Move deal completed — ${b.id}`,text:`Your TUT Move deal ${b.id} is completed. Attached is the final Deal Record. The underlying deal amount was handled directly between the parties outside TUT Move.`,attachments:[{filename:`TUT-Move-Deal-${b.id}.pdf`,content:pdf,contentType:'application/pdf'}]})}catch(e){console.error('Deal PDF email failed:',e.message)}}}
 
-function maskValue(v){const x=String(v||'').trim();if(!x)return '';return '•'.repeat(Math.max(4,x.length-2))+x.slice(-2)}
+function maskValue(v){const x=String(v||'').trim();if(!x)return '';const tail=x.replace(/[^0-9A-Za-z]/g,'').slice(-2);return '•'.repeat(8)+(tail||'••')}
 function verificationReady(user){
   const v=user?.verification||{},files=v.files||{},role=String(v.role||user?.role||'').toLowerCase();
   const base=!!(user?.emailVerifiedAt&&String(v.legalName||'').trim()&&String(v.phone||user?.phone||'').trim()&&String(v.identityNumber||'').trim()&&files.identity?.name&&files.selfie?.name);
