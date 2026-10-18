@@ -262,7 +262,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.418Z",
-      "closedAt": "2026-10-11T23:12:30.849Z",
+      "closedAt": "2026-10-03T15:11:49.274Z",
       "closedReason": "deal_completed",
       "bookingId": "b_016638298b95"
     },
@@ -296,7 +296,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.441Z",
-      "closedAt": "2026-10-11T23:12:30.849Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_6c2a181cc66d"
     },
@@ -330,7 +330,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.463Z",
-      "closedAt": "2026-10-11T23:12:30.849Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_32772e9ff783"
     },
@@ -364,7 +364,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.474Z",
-      "closedAt": "2026-10-11T23:12:30.849Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_4efde2e60bd4"
     },
@@ -398,7 +398,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.483Z",
-      "closedAt": "2026-10-11T23:12:30.849Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_7ee38304a94c"
     },
@@ -432,7 +432,7 @@
       "data": {},
       "status": "closed",
       "createdAt": "2026-09-29T04:24:33.498Z",
-      "closedAt": "2026-10-11T23:12:30.849Z",
+      "closedAt": "2026-10-03T15:11:49.275Z",
       "closedReason": "deal_completed",
       "bookingId": "b_2769a5481224"
     },
@@ -465,8 +465,7 @@
       "message": "test",
       "status": "accepted",
       "parentOfferId": null,
-      "createdAt": "2026-09-29T04:24:33.424Z",
-      "dealId": "b_016638298b95"
+      "createdAt": "2026-09-29T04:24:33.424Z"
     },
     {
       "id": "o_56cad3287261",
@@ -478,8 +477,7 @@
       "message": "test",
       "status": "accepted",
       "parentOfferId": null,
-      "createdAt": "2026-09-29T04:24:33.443Z",
-      "dealId": "b_6c2a181cc66d"
+      "createdAt": "2026-09-29T04:24:33.443Z"
     },
     {
       "id": "o_fd36ec2f5e6f",
@@ -491,8 +489,7 @@
       "message": "test",
       "status": "accepted",
       "parentOfferId": null,
-      "createdAt": "2026-09-29T04:24:33.465Z",
-      "dealId": "b_32772e9ff783"
+      "createdAt": "2026-09-29T04:24:33.465Z"
     },
     {
       "id": "o_7a437b2b9094",
@@ -504,8 +501,7 @@
       "message": "test",
       "status": "accepted",
       "parentOfferId": null,
-      "createdAt": "2026-09-29T04:24:33.475Z",
-      "dealId": "b_4efde2e60bd4"
+      "createdAt": "2026-09-29T04:24:33.475Z"
     },
     {
       "id": "o_aef3901ea685",
@@ -517,8 +513,7 @@
       "message": "test",
       "status": "accepted",
       "parentOfferId": null,
-      "createdAt": "2026-09-29T04:24:33.489Z",
-      "dealId": "b_7ee38304a94c"
+      "createdAt": "2026-09-29T04:24:33.489Z"
     },
     {
       "id": "o_ec300ac3db22",
@@ -530,8 +525,7 @@
       "message": "test",
       "status": "accepted",
       "parentOfferId": null,
-      "createdAt": "2026-09-29T04:24:33.501Z",
-      "dealId": "b_2769a5481224"
+      "createdAt": "2026-09-29T04:24:33.501Z"
     }
   ],
   "bookings": [
@@ -1275,8 +1269,7 @@
   "settings": {
     "brandName": "TUT Move",
     "siteUrl": "http://127.0.0.1:3100",
-    "customerFeeUSD": 9.5,
-    "providerFeeUSD": 9.5,
+    "platformFeePct": 5,
     "defaultCurrency": "USD",
     "ownerName": "",
     "ownerEmail": "",
@@ -1287,7 +1280,6 @@
       "Canada",
       "Europe",
       "Middle East"
-    ],
-    "platformFeePct": 5
+    ]
   }
 }
