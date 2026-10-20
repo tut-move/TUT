@@ -332,14 +332,25 @@ function archiveCompletedDealNotifications(db,b){
 }
 
 function closeCompletedDealListings(db,b){
-  const accepted=db.listings.find(x=>x.id===b.listingId);if(!accepted)return [];
-  const ids=new Set([accepted.id]);const otherId=accepted.userId===b.buyerUserId?b.providerUserId:b.buyerUserId;
-  const opposite=accepted.intent==='have'?'need':'have';
-  const related=db.listings.filter(x=>x.userId===otherId&&x.resource===accepted.resource&&x.intent===opposite&&x.status==='open').sort((a,z)=>String(z.createdAt||'').localeCompare(String(a.createdAt||'')))[0];
-  if(related)ids.add(related.id);
-  for(const id0 of ids){const x=db.listings.find(z=>z.id===id0);if(x){x.status='closed';x.closedAt=new Date().toISOString();x.closedReason='deal_completed';x.bookingId=b.id;}}
-  b.closedListingIds=[...ids];recomputeMatches(db);return b.closedListingIds;
+  // Close only the listing that actually produced this booking. Never guess
+  // another participant's listing from their latest post.
+  const listing=db.listings.find(x=>x.id===b.listingId);
+  if(!listing)return [];
+  listing.status='closed';listing.closedAt=listing.closedAt||new Date().toISOString();
+  listing.closedReason='deal_completed';listing.bookingId=b.id;
+  b.closedListingIds=[listing.id];
+  archiveListingActivity(db,listing.id);
+  recomputeMatches(db);
+  return b.closedListingIds;
 }
+function archiveListingActivity(db,listingId){
+  const offerIds=new Set((db.offers||[]).filter(o=>o.listingId===listingId).map(o=>o.id));
+  const dealIds=new Set((db.bookings||[]).filter(b=>b.listingId===listingId).map(b=>b.id));
+  for(const n of db.notifications||[]){
+    if((n.offerId&&offerIds.has(n.offerId))||(n.dealId&&dealIds.has(n.dealId))||n.listingId===listingId)n.archived=true;
+  }
+}
+function listingIsAvailable(db,listingId){return db.listings.some(l=>l.id===listingId&&['open','booked'].includes(l.status))}
 function reconcileCompletedDeals(db){
   let changed=false;
   for(const b of (db.bookings||[])){
@@ -480,19 +491,29 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});if(!accountActive(u))return json(res,403,{error:'Verify your email before using the marketplace.'});const b=await getBody(req);const resources=['driver','truck','load','warehouse','storage','equipment'];const intents=['have','need'];const priceModes=['fixed','negotiable','request_quotes','open_bidding'];if(!resources.includes(b.resource)||!intents.includes(b.intent)||!priceModes.includes(b.priceMode))return json(res,400,{error:'Invalid listing.'});
     const db=readDB();const x={id:id('l'),userId:u.id,intent:b.intent,resource:b.resource,title:String(b.title||'').slice(0,120),country:b.country||u.country||'',currency:b.currency||u.currency||db.settings.defaultCurrency,priceMode:b.priceMode,price:Number(b.price||0),data:sanitizeData(b.data),status:'open',createdAt:new Date().toISOString()};db.listings.push(x);recomputeMatches(db);await writeDB(db);return json(res,201,{listing:x});
   }
-  if(p.startsWith('/api/listings/')&&req.method==='DELETE'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const lid=p.split('/').pop(),db=readDB(),x=db.listings.find(z=>z.id===lid);if(!x)return json(res,404,{error:'Listing not found.'});if(x.userId!==u.id&&!isOwner(u))return json(res,403,{error:'Not your listing.'});x.status='closed';recomputeMatches(db);await writeDB(db);return json(res,200,{ok:true});}
+  if(p.startsWith('/api/listings/')&&req.method==='DELETE'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const lid=p.split('/').pop(),db=readDB(),x=db.listings.find(z=>z.id===lid);if(!x)return json(res,404,{error:'Listing not found.'});if(x.userId!==u.id&&!isOwner(u))return json(res,403,{error:'Not your listing.'});x.status='closed';x.closedAt=new Date().toISOString();x.closedReason='owner_removed';archiveListingActivity(db,x.id);recomputeMatches(db);await writeDB(db);return json(res,200,{ok:true});}
   if(p==='/api/matches'&&req.method==='GET'){const db=readDB();recomputeMatches(db);await writeDB(db);const map=Object.fromEntries(db.listings.map(x=>[x.id,publicListing(x,db)]));return json(res,200,{matches:db.matches.map(m=>({...m,listings:m.listingIds.map(i=>map[i]).filter(Boolean)}))});}
-  if(p==='/api/offers'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();const myListings=new Set(db.listings.filter(x=>x.userId===u.id).map(x=>x.id));const mine=isOwner(u)?db.offers:db.offers.filter(o=>o.fromUserId===u.id||o.toUserId===u.id||myListings.has(o.listingId));const completedOfferIds=new Set();for(const b of db.bookings.filter(b=>b.status==='completed'))for(const oid of relatedOfferIds(db,b.offerId))completedOfferIds.add(oid);const offers=mine.filter(o=>!completedOfferIds.has(o.id));return json(res,200,{offers:offers.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))});}
+  if(p==='/api/offers'&&req.method==='GET'){
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});
+    const db=readDB(),myListings=new Set(db.listings.filter(x=>x.userId===u.id).map(x=>x.id));
+    const mine=isOwner(u)?db.offers:db.offers.filter(o=>o.fromUserId===u.id||o.toUserId===u.id||myListings.has(o.listingId));
+    // Rejected and countered offers remain visible until the listing is removed
+    // or a deal on that listing is completed.
+    const offers=mine.filter(o=>listingIsAvailable(db,o.listingId)&&!(db.bookings||[]).some(b=>b.listingId===o.listingId&&b.status==='completed'));
+    return json(res,200,{offers:offers.sort((a,b)=>b.createdAt.localeCompare(a.createdAt))});
+  }
   if(p==='/api/offers'&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});if(!accountActive(u))return json(res,403,{error:'Verify your email before using the marketplace.'});const b=await getBody(req),db=readDB(),listing=db.listings.find(x=>x.id===b.listingId&&x.status==='open');if(!listing)return json(res,404,{error:'Listing not found.'});if(listing.userId===u.id)return json(res,400,{error:'You cannot offer on your own listing.'});const amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Offer amount required.'});const o={id:id('o'),listingId:listing.id,fromUserId:u.id,toUserId:listing.userId,amount,currency:b.currency||listing.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:b.parentOfferId||null,createdAt:new Date().toISOString()};db.offers.push(o);addNotification(db,listing.userId,'offer','New offer received',`${u.name||'A member'} sent you an offer of ${o.currency} ${o.amount}.`,'offers',null,o.id);await writeDB(db);return json(res,201,{offer:o});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});if(!accountActive(u))return json(res,403,{error:'Verify your email before using the marketplace.'});const b=await getBody(req),db=readDB(),listing=db.listings.find(x=>x.id===b.listingId&&x.status==='open');if(!listing)return json(res,404,{error:'Listing not found.'});if(listing.userId===u.id)return json(res,400,{error:'You cannot offer on your own listing.'});if(b.parentOfferId){const parent=db.offers.find(x=>x.id===b.parentOfferId);if(!parent||parent.listingId!==listing.id||![parent.fromUserId,parent.toUserId].includes(u.id))return json(res,400,{error:'Invalid offer thread.'});}const amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Offer amount required.'});const o={id:id('o'),listingId:listing.id,fromUserId:u.id,toUserId:listing.userId,amount,currency:b.currency||listing.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:b.parentOfferId||null,createdAt:new Date().toISOString()};db.offers.push(o);addNotification(db,listing.userId,'offer','New offer received',`${u.name||'A member'} sent you an offer of ${o.currency} ${o.amount}.`,'offers',null,o.id);await writeDB(db);return json(res,201,{offer:o});
   }
   if(/^\/api\/offers\/[^/]+\/(accept|reject|counter)$/.test(p)&&req.method==='POST'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const parts=p.split('/'),oid=parts[3],action=parts[4],db=readDB(),o=db.offers.find(x=>x.id===oid);if(!o)return json(res,404,{error:'Offer not found.'});if(o.toUserId!==u.id&&o.fromUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Not allowed.'});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const parts=p.split('/'),oid=parts[3],action=parts[4],db=readDB(),o=db.offers.find(x=>x.id===oid);if(!o)return json(res,404,{error:'Offer not found.'});if(!listingIsAvailable(db,o.listingId))return json(res,409,{error:'This listing is closed.'});if(o.toUserId!==u.id&&o.fromUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Not allowed.'});
     if(action==='accept'){
+      if(o.status!=='pending')return json(res,409,{error:'Only a pending offer can be accepted.'});
+      if((db.bookings||[]).some(b=>b.listingId===o.listingId&&!['cancelled','completed'].includes(b.status)))return json(res,409,{error:'This listing already has an active deal.'});
       if(o.toUserId!==u.id&&!isOwner(u))return json(res,403,{error:'Only recipient can accept.'});o.status='accepted';o.acceptedAt=new Date().toISOString();const booking=createBookingFromAcceptedOffer(db,o);if(!booking)return json(res,409,{error:'The accepted listing could not be converted into a deal.'});attachDealToOfferThread(db,booking);addNotification(db,booking.buyerUserId,'agreement','Agreement accepted',`Your ${booking.dealType} agreement is accepted. Complete basic verification before the TUT Move fee.`,'offers',booking.id);addNotification(db,booking.providerUserId,'agreement','You were selected',`Your ${booking.dealType} offer/agreement was accepted. Open Activity to continue.`,'offers',booking.id);recomputeMatches(db);await writeDB(db);return json(res,200,{booking:bookingView(booking,db)});
     }
-    if(action==='reject'){o.status='rejected';addNotification(db,o.fromUserId,'offer_rejected','Offer update','Your offer was not accepted.','offers');await writeDB(db);return json(res,200,{offer:o});}
-    const b=await getBody(req),amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Counter amount required.'});o.status='countered';const c={id:id('o'),listingId:o.listingId,fromUserId:u.id,toUserId:u.id===o.fromUserId?o.toUserId:o.fromUserId,amount,currency:o.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:o.id,createdAt:new Date().toISOString()};db.offers.push(c);addNotification(db,c.toUserId,'counter','Counter offer received',`${u.name||'A member'} sent a counter offer of ${c.currency} ${c.amount}.`,'offers',null,c.id);await writeDB(db);return json(res,201,{offer:c});
+    if(action==='reject'){if(o.status!=='pending')return json(res,409,{error:'Only a pending offer can be rejected.'});o.status='rejected';addNotification(db,o.fromUserId,'offer_rejected','Offer update','Your offer was not accepted. You can negotiate a new price.','offers',null,o.id);await writeDB(db);return json(res,200,{offer:o});}
+    if(!['pending','rejected'].includes(o.status))return json(res,409,{error:'This offer cannot be countered again. Reply to the latest offer.'});const b=await getBody(req),amount=Number(b.amount||0);if(!(amount>0))return json(res,400,{error:'Counter amount required.'});o.status='countered';const c={id:id('o'),listingId:o.listingId,fromUserId:u.id,toUserId:u.id===o.fromUserId?o.toUserId:o.fromUserId,amount,currency:o.currency,message:String(b.message||'').slice(0,500),status:'pending',parentOfferId:o.id,createdAt:new Date().toISOString()};db.offers.push(c);addNotification(db,c.toUserId,'counter','Counter offer received',`${u.name||'A member'} sent a counter offer of ${c.currency} ${c.amount}.`,'offers',null,c.id);await writeDB(db);return json(res,201,{offer:c});
   }
   if(p==='/api/verification/me'&&req.method==='GET'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});
@@ -578,7 +599,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});if(b.status==='completed')return json(res,409,{error:'This deal is already completed.'});if(b.status!=='deal_open'||b.paymentStatus!=='paid')return json(res,409,{error:'The deal must be open before completion.'});b.completion=b.completion||{buyer:false,provider:false};const now=new Date().toISOString();if(u.id===b.buyerUserId){b.completion.buyer=true;b.completion.buyerAt=now}else{b.completion.provider=true;b.completion.providerAt=now}const complete=b.completion.buyer&&b.completion.provider;if(complete){b.status='completed';b.completedAt=now;closeCompletedDealListings(db,b);b.dealRecordReady=true;archiveCompletedDealNotifications(db,b)}else b.status='deal_open';await writeDB(db);if(complete){const pdf=await dealPdfBuffer(b,db);await emailDealRecord(b,db,pdf);return json(res,200,{complete,booking:b,pdfUrl:`/api/bookings/${b.id}/deal-record.pdf`});}return json(res,200,{complete,booking:b});
   }
   if(p==='/api/notifications'&&req.method==='GET'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();const completedIds=new Set((db.bookings||[]).filter(b=>b.status==='completed').map(b=>b.id));const completedOffers=new Set();for(const b of (db.bookings||[]).filter(b=>b.status==='completed'))for(const oid of relatedOfferIds(db,b.offerId))completedOffers.add(oid);const items=(db.notifications||[]).filter(n=>n.userId===u.id&&!n.archived&&!completedIds.has(n.dealId)&&!completedOffers.has(n.offerId)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,60);return json(res,200,{items,unread:items.filter(x=>!x.read).length});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();const completedIds=new Set((db.bookings||[]).filter(b=>b.status==='completed').map(b=>b.id));const completedOffers=new Set();for(const b of (db.bookings||[]).filter(b=>b.status==='completed'))for(const oid of relatedOfferIds(db,b.offerId))completedOffers.add(oid);const closedOfferIds=new Set((db.offers||[]).filter(o=>!listingIsAvailable(db,o.listingId)).map(o=>o.id));const closedDealIds=new Set((db.bookings||[]).filter(b=>!listingIsAvailable(db,b.listingId)).map(b=>b.id));const items=(db.notifications||[]).filter(n=>n.userId===u.id&&!n.archived&&!completedIds.has(n.dealId)&&!completedOffers.has(n.offerId)&&!closedOfferIds.has(n.offerId)&&!closedDealIds.has(n.dealId)).sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).slice(0,60);return json(res,200,{items,unread:items.filter(x=>!x.read).length});
   }
   if(p==='/api/notifications/read'&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const db=readDB();for(const n of (db.notifications||[]))if(n.userId===u.id)n.read=true;await writeDB(db);return json(res,200,{ok:true});
