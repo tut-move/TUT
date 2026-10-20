@@ -9,7 +9,7 @@ const clean=v=>v===undefined||v===null||String(v).trim()===''?'Not specified':St
 const ascii=v=>clean(v).normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7e\xa0-\xff]/g,'?');
 const esc=v=>ascii(v).replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
 const money=(currency,value)=>`${clean(currency||'USD')} ${Number(value||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
-const date=v=>v&&!Number.isNaN(Date.parse(v))?new Date(v).toLocaleString('en-GB',{timeZone:'UTC',dateStyle:'medium',timeStyle:'short'})+' UTC':'Not specified';
+const date=v=>v&&!Number.isNaN(Date.parse(v))?new Date(v).toLocaleString('en-GB',{timeZone:'Europe/Berlin',dateStyle:'medium',timeStyle:'short'})+' (Europe/Berlin)':'Not specified';
 function routeFrom(listing,offer,b){
  const sources=[b,b?.trip,b?.dealTerms,listing?.data,listing?.details,listing,offer?.data,offer].filter(x=>x&&typeof x==='object');
  const pick=keys=>{for(const s of sources)for(const k of keys)if(typeof s[k]==='string'&&s[k].trim())return s[k].trim();return 'Not specified'};
@@ -64,8 +64,7 @@ function createDealRecord(b,db){
  mid(178,36,'COMPLETED',{font:'F2',color:GOLD});
  mid(190,8.4,'OFFICIAL TUT MOVE TRANSACTION RECORD');
  const party=(x,role,u)=>{
-  text(x,225,9.5,role,{color:GOLD,max:224});
-  text(x,244,17,u.verification?.legalName||u.name||'Not specified',{font:'F2',color:IVORY,max:226});
+  text(x,244,16,`${u.verification?.legalName||u.name||'Not specified'} (${role.toLowerCase()})`,{font:'F2',color:IVORY,max:235});
   text(x,262,9.3,u.email,{max:225});
   text(x,276,9.3,u.verification?.phone||u.phone,{max:225});
   text(x,288,9.3,u.verification?.country||u.country,{max:225});
@@ -77,17 +76,14 @@ function createDealRecord(b,db){
  text(48,361,17,route.from,{font:'F2',color:IVORY,max:226});text(315,361,17,route.to,{font:'F2',color:IVORY,max:226});
  mid(399,10,'A G R E E D   T R A N S P O R T   P R I C E',{color:GOLD});
  mid(431,30,money(b.currency,b.agreedPrice),{font:'F2',color:IVORY,max:340});
- mid(449,8.5,'Paid directly between the parties outside TUTMOVE');
- const fee=(x,role,label,u)=>{
-  const amount=feeFor(role);
-  text(x,489,9.5,`TUTMOVE FEE (${label})`,{color:GOLD,max:228});
-  text(x,514,23,money('USD',amount),{font:'F2',color:IVORY,max:226});
-  text(x,529,8.6,`Charged to ${u.name||'party'}`,{max:226});
-  text(x,543,11,feeStatus(role,amount),{font:'F2',color:GOLD});
- };
- fee(48,'buyer',buyerRole,buyer);fee(315,'provider',providerRole,provider);
+ mid(449,8.5,`To be paid by ${buyer.verification?.legalName||buyer.name||'requester'} to ${provider.verification?.legalName||provider.name||'provider'}`,{max:480});
+ // Fee snapshot remains per-party and independent of the underlying transport price.
+ // Display one clean box with each party's actual recorded fee, not a fabricated paid status.
+ mid(490,10,'T U T   M O V E   F E E',{color:GOLD});
+ mid(515,18,`Requester: ${money('USD',feeFor('buyer'))}    Provider: ${money('USD',feeFor('provider'))}`,{font:'F2',color:IVORY,max:490});
+ mid(537,9,`Fee status: requester ${feeStatus('buyer',feeFor('buyer'))} / provider ${feeStatus('provider',feeFor('provider'))}`,{color:GOLD,max:490});
  text(48,572,15,'D E A L   D E T A I L S',{color:GOLD,font:'F2'});
- const rows=[['DEAL REFERENCE',b.id],['DEAL TYPE',String(b.dealType||'deal').toUpperCase()],['PAYMENT METHOD',terms.settlementMethod||'Not specified'],['PAYMENT TIMING',terms.paymentTiming||'Not specified'],['CONFIRMATION',b.completion?.buyer&&b.completion?.provider?'Confirmed by both parties':'Completed deal'],['COMPLETED AT',date(b.completedAt)],['ADDITIONAL TERMS',terms.additionalTerms||offer.message||'No additional written terms']];
+ const rows=[['DEAL REFERENCE',b.id],['DEAL TYPE',String(b.dealType||'deal').toUpperCase()],['PAYMENT METHOD',terms.confirmed?terms.settlementMethod:'Not agreed'],['PAYMENT TIMING',terms.confirmed?terms.paymentTiming:'Not agreed'],['CONFIRMATION',b.completion?.buyer&&b.completion?.provider?'Confirmed by both parties':'Completed deal'],['COMPLETED AT',date(b.completedAt)],['ADDITIONAL TERMS',terms.additionalTerms||offer.message||'No additional written terms']];
  let y=593;for(const [k,v] of rows){text(48,y,9,k,{color:MUTED,max:210});text(284,y,9.5,v,{max:265});line(45,y+8,550,y+8);y+=19.5;}
  text(48,733,9.2,'TUTMOVE records the agreement and its applicable platform fee only.',{font:'F2',color:GOLD,max:520});
  text(48,744,7.5,'TUTMOVE is not a party to the underlying transaction. Identity checks, payment, handover,',{max:510});

@@ -586,8 +586,32 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   }
   if(/^\/api\/bookings\/[^/]+\/deal-terms$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],body=await getBody(req),db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});if(!['agreement_terms','commission_due'].includes(b.status))return json(res,409,{error:'Deal terms are not available yet.'});
-    const methods=['Cash','Bank Transfer','Cash / Bank Transfer','Other agreed method'],timings=['Upon meeting','Upon handover','Before handover','After delivery / service','As agreed between the parties'];const settlementMethod=String(body.settlementMethod||''),paymentTiming=String(body.paymentTiming||'');if(!methods.includes(settlementMethod)||!timings.includes(paymentTiming))return json(res,400,{error:'Choose a valid payment method and payment timing.'});
-    b.dealTerms=b.dealTerms||{buyer:null,provider:null,confirmed:false};const choice={settlementMethod,paymentTiming,at:new Date().toISOString()};if(u.id===b.buyerUserId)b.dealTerms.buyer=choice;else b.dealTerms.provider=choice;const a=b.dealTerms.buyer,z=b.dealTerms.provider;b.dealTerms.confirmed=!!(a&&z&&a.settlementMethod===z.settlementMethod&&a.paymentTiming===z.paymentTiming);if(b.dealTerms.confirmed){b.dealTerms.settlementMethod=a.settlementMethod;b.dealTerms.paymentTiming=a.paymentTiming;b.dealTerms.confirmedAt=new Date().toISOString();b.status='commission_due';activateFeeFreeSides(b);}else b.status='agreement_terms';await writeDB(db);return json(res,200,{booking:bookingView(b,db),confirmed:b.dealTerms.confirmed});
+    // The requester (buyer) proposes the underlying-service payment terms;
+    // the provider can only accept or request a revision. Never auto-confirm two unrelated selections.
+    const methods=['Cash','Bank Transfer','Cash / Bank Transfer','Other agreed method'];
+    const timings=['Upon meeting','Upon handover','Before handover','After delivery / service','As agreed between the parties'];
+    b.dealTerms=b.dealTerms||{buyer:null,provider:null,confirmed:false};
+    const terms=b.dealTerms,now=new Date().toISOString();
+    if(u.id===b.buyerUserId){
+      const settlementMethod=String(body.settlementMethod||''),paymentTiming=String(body.paymentTiming||'');
+      if(!methods.includes(settlementMethod)||!timings.includes(paymentTiming))return json(res,400,{error:'Choose a valid payment method and timing.'});
+      terms.buyer={settlementMethod,paymentTiming,at:now};terms.provider=null;terms.confirmed=false;
+      terms.settlementMethod='';terms.paymentTiming='';terms.confirmedAt=null;
+      addNotification(db,b.providerUserId,'agreement','Payment method proposed','Review and accept or request a change to the proposed payment terms.','offers',b.id);
+    }else{
+      if(!terms.buyer)return json(res,409,{error:'Wait for the payer to propose a payment method.'});
+      if(body.decision==='reject'){
+        terms.provider={decision:'rejected',at:now};terms.confirmed=false;
+        addNotification(db,b.buyerUserId,'agreement','Payment terms change requested','The recipient rejected the proposed payment method. Please propose new terms.','offers',b.id);
+      }else if(body.decision==='accept'){
+        terms.provider={decision:'accepted',at:now};terms.confirmed=true;
+        terms.settlementMethod=terms.buyer.settlementMethod;terms.paymentTiming=terms.buyer.paymentTiming;
+        terms.confirmedAt=now;b.status='commission_due';activateFeeFreeSides(b);
+        addNotification(db,b.buyerUserId,'agreement','Payment terms accepted','The recipient accepted your proposed payment method.','offers',b.id);
+      }else return json(res,400,{error:'Accept or reject the proposed payment terms.'});
+    }
+    if(!terms.confirmed)b.status='agreement_terms';
+    await writeDB(db);return json(res,200,{booking:bookingView(b,db),confirmed:terms.confirmed});
   }
   if(/^\/api\/bookings\/[^/]+\/basic-reject$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});if(['cancelled','completed','payment_pending','payment_expired'].includes(b.status))return json(res,409,{error:'This deal is already closed.'});if(b.paymentStatus==='paid')return json(res,409,{error:'This deal is already paid and open.'});b.status='cancelled';b.cancelledAt=new Date().toISOString();b.basicVerification=b.basicVerification||{};b.basicVerification.rejectedBy=u.id;const listing=db.listings.find(x=>x.id===b.listingId);if(listing&&listing.status==='booked')listing.status='open';const offer=db.offers.find(x=>x.id===b.offerId);if(offer)offer.status='rejected_after_basic_verification';recomputeMatches(db);await writeDB(db);return json(res,200,{ok:true});
