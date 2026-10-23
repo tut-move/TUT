@@ -281,12 +281,12 @@
             <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>These documents stay private. TUT Move does not manually approve them. The other party receives only limited verification details after the TUT Move fee is paid; original documents can be checked directly between the parties when appropriate.</p></div>
             <div class="uploadGrid">
               <label class="uploadCard"><span class="uploadIcon">ID</span><b>Government ID</b><small>Take a photo</small><input id="verifyIdentityFile" type="file" accept="image/*" capture="environment"></label>
-              <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Take a selfie</small><input id="verifySelfieFile" type="file" accept="image/*" capture="user"></label>
-              <label class="uploadCard" data-role-field="driver"><span class="uploadIcon">DL</span><b>Driving licence</b><small>Take a photo</small><input id="verifyLicenceFile" type="file" accept="image/*" capture="environment"></label>
+              <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Face only - never an ID card. Shown to the other party.</small><input id="verifySelfieFile" type="file" accept="image/*" capture="user"></label>
+              <label class="uploadCard"><span class="uploadIcon">DL</span><b>Licence / permit (driving, forklift...)</b><small>Optional unless you are a driver</small><input id="verifyLicenceFile" type="file" accept="image/*" capture="environment"></label>
             </div>
-            <div id="verifyMaskEditor" style="display:none;padding:12px;border:1px solid #b89a58;border-radius:8px;margin:12px 0"><b>Automatic privacy protection</b><p>The entire document image is hidden automatically on the server. This privacy-safe fallback does not yet preserve the document portrait or text. Your selfie remains available separately.</p><p id="verifyMaskStatus"></p></div>
+            <div id="verifyMaskEditor" style="display:none;padding:12px;border:1px solid #b89a58;border-radius:8px;margin:12px 0"><b>Automatic privacy protection</b><p>Numbers are found and covered in your browser. The original photo never leaves your device. You review the result and can cover anything else before sending.</p><p id="verifyMaskStatus"></p></div>
             <label><span>Profile notes</span><textarea id="verifyNotes" rows="3" placeholder="Optional information for the other party"></textarea></label>
-            <div class="privacyNote"><b>Privacy</b><span>Document images are never saved or shared. The server creates a safe redacted confirmation card automatically. Your selfie is handled separately.</span></div>
+            <div class="privacyNote"><b>Privacy</b><span>Only the masked version of each document is uploaded, and the other party sees it only after both of you agree. TUT Move does not verify documents: check the originals in person. Your selfie is handled separately.</span></div>
             <div class="wizardActions"><button class="outlineBtn" type="button" onclick="verifyPrevStep()">Back</button><button class="goldBtn" type="submit">Send photos for verification</button></div>
             <div id="verifySubmitMsg" class="formMessage" aria-live="polite"></div>
           </section>

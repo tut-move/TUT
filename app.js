@@ -806,7 +806,18 @@ async function reviewDealTerms(id,decision){try{await api(`/api/bookings/${id}/d
 async function startStripeCheckout(id){if(!document.getElementById('feeAgree_'+id)?.checked){alert('Accept the fee and refund terms before payment.');return}try{const j=await api(`/api/bookings/${id}/checkout`,{method:'POST'});if(j.url)location.href=j.url}catch(e){alert(e.message)}}
 const openVerificationProfiles=new Set();
 function closeBasicProfile(id){openVerificationProfiles.delete(id);const el=$(`basicProfile_${id}`);if(el)el.innerHTML='';}
-async function loadBasicProfile(id){try{const j=await api(`/api/bookings/${id}/basic-profile`),p=j.profile||{},el=$(`basicProfile_${id}`);if(!el)return;openVerificationProfiles.add(id);el.innerHTML=`<p><b>${j.otherReady?'✓ Other party verification is complete':'○ Other party verification is incomplete'}</b></p><div class="dealFacts">${valueLine('Name',p.displayName)}${valueLine('Country',p.country)}${valueLine('Role',p.role)}${valueLine('Email verified',p.emailVerified?'Yes':'No')}${p.contactUnlocked?valueLine('Phone',p.phone)+valueLine('Email',p.email):''}${valueLine('Identity document',p.identityProvided?'Provided':'Missing')}${valueLine('Government ID (masked)',p.identityNumberMasked)}${p.birthDateMasked?valueLine('Birth year',p.birthDateMasked):''}${valueLine('Photo / selfie',p.selfieProvided?'Provided':'Missing')}${p.role==='driver'?(valueLine('Driving licence',p.licenceProvided?'Provided':'Missing')+valueLine('Licence number (masked)',p.licenceNumberMasked)):''}</div><div class="docConsentBox"><p class="muted">Name and photo are always visible. ID and licence documents open only when <b>both</b> parties agree. TUT Move does not verify documents &mdash; check the originals in person at the meeting.</p><div class="mutualState"><span>${j.docConsent?.mine?'✓ You agreed to open documents':'○ You have not agreed'}</span><span>${j.docConsent?.other?'✓ Other party agreed':'○ Other party has not agreed'}</span></div><button class="outlineBtn mini" onclick="setDocConsent('${id}',${j.docConsent?.mine?'false':'true'})">${j.docConsent?.mine?'Withdraw my consent':'I agree to open documents'}</button></div><div class="verificationPhotoList">${p.identityPreview?`<img loading="lazy" alt="Masked identity photo" src="/api/bookings/${id}/verification-photo/identity" style="max-width:100%;max-height:350px;display:block;margin:12px 0">`:''}${p.selfiePreview?`<img loading="lazy" alt="Selfie" src="/api/bookings/${id}/verification-photo/selfie" style="max-width:100%;max-height:350px;display:block;margin:12px 0">`:''}${p.licencePreview&&p.role==='driver'?`<img loading="lazy" alt="Masked licence photo" src="/api/bookings/${id}/verification-photo/license" style="max-width:100%;max-height:350px;display:block;margin:12px 0">`:''}</div><button class="outlineBtn mini" onclick="closeBasicProfile('${id}')">Close</button>`}catch(e){if(!/current deal state/.test(e.message))console.warn('Verification preview:',e.message)}}
+async function loadBasicProfile(id){try{const j=await api(`/api/bookings/${id}/basic-profile`),p=j.profile||{},el=$(`basicProfile_${id}`);if(!el)return;openVerificationProfiles.add(id);el.innerHTML=`<p><b>${j.otherReady?'✓ Other party verification is complete':'○ Other party verification is incomplete'}</b></p><div class="dealFacts">${valueLine('Name',p.displayName)}${valueLine('Country',p.country)}${valueLine('Role',p.role)}${valueLine('Email verified',p.emailVerified?'Yes':'No')}${p.contactUnlocked?valueLine('Phone',p.phone)+valueLine('Email',p.email):''}${valueLine('Identity document',p.identityProvided?'Provided':'Missing')}${valueLine('Government ID (masked)',p.identityNumberMasked)}${p.birthDateMasked?valueLine('Birth year',p.birthDateMasked):''}${valueLine('Photo / selfie',p.selfieProvided?'Provided':'Missing')}${(p.role==='driver'||p.licenceProvided)?(valueLine('Licence / permit',p.licenceProvided?'Provided':'Missing')+(p.licenceNumberMasked?valueLine('Licence number (masked)',p.licenceNumberMasked):'')):''}</div><div class="docConsentBox"><p class="muted">Name and photo are always visible. ID and licence documents open only when <b>both</b> parties agree. TUT Move does not verify documents &mdash; check the originals in person at the meeting.</p><div class="mutualState"><span>${j.docConsent?.mine?'✓ You agreed to open documents':'○ You have not agreed'}</span><span>${j.docConsent?.other?'✓ Other party agreed':'○ Other party has not agreed'}</span></div><button class="outlineBtn mini" onclick="setDocConsent('${id}',${j.docConsent?.mine?'false':'true'})">${j.docConsent?.mine?'Withdraw my consent':'I agree to open documents'}</button></div><div class="verificationPhotoList">${p.identityPreview?`<img loading="lazy" alt="Masked identity photo" src="/api/bookings/${id}/verification-photo/identity?t=${Date.now()}" style="max-width:100%;max-height:350px;display:block;margin:12px 0">`:''}${p.selfiePreview?`<img loading="lazy" alt="Selfie" src="/api/bookings/${id}/verification-photo/selfie?t=${Date.now()}" style="max-width:100%;max-height:350px;display:block;margin:12px 0">`:''}${p.licencePreview?`<img loading="lazy" alt="Masked licence photo" src="/api/bookings/${id}/verification-photo/license?t=${Date.now()}" style="max-width:100%;max-height:350px;display:block;margin:12px 0">`:''}</div><button class="outlineBtn mini" onclick="closeBasicProfile('${id}')">Close</button>`}catch(e){if(!/current deal state/.test(e.message))console.warn('Verification preview:',e.message)}}
+async function selfieCheck(file){
+  // Accident guard: the selfie is shown to the other party without redaction, so it must be a face photo, never an ID card.
+  const msg='The selfie must be a portrait photo of your face only. Do not upload an ID card or any document here - documents go in their own fields.';
+  try{
+    const src=typeof file==='string'?file:(file&&file.dataUrl)||'';
+    if(!src.startsWith('data:image/'))return {ok:true};
+    const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=src});
+    if('FaceDetector' in window){const faces=await new window.FaceDetector({fastMode:true}).detect(img);if(!faces.length)return {ok:false,msg};if(faces.length>1)return {ok:false,msg:'Only one face should appear in the selfie.'}}
+  }catch(e){}
+  return {ok:true};
+}
 async function setDocConsent(id,consent){try{await api(`/api/bookings/${id}/doc-consent`,{method:'POST',body:JSON.stringify({consent})});await loadBasicProfile(id)}catch(e){alert(e.message)}}
 async function basicContinue(id){try{await api(`/api/bookings/${id}/basic-continue`,{method:'POST',body:'{}'});await loadBookings();await loadNotifications(false)}catch(e){alert(e.message)}}
 async function basicReject(id){if(!confirm('Reject this preliminary deal? No TUT Move fee will be charged.'))return;try{await api(`/api/bookings/${id}/basic-reject`,{method:'POST',body:'{}'});await Promise.all([loadBookings(),loadOffers(),loadMarket()])}catch(e){alert(e.message)}}
@@ -895,10 +906,13 @@ async function submitVerificationV1(e){
   try{
     const role=$('verifyRole').value;
     const [identityRaw,selfieFile,licenceRaw]=await Promise.all([verifyFileData('verifyIdentityFile'),verifyFileData('verifySelfieFile'),verifyFileData('verifyLicenceFile')]);const identityFile=identityRaw;const licenceFile=licenceRaw;
+    const maskedDocs={};
+    for(const k of ['identity','license']){const inp=$(DOC_INPUT[k]);if(!inp?.files?.[0])continue;const st=docMask[k];if(!st||st.file!==inp.files[0]||!st.confirmed){$('verifySubmitMsg').textContent=`Review the ${DOC_LABEL[k]} image, cover every number, and tick the confirmation box before sending.`;return}maskedDocs[k]=dmExport(k)}
+    if(selfieFile){const chk=await selfieCheck(selfieFile);if(!chk.ok){$('verifySubmitMsg').textContent=chk.msg;return}}
     const licenceClasses=[...document.querySelectorAll('#verifyLicenceClasses input:checked')].map(x=>x.value);
     if(role==='driver'&&!licenceClasses.length){$('verifySubmitMsg').textContent=tr('Choose at least one licence class.');return}
     const registration=$('verifyRegistration')?.value||$('verifyBusinessRegistration')?.value||'';
-    const body={role,legalName:$('verifyLegalName').value,phone:$('verifyPhone')?.value||'',country:$('verifyCountry').value,identityNumber:$('verifyIdentityNumber').value,licenceNumber:$('verifyLicence')?.value||'',licenceClasses,licenceExpiry:$('verifyLicenceExpiry')?.value||'',endorsements:$('verifyEndorsements')?.value||'',registrationNumber:registration,vehicleId:$('verifyVehicle')?.value||'',notes:$('verifyNotes').value,files:{identity:identityFile,selfie:selfieFile,license:role==='driver'?licenceFile:''}};
+    const body={role,legalName:$('verifyLegalName').value,phone:$('verifyPhone')?.value||'',country:$('verifyCountry').value,identityNumber:$('verifyIdentityNumber').value,licenceNumber:$('verifyLicence')?.value||'',licenceClasses,licenceExpiry:$('verifyLicenceExpiry')?.value||'',endorsements:$('verifyEndorsements')?.value||'',registrationNumber:registration,vehicleId:$('verifyVehicle')?.value||'',notes:$('verifyNotes').value,docMaskConfirmed:true,files:{identity:maskedDocs.identity||'',selfie:selfieFile,license:maskedDocs.license||''}};
     const j=await api('/api/verification/submit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     $('verifySubmitMsg').textContent=tr(j.message||'Verification submitted for review.');await loadVerification();if(j.ready){setTimeout(async()=>{go('offers');await loadBookings();},500)}
   }catch(e){$('verifySubmitMsg').textContent=tr(e.message)}
@@ -937,12 +951,83 @@ const _v30Go=go;go=function(id){_v30Go(id);if(id==='verify')setTimeout(loadTrust
 window.addEventListener('DOMContentLoaded',()=>{renderTrustFields();setTimeout(loadTrustVerification,350)});
 
 // Document privacy is enforced on the server; no manual masking or raw document previews.
-function prepareVerificationMask(input){
- const f=input.files?.[0];if(!f)return;
- if(!['image/jpeg','image/png','image/webp'].includes(f.type)){alert('Please choose a JPG, PNG or WebP photo.');input.value='';return;}
- const status=document.getElementById('verifyMaskStatus');if(status)status.textContent='The server will automatically hide the entire document image. Only your entered name and a safe confirmation card will be shared.';
- const editor=document.getElementById('verifyMaskEditor');if(editor)editor.style.display='block';
+// ===== Document masking: runs in the user's browser; the original photo is never uploaded =====
+const docMask={identity:null,license:null};
+const DOC_LABEL={identity:'Government ID',license:'Licence / permit'};
+const DOC_INPUT={identity:'verifyIdentityFile',license:'verifyLicenceFile'};
+function dmSensitive(t){const d=(t.match(/\d/g)||[]).length,l=(t.match(/[A-Za-z]/g)||[]).length;return d>=2||(d>=1&&l>=3&&t.length>=5)}
+let dmTessLoading=null;
+function dmLoadTesseract(){
+  if(window.Tesseract)return Promise.resolve();
+  if(dmTessLoading)return dmTessLoading;
+  dmTessLoading=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';s.onload=res;s.onerror=()=>{dmTessLoading=null;rej(new Error('OCR could not load'))};document.head.appendChild(s)});
+  return dmTessLoading;
 }
+function dmPanel(kind){
+  let p=document.getElementById('dm_'+kind);
+  if(!p){p=document.createElement('div');p.id='dm_'+kind;p.className='docMaskPanel';document.getElementById('verifyMaskEditor').appendChild(p)}
+  return p;
+}
+function dmStatus(kind,text,warn){const el=document.getElementById('dmStatus_'+kind);if(el){el.textContent=text;el.className=warn?'dmWarn':'muted'}}
+function dmRender(kind,preview){
+  const st=docMask[kind];if(!st)return;const cv=st.canvas,ctx=cv.getContext('2d');
+  ctx.drawImage(st.base,0,0);ctx.fillStyle='#000';
+  for(const b of st.boxes)ctx.fillRect(b.x,b.y,b.w,b.h);
+  if(preview){ctx.fillStyle='rgba(0,0,0,.55)';ctx.fillRect(preview.x,preview.y,preview.w,preview.h);ctx.strokeStyle='#e8bd68';ctx.lineWidth=3;ctx.strokeRect(preview.x,preview.y,preview.w,preview.h)}
+}
+function dmConfirm(kind){const st=docMask[kind];if(st)st.confirmed=!!document.getElementById('dmOk_'+kind)?.checked}
+function dmUndo(kind){const st=docMask[kind];if(!st)return;const i=[...st.boxes].map(b=>b.manual).lastIndexOf(true);if(i>=0)st.boxes.splice(i,1);dmRender(kind)}
+function dmClear(kind){const st=docMask[kind];if(!st)return;st.boxes=st.boxes.filter(b=>!b.manual);dmRender(kind)}
+function dmExport(kind){const st=docMask[kind];dmRender(kind);return st.canvas.toDataURL('image/jpeg',0.88)}
+async function dmAuto(kind){
+  const st=docMask[kind];if(!st)return;
+  dmStatus(kind,'Reading the document in your browser to find numbers (first time can take a little while)...');
+  try{
+    await dmLoadTesseract();
+    const {data}=await window.Tesseract.recognize(st.base,'eng',window.__tessOpts||{});
+    if(docMask[kind]!==st)return;
+    let n=0;
+    for(const w of (data.words||[])){
+      const t=String(w.text||'').trim();if(!t||(w.confidence||0)<25||!dmSensitive(t))continue;
+      let {x0,y0,x1,y1}=w.bbox;const len=t.length;
+      if(len>=8)x1=x0+(x1-x0)*(len-3)/len;      // keep the last 3 characters visible, cover the rest
+      const pad=Math.max(3,Math.round((y1-y0)*0.15));
+      st.boxes.push({x:x0-pad,y:y0-pad,w:(x1-x0)+2*pad,h:(y1-y0)+2*pad,manual:false});n++;
+    }
+    dmRender(kind);
+    if(n>0)dmStatus(kind,`Automatically covered ${n} item(s). Check the image carefully and drag to cover anything that was missed.`);
+    else dmStatus(kind,'WARNING: no numbers were detected automatically. This usually means the reader could not read this document. Cover every number, date and code yourself before sending.',true);
+  }catch(e){
+    dmStatus(kind,'WARNING: automatic reading is not available right now. Cover every number, date and code yourself before sending.',true);
+  }
+}
+async function startDocMask(input){
+  const kind=input.id==='verifyIdentityFile'?'identity':'license';
+  const f=input.files?.[0];
+  if(!f){docMask[kind]=null;const p=document.getElementById('dm_'+kind);if(p)p.remove();return}
+  if(!['image/jpeg','image/png','image/webp'].includes(f.type)){alert('Please choose a JPG, PNG or WebP photo.');input.value='';return}
+  if(f.size>12*1024*1024){alert('Each photo must be 12MB or less.');input.value='';return}
+  const editor=document.getElementById('verifyMaskEditor');if(editor)editor.style.display='block';
+  const status=document.getElementById('verifyMaskStatus');if(status)status.textContent='';
+  let bmp;try{bmp=await createImageBitmap(f)}catch{alert('Could not read this photo.');input.value='';return}
+  const scale=Math.min(1,1600/Math.max(bmp.width,bmp.height));
+  const w=Math.max(1,Math.round(bmp.width*scale)),h=Math.max(1,Math.round(bmp.height*scale));
+  const base=document.createElement('canvas');base.width=w;base.height=h;base.getContext('2d').drawImage(bmp,0,0,w,h);bmp.close?.();
+  const p=dmPanel(kind);
+  p.innerHTML=`<h4>${DOC_LABEL[kind]}: cover every number</h4><p id="dmStatus_${kind}" class="muted"></p><canvas id="dmCv_${kind}" width="${w}" height="${h}" style="width:100%;max-height:70vh;object-fit:contain;touch-action:none;cursor:crosshair;border:1px solid #b89a58;border-radius:6px"></canvas><p class="muted">Drag on the image to cover anything you do not want shared: numbers, dates, address, barcodes. Your name and photo can stay visible.</p><div class="actions"><button type="button" class="outlineBtn mini" onclick="dmUndo('${kind}')">Undo my last box</button> <button type="button" class="outlineBtn mini" onclick="dmClear('${kind}')">Remove my boxes</button></div><label class="dmConfirm"><input type="checkbox" id="dmOk_${kind}" onchange="dmConfirm('${kind}')"> I checked this image: no ID, licence, card or document numbers, dates or barcodes are visible.</label>`;
+  const cv=document.getElementById('dmCv_'+kind);
+  const st=docMask[kind]={file:f,base,canvas:cv,boxes:[],confirmed:false};
+  dmRender(kind);
+  let drag=null;
+  const pt=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left)*cv.width/r.width,y:(e.clientY-r.top)*cv.height/r.height}};
+  const rect=(a,b)=>({x:Math.min(a.x,b.x),y:Math.min(a.y,b.y),w:Math.abs(a.x-b.x),h:Math.abs(a.y-b.y)});
+  cv.addEventListener('pointerdown',e=>{drag=pt(e);cv.setPointerCapture(e.pointerId);e.preventDefault()});
+  cv.addEventListener('pointermove',e=>{if(drag)dmRender(kind,rect(drag,pt(e)))});
+  cv.addEventListener('pointerup',e=>{if(!drag)return;const r=rect(drag,pt(e));drag=null;if(r.w>6&&r.h>6)st.boxes.push({...r,manual:true});dmRender(kind)});
+  cv.addEventListener('pointercancel',()=>{drag=null;dmRender(kind)});
+  dmAuto(kind);
+}
+function prepareVerificationMask(input){return startDocMask(input)}
 ['verifyIdentityFile','verifyLicenceFile'].forEach(id=>document.getElementById(id)?.addEventListener('change',e=>prepareVerificationMask(e.target)));
 async function verifyFileData(id){
   const f=$(id)?.files?.[0];if(!f)return '';
