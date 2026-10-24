@@ -1,3 +1,4 @@
+const {capacityLabel}=require('./deal-capacity');
 'use strict';
 // Single self-contained PDF renderer. Both SMTP and downloads call createDealRecord.
 // No Chromium, external font, runtime dependency, or HTML screenshot required.
@@ -22,8 +23,8 @@ function createDealRecord(b,db){
  const provider=(db.users||[]).find(x=>x.id===b.providerUserId)||{};
  const defaultRoles={driver:['REQUESTER','DRIVER'],truck:['REQUESTER','TRUCK OWNER'],warehouse:['REQUESTER','WAREHOUSE PROVIDER'],equipment:['REQUESTER','EQUIPMENT PROVIDER'],transport:['CARGO OWNER','TRANSPORT PROVIDER']};
  const roles=defaultRoles[b.dealType]||['REQUESTER','PROVIDER'];
- const buyerRole=clean(b.buyerDealRole||b.partyRoles?.buyer||roles[0]);
- const providerRole=clean(b.providerDealRole||b.partyRoles?.provider||roles[1]);
+ const buyerRole=clean(b.buyerDealRole||b.partyRoles?.buyer||capacityLabel(b.dealType,'buyer',buyer));
+ const providerRole=clean(b.providerDealRole||b.partyRoles?.provider||capacityLabel(b.dealType,'provider',provider));
  const route=routeFrom(listing,offer,b),terms=b.dealTerms||{};
  // Fees are read from the booking snapshot, never recalculated from current admin settings.
  // Legacy records retain their original charged-party behavior rather than inventing payments.
@@ -64,20 +65,31 @@ function createDealRecord(b,db){
  mid(178,36,'COMPLETED',{font:'F2',color:GOLD});
  mid(190,8.4,'OFFICIAL TUT MOVE TRANSACTION RECORD');
  const party=(x,role,u)=>{
-  text(x,244,16,`${u.verification?.legalName||u.name||'Not specified'} (${role.toLowerCase()})`,{font:'F2',color:IVORY,max:235});
+  text(x,229,8,String(role).toUpperCase(),{font:'F2',color:GOLD,max:235});
+  text(x,246,16,`${u.verification?.legalName||u.name||'Not specified'}`,{font:'F2',color:IVORY,max:235});
   text(x,262,9.3,u.email,{max:225});
   text(x,276,9.3,u.verification?.phone||u.phone,{max:225});
   text(x,288,9.3,u.verification?.country||u.country,{max:225});
  };
  party(48,buyerRole,buyer);party(315,providerRole,provider);
  ops.push('0 0 0 rg 195 515 205 26 re f');
- mid(316,10,'T R A N S P O R T   R O U T E',{color:GOLD});
- text(48,341,9,'PICKUP LOCATION',{color:MUTED});text(315,341,9,'DELIVERY LOCATION',{color:MUTED});
+ // Wording follows the deal type (a driver deal is not a "transport route").
+ const sp=s=>s.split(' ').map(w=>w.split('').join(' ')).join('   ');
+ const LABELS={
+  transport:{route:'TRANSPORT ROUTE',from:'PICKUP LOCATION',to:'DELIVERY LOCATION',price:'AGREED TRANSPORT PRICE'},
+  driver:{route:'WORK LOCATIONS',from:'START LOCATION',to:'END LOCATION',price:'AGREED DRIVER COMPENSATION'},
+  truck:{route:'RENTAL LOCATIONS',from:'PICKUP / START',to:'RETURN / END',price:'AGREED RENTAL PRICE'},
+  warehouse:{route:'STORAGE LOCATIONS',from:'START ADDRESS',to:'END ADDRESS',price:'AGREED STORAGE PRICE'},
+  equipment:{route:'EQUIPMENT LOCATIONS',from:'PICKUP / START',to:'RETURN / END',price:'AGREED EQUIPMENT PRICE'}
+ };
+ const L=LABELS[b.dealType]||LABELS.transport;
+ mid(316,10,sp(L.route),{color:GOLD});
+ text(48,341,9,L.from,{color:MUTED});text(315,341,9,L.to,{color:MUTED});
  text(48,361,17,route.from,{font:'F2',color:IVORY,max:226});text(315,361,17,route.to,{font:'F2',color:IVORY,max:226});
- mid(399,10,'A G R E E D   T R A N S P O R T   P R I C E',{color:GOLD});
+ mid(399,10,sp(L.price),{color:GOLD});
  mid(431,30,money(b.currency,b.agreedPrice),{font:'F2',color:IVORY,max:340});
  mid(449,8.5,`To be paid by ${buyer.verification?.legalName||buyer.name||'requester'} to ${provider.verification?.legalName||provider.name||'provider'}`,{max:480});
- // Fee snapshot remains per-party and independent of the underlying transport price.
+ // Fee snapshot remains per-party and independent of the underlying deal price.
  // Display one clean box with each party's actual recorded fee, not a fabricated paid status.
  mid(490,10,'T U T   M O V E   F E E',{color:GOLD});
  mid(515,18,`Requester: ${money('USD',feeFor('buyer'))}    Provider: ${money('USD',feeFor('provider'))}`,{font:'F2',color:IVORY,max:490});

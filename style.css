@@ -920,3 +920,5 @@ html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:righ
 .docMaskPanel h4{margin:0 0 6px}
 .dmWarn{color:#ff8a80;font-weight:600}
 .dmConfirm{display:flex;gap:8px;align-items:flex-start;margin-top:10px}
+#verifyReqNote{margin:6px 0 12px}
+.uploadCard.hidden{display:none!important}

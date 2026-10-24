@@ -260,7 +260,8 @@
 
           <section class="verifyWizardStep hidden" data-step-panel="2">
             <div class="stepHeading"><span>STEP 2 OF 3</span><h2>Show your qualifications.</h2><p>The fields below adapt to the role you selected.</p></div>
-            <div data-role-field="driver" class="roleVerifyBlock premiumRoleBlock">
+            <p id="verifyReqNote" class="muted"></p>
+            <div data-req-field="licence" id="licenceBlock" class="roleVerifyBlock premiumRoleBlock">
               <div class="blockTitle"><div><span class="miniIcon">▣</span><div><h3>Driving licence</h3><p>Licence type, validity and specialist endorsements.</p></div></div></div>
               <div class="formGrid2"><label><span>Licence number</span><input id="verifyLicence"></label><label><span>Licence expiry</span><input id="verifyLicenceExpiry" type="date"></label></div>
               <label><span>Licence class / qualification</span></label><div id="verifyLicenceClasses" class="verificationChecks"></div>
@@ -281,9 +282,10 @@
             <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>These documents stay private. TUT Move does not manually approve them. The other party receives only limited verification details after the TUT Move fee is paid; original documents can be checked directly between the parties when appropriate.</p></div>
             <div class="uploadGrid">
               <label class="uploadCard"><span class="uploadIcon">ID</span><b>Government ID</b><small>Take a photo</small><input id="verifyIdentityFile" type="file" accept="image/*" capture="environment"></label>
-              <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Face only - never an ID card. Shown to the other party.</small><input id="verifySelfieFile" type="file" accept="image/*" capture="user"></label>
-              <label class="uploadCard"><span class="uploadIcon">DL</span><b>Licence / permit (driving, forklift...)</b><small>Optional unless you are a driver</small><input id="verifyLicenceFile" type="file" accept="image/*" capture="environment"></label>
+              <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Your face only (camera or file). ID cards, licences and documents are rejected.</small><input id="verifySelfieFile" type="file" accept="image/*"></label>
+              <label class="uploadCard" data-req-field="licence"><span class="uploadIcon">DL</span><b>Licence / permit (driving, forklift...)</b><small id="licenceFileHint">Required or optional depending on your deal</small><input id="verifyLicenceFile" type="file" accept="image/*" capture="environment"></label>
             </div>
+            <p id="selfieMsg" class="muted"></p>
             <div id="verifyMaskEditor" style="display:none;padding:12px;border:1px solid #b89a58;border-radius:8px;margin:12px 0"><b>Automatic privacy protection</b><p>Numbers are found and covered in your browser. The original photo never leaves your device. You review the result and can cover anything else before sending.</p><p id="verifyMaskStatus"></p></div>
             <label><span>Profile notes</span><textarea id="verifyNotes" rows="3" placeholder="Optional information for the other party"></textarea></label>
             <div class="privacyNote"><b>Privacy</b><span>Only the masked version of each document is uploaded, and the other party sees it only after both of you agree. TUT Move does not verify documents: check the originals in person. Your selfie is handled separately.</span></div>
@@ -353,6 +355,6 @@
 </footer>
 </div>
 <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script defer src="/app.js?v=94.1-clean"></script>
+<script defer src="/app.js?v=95-deal-docs"></script>
 </body>
 </html>
