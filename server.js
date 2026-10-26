@@ -174,7 +174,7 @@ function transportDealContext(b,db){
 }
 function bookingView(b,db){
   const buyer=db.users.find(u=>u.id===b.buyerUserId),provider=db.users.find(u=>u.id===b.providerUserId);
-  const out={...b,feePayerUserId:b.feePayerUserId||b.buyerUserId,verificationState:{buyerReady:verificationReady(buyer,db,b),providerReady:verificationReady(provider,db,b)}},type=bookingDealType(b,db);
+  const out={...b,feePayerUserId:b.feePayerUserId||b.buyerUserId,verificationState:{buyerReady:verificationReady(buyer,db,b),providerReady:verificationReady(provider,db,b),buyerMissing:verificationMissing(buyer,db,b),providerMissing:verificationMissing(provider,db,b),buyerSubmitted:!!buyer?.verification?.submittedAt,providerSubmitted:!!provider?.verification?.submittedAt}},type=bookingDealType(b,db);
   out.partyLabels={buyer:capacityLabel(type,'buyer',buyer),provider:capacityLabel(type,'provider',provider)};
   if(type==='driver')out.dealContext=driverDealContext(b,db);
   else if(type==='warehouse'){const accepted=db.listings.find(x=>x.id===b.listingId);out.dealContext=pairedResourceDealContext(b,db,accepted?.resource==='storage'?'storage':'warehouse');}
@@ -347,15 +347,27 @@ function licenceRequirement(db,userId,onlyDeal){
   }
   return {licence:level,deals:list};
 }
-function verificationReady(user,db,deal){
-  const v=user?.verification||{},files=v.files||{},role=String(v.role||user?.role||'').toLowerCase();
-  const base=!!(user?.emailVerifiedAt&&String(v.legalName||'').trim()&&String(v.phone||user?.phone||'').trim()&&String(v.identityNumber||'').trim()&&files.identity?.name&&files.selfie?.name);
-  const needLicence=(db&&user?licenceRequirement(db,user.id,deal).licence:(role==='driver'?'required':'none'))==='required';
+// Exactly what is still missing for this person in this deal (empty list = ready). Shown to both parties so nobody waits blindly.
+function verificationMissing(user,db,deal){
+  const v=user?.verification||{},files=v.files||{},role=String(v.role||user?.role||'').toLowerCase(),out=[];
+  if(!user?.emailVerifiedAt)out.push('Verified email');
+  if(!String(v.legalName||'').trim())out.push('Full legal name');
+  if(!String(v.phone||user?.phone||'').trim())out.push('Phone number');
+  if(!String(v.identityNumber||'').trim())out.push('Government ID number');
+  if(!files.identity?.name)out.push('ID document photo');else if(!docSafe(files.identity))out.push('ID document photo (upload again with the number-covering step)');
+  if(!files.selfie?.name)out.push('Selfie (face photo)');
+  const need=(db&&user?licenceRequirement(db,user.id,deal).licence:(role==='driver'?'required':'none'))==='required';
+  if(need){
+    if(!String(v.licenceNumber||'').trim())out.push('Licence number');
+    if(!(v.licenceClasses||[]).length)out.push('Licence class');
+    if(!String(v.licenceExpiry||'').trim())out.push('Licence expiry date');
+    if(!files.license?.name)out.push('Licence photo');else if(!docSafe(files.license))out.push('Licence photo (upload again with the number-covering step)');
+  }else if(files.license?.name&&!docSafe(files.license))out.push('Licence photo (upload again with the number-covering step)');
   const company=['carrier','transport_company','transport-company','company'].includes(role);
-  const safeId=docSafe(files.identity);
-  const safeLicense=needLicence?docSafe(files.license):(!files.license?.name||docSafe(files.license));
-  return base&&safeId&&safeLicense&&(!company||!!String(v.registrationNumber||'').trim())&&(!needLicence||!!(String(v.licenceNumber||'').trim()&&(v.licenceClasses||[]).length&&String(v.licenceExpiry||'').trim()&&files.license?.name));
+  if(company&&!String(v.registrationNumber||'').trim())out.push('Business registration number');
+  return out;
 }
+function verificationReady(user,db,deal){return verificationMissing(user,db,deal).length===0}
 function relatedOfferIds(db,offerId){
   const ids=new Set();
   let current=(db.offers||[]).find(o=>o.id===offerId);
@@ -622,13 +634,12 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     const f=other?.verification?.files?.[kind];
     if(!f||!['image/jpeg','image/png','image/webp','image/svg+xml'].includes(f.mime))return json(res,404,{error:'No preview.'});
     if(kind!=='selfie'&&(!f.masked||!docSafe(f)))return json(res,403,{error:'Document must be masked before sharing.'});
-    if(kind!=='selfie'&&!docsUnlocked(b))return json(res,403,{error:'Documents open only after both parties consent.'});
     const base=path.resolve(UPLOADS)+path.sep,file=path.resolve(UPLOADS,String(f.name||''));
     if(!file.startsWith(base)||!fs.existsSync(file))return json(res,404,{error:'Photo not found.'});
     const data=fs.readFileSync(file);res.writeHead(200,{'Content-Type':f.mime,'Content-Length':data.length,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; sandbox"});return res.end(data);
   }
   if(/^\/api\/bookings\/[^/]+\/basic-profile$/.test(p)&&req.method==='GET'){
-    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});const otherId=u.id===b.buyerUserId?b.providerUserId:b.buyerUserId,other=db.users.find(x=>x.id===otherId),me=db.users.find(x=>x.id===u.id);const ov=other?.verification||{};return json(res,200,{myReady:verificationReady(me,db,b),otherReady:verificationReady(other,db,b),profile:{displayName:String(ov.legalName||other?.name||'').split(/\s+/).slice(0,2).join(' '),capacity:capacityLabel(bookingDealType(b,db),otherId===b.buyerUserId?'buyer':'provider',other),country:ov.country||other?.country||'',role:ov.role||other?.role||'',emailVerified:!!other?.emailVerifiedAt,contactUnlocked:false,phone:'',email:'',identityProvided:!!ov.files?.identity?.name,identityNumberMasked:maskValue(ov.identityNumber),birthDateMasked:ov.birthDate?String(ov.birthDate).slice(0,4):'',selfieProvided:!!ov.files?.selfie?.name,licenceProvided:!!ov.files?.license?.name,licenceLevel:licenceRequirement(db,other?.id,b).licence,identityPreview:docsUnlocked(b)&&docSafe(ov.files?.identity),selfiePreview:!!ov.files?.selfie?.name,licencePreview:docsUnlocked(b)&&docSafe(ov.files?.license),licenceNumberMasked:maskValue(ov.licenceNumber),licenceExpiry:'',licenceClasses:[]},docConsent:{mine:!!b.docConsent?.[u.id===b.buyerUserId?'buyer':'provider'],other:!!b.docConsent?.[u.id===b.buyerUserId?'provider':'buyer'],unlocked:docsUnlocked(b)},basicVerification:b.basicVerification||{}});
+    const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});const otherId=u.id===b.buyerUserId?b.providerUserId:b.buyerUserId,other=db.users.find(x=>x.id===otherId),me=db.users.find(x=>x.id===u.id);const ov=other?.verification||{};return json(res,200,{myReady:verificationReady(me,db,b),otherReady:verificationReady(other,db,b),profile:{displayName:String(ov.legalName||other?.name||'').split(/\s+/).slice(0,2).join(' '),capacity:capacityLabel(bookingDealType(b,db),otherId===b.buyerUserId?'buyer':'provider',other),country:ov.country||other?.country||'',role:ov.role||other?.role||'',emailVerified:!!other?.emailVerifiedAt,contactUnlocked:false,phone:'',email:'',identityProvided:!!ov.files?.identity?.name,identityNumberMasked:maskValue(ov.identityNumber),birthDateMasked:ov.birthDate?String(ov.birthDate).slice(0,4):'',selfieProvided:!!ov.files?.selfie?.name,licenceProvided:!!ov.files?.license?.name,licenceLevel:licenceRequirement(db,other?.id,b).licence,identityPreview:docSafe(ov.files?.identity),selfiePreview:!!ov.files?.selfie?.name,licencePreview:docSafe(ov.files?.license),photoVersion:Date.parse(ov.submittedAt)||0,licenceNumberMasked:maskValue(ov.licenceNumber),licenceExpiry:'',licenceClasses:[]},docConsent:{mine:!!b.docConsent?.[u.id===b.buyerUserId?'buyer':'provider'],other:!!b.docConsent?.[u.id===b.buyerUserId?'provider':'buyer'],unlocked:docsUnlocked(b)},basicVerification:b.basicVerification||{}});
   }
   if(/^\/api\/bookings\/[^/]+\/doc-consent$/.test(p)&&req.method==='POST'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],body=await getBody(req),db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});

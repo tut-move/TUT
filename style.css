@@ -922,3 +922,37 @@ html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:righ
 .dmConfirm{display:flex;gap:8px;align-items:flex-start;margin-top:10px}
 #verifyReqNote{margin:6px 0 12px}
 .uploadCard.hidden{display:none!important}
+
+/* ===== Deal verification: one consistent card style ===== */
+.vSec{margin-top:16px;padding:18px;border:1px solid rgba(184,143,65,.35);border-radius:16px;background:rgba(184,143,65,.05)}
+.vHead{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.vHead h4{margin:2px 0 4px;font-size:17px}
+.vHead p{margin:0;font-size:13px;line-height:1.5}
+.vNum{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--gold);color:#111;font-weight:900;font-size:14px}
+.vRows{display:grid;gap:8px;margin:10px 0}
+.vRow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.04)}
+.vRow>span:first-child{flex:1 1 120px;color:#d2c9b4;font-size:14px}
+.vChip{display:inline-block;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;background:rgba(255,255,255,.08);color:#cfc8b8;white-space:nowrap}
+.vChip.ok{background:rgba(143,215,162,.16);color:#8fd7a2}
+.vChip.gold{background:rgba(215,175,69,.16);color:var(--gold2)}
+.vMissing{margin:0;padding:8px 12px;border-radius:10px;background:rgba(228,107,107,.1);color:#f0a5a5;font-size:13px}
+.vPerson{display:flex;gap:14px;align-items:center;margin:14px 0 10px;padding:12px;border-radius:14px;background:rgba(255,255,255,.04)}
+.vAvatar{flex:0 0 84px;width:84px;height:84px;border-radius:14px;overflow:hidden;background:#0a0a0a;display:grid;place-items:center;color:var(--muted);font-size:28px}
+.vAvatar img{width:100%;height:100%;object-fit:cover;display:block}
+.vWho h5{margin:0 0 6px;font-size:18px}
+.vWho p{margin:6px 0 0;font-size:13px}
+.vFacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:8px 0}
+.vFact{padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.04);min-width:0}
+.vFact small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+.vFact b{display:block;font-size:14px;overflow-wrap:anywhere}
+.vDocs{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:10px 0}
+.vDoc{display:block;border:1px solid #363126;border-radius:12px;overflow:hidden;background:#0a0a0a;color:inherit;text-decoration:none}
+.vDoc img{width:100%;height:130px;object-fit:cover;display:block}
+.vDoc span{display:block;padding:7px 10px;font-size:12px;color:#cfc8b8}
+.vNote{font-size:12px;margin:8px 0 10px}
+.uploadBtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px}
+.uploadName{display:block;margin-top:8px;font-size:12px;color:#8fd7a2;overflow-wrap:anywhere;text-align:center}
+.vSec .actions{margin-top:14px}
+.vSec hr{display:none}
+.vDoc img{object-fit:contain;background:#000;height:150px}
+.vSec p.muted{font-size:13px;line-height:1.5}

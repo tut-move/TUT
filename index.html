@@ -281,9 +281,18 @@
           <section class="verifyWizardStep hidden" data-step-panel="3">
             <div class="stepHeading"><span>STEP 3 OF 3</span><h2>Upload supporting documents.</h2><p>These documents stay private. TUT Move does not manually approve them. The other party receives only limited verification details after the TUT Move fee is paid; original documents can be checked directly between the parties when appropriate.</p></div>
             <div class="uploadGrid">
-              <label class="uploadCard"><span class="uploadIcon">ID</span><b>Government ID</b><small>Take a photo</small><input id="verifyIdentityFile" type="file" accept="image/*" capture="environment"></label>
-              <label class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Your face only (camera or file). ID cards, licences and documents are rejected.</small><input id="verifySelfieFile" type="file" accept="image/*"></label>
-              <label class="uploadCard" data-req-field="licence"><span class="uploadIcon">DL</span><b>Licence / permit (driving, forklift...)</b><small id="licenceFileHint">Required or optional depending on your deal</small><input id="verifyLicenceFile" type="file" accept="image/*" capture="environment"></label>
+              <div class="uploadCard"><span class="uploadIcon">ID</span><b>Government ID</b><small>Photo of your ID card or passport</small>
+                <div class="uploadBtns"><button type="button" class="outlineBtn mini" onclick="pickUpload('verifyIdentityFile')">Upload file</button><button type="button" class="outlineBtn mini" onclick="pickUpload('verifyIdentityCam')">Camera</button></div>
+                <span class="uploadName" id="verifyIdentityFileName"></span>
+                <input id="verifyIdentityFile" type="file" accept="image/*" class="hidden"><input id="verifyIdentityCam" type="file" accept="image/*" capture="environment" class="hidden"></div>
+              <div class="uploadCard"><span class="uploadIcon">☺</span><b>Selfie / profile photo</b><small>Your face only. ID cards and documents are rejected.</small>
+                <div class="uploadBtns"><button type="button" class="outlineBtn mini" onclick="pickUpload('verifySelfieFile')">Upload file</button><button type="button" class="outlineBtn mini" onclick="pickUpload('verifySelfieCam')">Camera</button></div>
+                <span class="uploadName" id="verifySelfieFileName"></span>
+                <input id="verifySelfieFile" type="file" accept="image/*" class="hidden"><input id="verifySelfieCam" type="file" accept="image/*" capture="user" class="hidden"></div>
+              <div class="uploadCard" data-req-field="licence"><span class="uploadIcon">DL</span><b>Licence / permit (driving, forklift...)</b><small id="licenceFileHint">Required or optional depending on your deal</small>
+                <div class="uploadBtns"><button type="button" class="outlineBtn mini" onclick="pickUpload('verifyLicenceFile')">Upload file</button><button type="button" class="outlineBtn mini" onclick="pickUpload('verifyLicenceCam')">Camera</button></div>
+                <span class="uploadName" id="verifyLicenceFileName"></span>
+                <input id="verifyLicenceFile" type="file" accept="image/*" class="hidden"><input id="verifyLicenceCam" type="file" accept="image/*" capture="environment" class="hidden"></div>
             </div>
             <p id="selfieMsg" class="muted"></p>
             <div id="verifyMaskEditor" style="display:none;padding:12px;border:1px solid #b89a58;border-radius:8px;margin:12px 0"><b>Automatic privacy protection</b><p>Numbers are found and covered in your browser. The original photo never leaves your device. You review the result and can cover anything else before sending.</p><p id="verifyMaskStatus"></p></div>
