@@ -70,6 +70,10 @@ function readDB(){
   if(!dbCache) dbCache=readLocalDB();
   return dbCache;
 }
+const sseClients=new Map(),ssePending=new Set();
+function ssePush(userIds){for(const uid of userIds){const set=sseClients.get(uid);if(!set)continue;for(const r of set){try{r.write('event: update\ndata: {"t":'+Date.now()+'}\n\n')}catch(e){}}}}
+function sseFlush(){if(!ssePending.size)return;const ids=[...ssePending];ssePending.clear();ssePush(ids)}
+setInterval(()=>{for(const set of sseClients.values())for(const r of set){try{r.write(': ping\n\n')}catch(e){}}},20000).unref();
 async function writeDB(db){
   dbCache=normalizeDB(db);
   if(pgPool){
@@ -80,13 +84,14 @@ async function writeDB(db){
   }else{
     writeLocalDB(dbCache);
   }
+  sseFlush();
 }
 async function dbInfo(){
   return {persistent:!!pgPool,engine:pgPool?'postgresql':'local-file',ownerConfigured:ownerExists()};
 }
 function id(prefix){return prefix+'_'+crypto.randomBytes(6).toString('hex')}
 function addNotification(db,userId,type,title,message,link='offers',dealId=null,offerId=null){
-  if(!userId)return null;db.notifications=db.notifications||[];const n={id:id('n'),userId,type,title,message,link,dealId,offerId,read:false,createdAt:new Date().toISOString()};db.notifications.push(n);if(db.notifications.length>1000)db.notifications=db.notifications.slice(-1000);return n;
+  if(!userId)return null;ssePending.add(userId);db.notifications=db.notifications||[];const n={id:id('n'),userId,type,title,message,link,dealId,offerId,read:false,createdAt:new Date().toISOString()};db.notifications.push(n);if(db.notifications.length>1000)db.notifications=db.notifications.slice(-1000);return n;
 }
 function verificationRecordForUser(db,userId){const u=db.users.find(x=>x.id===userId);const legacy=(db.verifications||[]).find(v=>v.userId===userId)||{};return {...legacy,...((u&&u.verification)||{})};}
 function json(res,status,obj){const s=JSON.stringify(obj);res.writeHead(status,{'Content-Type':'application/json','Content-Length':Buffer.byteLength(s),'Cache-Control':'no-store'});res.end(s)}
@@ -434,7 +439,13 @@ async function refundExpiredDeal(b,db){if(!b.feePayments||!b.paymentDeadline||Da
 
 const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  const url=new URL(req.url,`http://${req.headers.host}`),p=url.pathname;
+ if(req.method!=='GET'&&req.method!=='HEAD'&&p.startsWith('/api/'))res.on('finish',()=>{if(res.statusCode<400){clearTimeout(global.__ssePing);global.__ssePing=setTimeout(()=>ssePush([...sseClients.keys()]),60)}});
  try{
+  if(p==='/api/events'&&req.method==='GET'){const u=auth(req);if(!u)return json(res,401,{error:'Login required'});
+   res.writeHead(200,{'Content-Type':'text/event-stream; charset=utf-8','Cache-Control':'no-cache, no-transform','Connection':'keep-alive','X-Accel-Buffering':'no'});
+   res.write('retry: 3000\n\nevent: hello\ndata: {}\n\n');
+   let set=sseClients.get(u.id);if(!set){set=new Set();sseClients.set(u.id,set)}set.add(res);
+   req.on('close',()=>{set.delete(res);if(!set.size&&sseClients.get(u.id)===set)sseClients.delete(u.id)});return}
   if(p==='/api/health')return json(res,200,{ok:true,version:'96',site:'tutmove.com',database:await dbInfo()});
   if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
 

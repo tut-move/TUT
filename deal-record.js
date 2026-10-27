@@ -57,53 +57,66 @@ function createDealRecord(b,db){
  // The image contains only the decorative background and authentic brand emblem.
  // All transaction fields, labels and values remain selectable, dynamic PDF text.
  ops.push('q 595 0 0 842 0 0 cm /Bg Do Q');
- // Layout coordinates match the decorative background's actual horizontal rules.
- // All centered text uses the real built-in PDF font advance widths.
- mid(104,18,'TUTMOVE',{font:'F2',color:GOLD});
- mid(116,8.1,'VEHICLE TRANSPORT MADE SIMPLE',{color:IVORY});
- mid(148,10.5,'F I N A L   D E A L   R E C O R D',{color:WHITE});
- mid(178,36,'COMPLETED',{font:'F2',color:GOLD});
- mid(190,8.4,'OFFICIAL TUT MOVE TRANSACTION RECORD');
- const party=(x,role,u)=>{
-  text(x,229,8,String(role).toUpperCase(),{font:'F2',color:GOLD,max:235});
-  text(x,246,16,`${u.verification?.legalName||u.name||'Not specified'}`,{font:'F2',color:IVORY,max:235});
-  text(x,262,9.3,u.email,{max:225});
-  text(x,276,9.3,u.verification?.phone||u.phone,{max:225});
-  text(x,288,9.3,u.verification?.country||u.country,{max:225});
- };
- party(48,buyerRole,buyer);party(315,providerRole,provider);
- ops.push('0 0 0 rg 195 515 205 26 re f');
- // Wording follows the deal type (a driver deal is not a "transport route").
+ const GOLDC='.86 .67 .40',CARD='.075 .068 .058',BORD='.55 .43 .25',TXT='.97 .95 .91',LBL='.80 .70 .52';
+ const rect=(x,top,w,h,fill,stroke,lw=.8)=>ops.push(`${fill?fill+' rg ':''}${stroke?stroke+' RG '+lw+' w ':''}${x} ${PAGE_H-top-h} ${w} ${h} re ${fill&&stroke?'B':fill?'f':'S'}`);
+ const dot=(cx,top,r,fill)=>{const k=.5523*r,y=PAGE_H-top;ops.push(`${fill} rg ${cx+r} ${y} m ${cx+r} ${y+k} ${cx+k} ${y+r} ${cx} ${y+r} c ${cx-k} ${y+r} ${cx-r} ${y+k} ${cx-r} ${y} c ${cx-r} ${y-k} ${cx-k} ${y-r} ${cx} ${y-r} c ${cx+k} ${y-r} ${cx+r} ${y-k} ${cx+r} ${y} c f`)};
  const sp=s=>s.split(' ').map(w=>w.split('').join(' ')).join('   ');
+ const sect=(top,label)=>{text(40,top,9,sp(label),{font:'F3',color:GOLDC});line(40,top+6,555,top+6,BORD,.6)};
+ const nm=u=>u.verification?.legalName||u.name||'Not specified';
+ // Header
+ mid(112,16,'TUTMOVE',{font:'F2',color:GOLDC});
+ mid(124,7.5,'VEHICLE TRANSPORT MADE SIMPLE',{color:LBL});
+ mid(152,9,sp('FINAL DEAL RECORD'),{font:'F3',color:TXT});
+ mid(186,34,'COMPLETED',{font:'F2',color:GOLDC});
+ // Parties
+ sect(232,'PARTIES');
+ const card=(x,role,u,tag)=>{rect(x,244,250,86,CARD,BORD);
+  text(x+14,261,8,String(role).toUpperCase(),{font:'F3',color:GOLDC,max:150});
+  const tw=measure(tag,'F3',7.5)+14;rect(x+250-14-tw,252,tw,14,GOLDC);text(x+250-14-tw/2,262,7.5,tag,{font:'F3',color:'0 0 0',align:'center'});
+  text(x+14,284,15,nm(u),{font:'F2',color:TXT,max:222});
+  text(x+14,301,9,u.email,{color:TXT,max:222});
+  text(x+14,313,9,u.verification?.phone||u.phone,{color:TXT,max:222});
+  text(x+14,325,9,u.verification?.country||u.country,{color:TXT,max:222});};
+ card(40,buyerRole,buyer,'PAYS');card(305,providerRole,provider,'RECEIVES');
+ // Route
  const LABELS={
-  transport:{route:'TRANSPORT ROUTE',from:'PICKUP LOCATION',to:'DELIVERY LOCATION',price:'AGREED TRANSPORT PRICE'},
-  driver:{route:'WORK LOCATIONS',from:'START LOCATION',to:'END LOCATION',price:'AGREED DRIVER COMPENSATION'},
-  truck:{route:'RENTAL LOCATIONS',from:'PICKUP / START',to:'RETURN / END',price:'AGREED RENTAL PRICE'},
-  warehouse:{route:'STORAGE LOCATIONS',from:'START ADDRESS',to:'END ADDRESS',price:'AGREED STORAGE PRICE'},
-  equipment:{route:'EQUIPMENT LOCATIONS',from:'PICKUP / START',to:'RETURN / END',price:'AGREED EQUIPMENT PRICE'}
+  transport:{route:'TRANSPORT ROUTE',from:'PICKUP',to:'DELIVERY',price:'AGREED TRANSPORT PRICE'},
+  driver:{route:'WORK LOCATIONS',from:'START',to:'END',price:'AGREED DRIVER COMPENSATION'},
+  truck:{route:'RENTAL LOCATIONS',from:'PICKUP',to:'RETURN',price:'AGREED RENTAL PRICE'},
+  warehouse:{route:'STORAGE LOCATIONS',from:'START',to:'END',price:'AGREED STORAGE PRICE'},
+  equipment:{route:'EQUIPMENT LOCATIONS',from:'PICKUP',to:'RETURN',price:'AGREED EQUIPMENT PRICE'}
  };
  const L=LABELS[b.dealType]||LABELS.transport;
- mid(316,10,sp(L.route),{color:GOLD});
- text(48,341,9,L.from,{color:MUTED});text(315,341,9,L.to,{color:MUTED});
- text(48,361,17,route.from,{font:'F2',color:IVORY,max:226});text(315,361,17,route.to,{font:'F2',color:IVORY,max:226});
- mid(399,10,sp(L.price),{color:GOLD});
- mid(431,30,money(b.currency,b.agreedPrice),{font:'F2',color:IVORY,max:340});
- mid(449,8.5,`To be paid by ${buyer.verification?.legalName||buyer.name||'requester'} to ${provider.verification?.legalName||provider.name||'provider'}`,{max:480});
- // Fee snapshot remains per-party and independent of the underlying deal price.
- // Display one clean box with each party's actual recorded fee, not a fabricated paid status.
- mid(490,10,'T U T   M O V E   F E E',{color:GOLD});
- mid(515,18,`Requester: ${money('USD',feeFor('buyer'))}    Provider: ${money('USD',feeFor('provider'))}`,{font:'F2',color:IVORY,max:490});
- mid(537,9,`Fee status: requester ${feeStatus('buyer',feeFor('buyer'))} / provider ${feeStatus('provider',feeFor('provider'))}`,{color:GOLD,max:490});
- text(48,572,15,'D E A L   D E T A I L S',{color:GOLD,font:'F2'});
+ sect(354,L.route);
+ rect(40,366,515,66,CARD,BORD);
+ dot(60,384,4,GOLDC);dot(535,384,4,GOLDC);line(66,384,529,384,GOLDC,1);
+ text(54,404,8,'FROM  -  '+L.from,{font:'F3',color:GOLDC});text(541,404,8,'TO  -  '+L.to,{font:'F3',color:GOLDC,align:'right'});
+ text(54,423,15,route.from,{font:'F2',color:TXT,max:235});text(541,423,15,route.to,{font:'F2',color:TXT,max:235,align:'right'});
+ // Price
+ sect(456,L.price);
+ rect(40,468,515,66,CARD,GOLDC,1.1);
+ text(58,512,32,money(b.currency,b.agreedPrice),{font:'F2',color:GOLDC,max:300});
+ text(545,490,7.5,'PAID BY',{font:'F3',color:LBL,align:'right'});text(545,502,11,nm(buyer),{font:'F2',color:TXT,align:'right',max:190});
+ text(545,517,7.5,'PAID TO',{font:'F3',color:LBL,align:'right'});text(545,529,11,nm(provider),{font:'F2',color:TXT,align:'right',max:190});
+ // Fee
+ sect(558,'TUTMOVE PLATFORM FEE');
+ const fb=feeFor('buyer'),fp=feeFor('provider');
+ rect(40,570,515,48,CARD,BORD);
+ if(fb<=0&&fp<=0){text(54,590,13,'No platform fee for this deal',{font:'F2',color:TXT,max:480});text(54,606,8.5,'Nothing is owed to TUTMOVE. The agreed price is settled directly between the parties.',{color:LBL,max:490});}
+ else{const fr=[];if(fb>0)fr.push([buyerRole,fb,feeStatus('buyer',fb)]);if(fp>0)fr.push([providerRole,fp,feeStatus('provider',fp)]);
+  fr.forEach(([r,v,st],i)=>{const yy=(fr.length>1?588:596)+i*18;text(54,yy,10.5,String(r),{font:'F2',color:TXT,max:260});text(430,yy,10.5,money('USD',v),{font:'F2',color:TXT,align:'right'});const ok=st==='PAID';rect(450,yy-10,92,14,ok?GOLDC:'.55 .18 .15');text(496,yy,7.5,st,{font:'F3',color:ok?'0 0 0':'1 1 1',align:'center'});});}
+ // Details
+ sect(642,'DEAL DETAILS');
  const rows=[['DEAL REFERENCE',b.id],['DEAL TYPE',String(b.dealType||'deal').toUpperCase()],['PAYMENT METHOD',terms.confirmed?terms.settlementMethod:'Not agreed'],['PAYMENT TIMING',terms.confirmed?terms.paymentTiming:'Not agreed'],['CONFIRMATION',b.completion?.buyer&&b.completion?.provider?'Confirmed by both parties':'Completed deal'],['COMPLETED AT',date(b.completedAt)],['ADDITIONAL TERMS',terms.additionalTerms||offer.message||'No additional written terms']];
- let y=593;for(const [k,v] of rows){text(48,y,9,k,{color:MUTED,max:210});text(284,y,9.5,v,{max:265});line(45,y+8,550,y+8);y+=19.5;}
- text(48,733,9.2,'TUTMOVE records the agreement and its applicable platform fee only.',{font:'F2',color:GOLD,max:520});
- text(48,744,7.5,'TUTMOVE is not a party to the underlying transaction. Identity checks, payment, handover,',{max:510});
- text(48,753,7.5,'inspection and fulfilment remain the responsibility of the parties.',{max:510});
- text(48,790,11,'TUTMOVE.COM',{font:'F2',color:GOLD});mid(790,7.5,'VEHICLE TRANSPORT MADE SIMPLE');
- text(548,790,8.5,db.settings?.supportEmail||'info@tutmove.com',{color:GOLD,align:'right',max:160});
+ let y=654;rows.forEach(([k,v],i)=>{if(i%2===0)rect(40,y,515,17,'.06 .055 .048',null);text(50,y+12,8,String(k),{font:'F3',color:LBL,max:200});text(230,y+12,9.5,v,{color:TXT,max:315});y+=17;});
+ text(40,792-14*0,0.1,' ');
+ text(40,786,7.5,'TUTMOVE records the agreement and its applicable platform fee only. TUTMOVE is not a party to the underlying transaction.',{color:LBL,max:515});
+ text(40,796,7.5,'Identity checks, payment, handover, inspection and fulfilment remain the responsibility of the parties.',{color:LBL,max:515});
+ line(40,808,555,808,BORD,.6);
+ text(40,824,10,'TUTMOVE.COM',{font:'F2',color:GOLDC});
+ text(555,824,8.5,db.settings?.supportEmail||'info@tutmove.com',{color:GOLDC,align:'right',max:200});
  const stream=Buffer.from(ops.join('\n'),'latin1');
- const bg=fs.readFileSync(path.join(__dirname,'deal-record-background.jpg'));
+ const bg=fs.readFileSync(path.join(__dirname,'deal-record-bg2.jpg'));
  const objs=[null,
   Buffer.from('<< /Type /Catalog /Pages 2 0 R >>'),
   Buffer.from('<< /Type /Pages /Kids [3 0 R] /Count 1 >>'),

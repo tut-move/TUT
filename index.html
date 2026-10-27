@@ -4,20 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#080808">
-  <meta name="description" content="TUT Move is a global marketplace connecting drivers, trucks, loads and warehouse capacity.">
+  <meta name="description" content="TUT Move is an online marketplace where drivers, truck and trailer owners, warehouse owners, equipment owners and shippers publish what they have or need, match with each other, agree deals and check each other before they meet. Available in English, Arabic, German, French, Spanish and Portuguese.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="application-name" content="TUT Move">
   <link rel="canonical" href="https://tutmove.com/">
   <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
   <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
   <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <meta property="og:title" content="TUT Move — Turn Unused Into Transport">
-  <meta property="og:description" content="One market for available logistics capacity and demand.">
+  <meta property="og:description" content="Find drivers, trucks, loads, warehouse space and equipment. Agree deals directly and check each other before you meet.">
+  <meta property="og:site_name" content="TUT Move">
+  <meta property="og:image" content="https://tutmove.com/tut-hero-logistics.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
   <link rel="stylesheet" href="/style.css?v=94.1-home-reference-final">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3yn5HssuoZQ8N6bJ9LP1r1bg0l8w=" crossorigin="">
 
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://tutmove.com/#org","name":"TUT Move","url":"https://tutmove.com/","logo":"https://tutmove.com/tut-emblem.png","email":"info@tutmove.com","description":"Online marketplace for drivers, trucks, trailers, loads, warehouse space and equipment."},{"@type":"WebSite","@id":"https://tutmove.com/#website","url":"https://tutmove.com/","name":"TUT Move","inLanguage":["en","ar","de","fr","es","pt"],"publisher":{"@id":"https://tutmove.com/#org"}}]}</script>
 </head>
 <body>
 <div class="shell">
@@ -112,7 +118,19 @@
         <article><span>03</span><div><b data-ui-key="Agree">Agree</b><small data-ui-key="Offer, counter and accept your own terms.">Offer, counter and accept your own terms.</small></div></article>
         <article><span>04</span><div><b data-ui-key="Secure">Secure</b><small data-ui-key="Verify identities and test the payment flow.">Verify identities and test the payment flow.</small></div></article>
       </section>
-    </section>
+    
+      <section class="aboutBlock" aria-labelledby="aboutTitle">
+        <span class="eyebrow">ABOUT TUT MOVE</span>
+        <h2 id="aboutTitle">One place for drivers, trucks, loads, warehouses and equipment</h2>
+        <p>TUT Move is an online marketplace. Drivers, truck and trailer owners, warehouse owners, equipment owners and shippers post what they have or need, find a match, negotiate a price and agree a deal directly with each other.</p>
+        <div class="aboutGrid">
+          <article><h3>How a deal works</h3><p>Make an offer, counter, accept. Both sides review each other's masked details, choose Continue, pay their platform fee, then receive each other's contact details. After meeting and checking the originals in person, both confirm and get a Deal Record PDF.</p></article>
+          <article><h3>What it costs</h3><p>Creating an account, posting listings and making offers is free. For each deal that goes ahead, TUT Move charges a fixed platform fee per party, shown before you pay, by card through Stripe. The price of the service itself is paid directly between you and the other party.</p></article>
+          <article><h3>Your data</h3><p>ID and licence numbers are shown only partly (last characters). Document photos are covered before they are uploaded and are visible only to the other party in your deal. Your name and photo are shown so people know who they deal with.</p></article>
+          <article><h3>Checking each other</h3><p>TUT Move does not certify documents. Each party checks the original ID and licence in person before the service starts, and the platform records that both parties confirmed it.</p></article>
+        </div>
+      </section>
+</section>
 
     <section id="about" class="pane hidden aboutReference">
       <div class="aboutHero">
@@ -213,20 +231,16 @@
 
     <section id="payments" class="pane hidden">
       <div class="pageHead paymentPageHead">
-        <div><span class="eyebrow">MONEY FLOW</span><h1>Payments</h1><p>Test the money flow now. Connect a regulated marketplace payment provider before charging real customers.</p></div>
-        <span class="modePill">TEST MODE</span>
+        <div><span class="eyebrow">MONEY FLOW</span><h1>Payments</h1><p>TUT Move charges a fixed platform fee per party for each deal, paid by card through Stripe. The price of the service itself is paid directly between the two parties and is never handled by TUT Move.</p></div>
       </div>
       <div id="paymentIntegrationStatus" class="integrationStatus"></div>
       <div class="paymentOverview">
         <article class="paymentStat"><small>Accepted agreements</small><strong id="paymentBookingCount">0</strong></article>
         <article class="paymentStat"><small>Awaiting payment</small><strong id="paymentPendingCount">0</strong></article>
-        <article class="paymentStat"><small>Test authorized</small><strong id="paymentAuthorizedCount">0</strong></article>
+        <article class="paymentStat"><small>Fee paid</small><strong id="paymentAuthorizedCount">0</strong></article>
       </div>
       <div id="paymentList" class="paymentList"></div>
-      <section class="providerRoadmap">
-        <div><span class="eyebrow">PRODUCTION CHECKLIST</span><h2>Ready for the real provider later.</h2><p>The app keeps payment state separate from marketplace pricing, so the next step can be Stripe Connect or another marketplace-capable provider without changing how users negotiate.</p></div>
-        <div class="roadmapChecks"><span>✓ Buyer payment state</span><span>✓ Platform fee calculation</span><span>✓ Provider net amount</span><span>○ Payment intent / checkout</span><span>○ Webhooks</span><span>○ Connected-account payout</span></div>
-      </section>
+      
     </section>
 
     <section id="verify" class="pane hidden">
