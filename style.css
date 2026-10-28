@@ -965,3 +965,35 @@ html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:righ
 .aboutGrid h3{margin:0 0 8px;font-size:16px;color:var(--gold2)}
 .aboutGrid p{margin:0;color:#c4bdad;font-size:14px;line-height:1.65}
 @media(max-width:760px){.aboutGrid{grid-template-columns:1fr}.aboutBlock{padding:20px}}
+
+/* Bell lives beside LIVE and notifications float above the page (phone + desktop) */
+.liveBoard .notificationBtn{flex:0 0 auto;margin:0 10px 0 12px;height:30px;min-width:34px;border-color:rgba(215,175,69,.5);font-size:15px;position:relative;z-index:2;background:rgba(215,175,69,.08)}
+.liveBoard .notificationBtn.hidden{display:none}
+.liveBoard .notificationCount{right:-6px;top:-8px}
+@keyframes bellRing{0%,100%{transform:rotate(0)}15%{transform:rotate(16deg)}30%{transform:rotate(-14deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-8deg)}75%{transform:rotate(4deg)}}
+.notificationBtn.ring{animation:bellRing .9s ease 2}
+.notificationBtn.hasNew{box-shadow:0 0 0 2px rgba(215,175,69,.45)}
+.notificationPanel{position:fixed;top:92px;left:8px;right:8px;max-width:440px;max-height:68vh;overflow:auto;z-index:400;margin:0;box-shadow:0 18px 48px rgba(0,0,0,.65);-webkit-overflow-scrolling:touch}
+.notificationPanel.hidden{display:none}
+.notificationToast{position:fixed;top:92px;left:8px;right:8px;max-width:440px;z-index:410;background:#14110a;border:1px solid #d6a94d;border-radius:14px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.7);cursor:pointer;animation:toastIn .25s ease}
+.notificationToast.hidden{display:none}
+.notificationToast strong{display:block;color:#f2d28a;font-size:14px}.notificationToast span{display:block;font-size:13px;opacity:.9;margin-top:2px}
+@keyframes toastIn{from{transform:translateY(-12px);opacity:0}to{transform:none;opacity:1}}
+@media(min-width:721px){.notificationPanel,.notificationToast{left:auto;right:24px;width:420px}}
+.liveBoard{overflow:visible!important}
+.liveBoard .notificationBtn{height:30px!important;min-height:0!important;min-width:34px!important;padding:0!important;line-height:1!important;margin:0 8px 0 10px!important;align-self:center}
+.liveBoard .liveTicker{flex:0 0 auto!important;min-width:0!important}
+.notificationPanel,.notificationToast{background:#0f0d09!important;opacity:1!important;color:#f4ecd8}
+.notificationPanel .notificationItem p{opacity:.85}
+.notificationPanel{top:132px}.notificationToast{top:132px}
+/* keep the LIVE bar (with the bell) visible while scrolling, right under the sticky header */
+.liveBoard{position:sticky;top:var(--topbarH,0px);z-index:45}
+html,body{overflow-x:clip!important}
+.topbar{position:static!important}
+.postStep.quickSkip{display:none!important}
+.quickNeedBanner{font-size:15px}.quickNeedBanner b{font-size:18px;color:#f2d28a}
+/* automatic step numbers (works with any hidden step) */
+.smartPostForm{counter-reset:ps}
+.smartPostForm .postStep:not(.quickSkip){counter-increment:ps}
+.smartPostForm .postStepNo{font-size:0!important;line-height:0}
+.smartPostForm .postStepNo::before{content:counter(ps);font-size:15px;line-height:1;font-weight:800}
