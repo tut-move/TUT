@@ -918,6 +918,7 @@ async function loadBookings(){if(!me){$('bookingList').innerHTML='';if($('dealHi
 async function loadVerification(){if(me?.role==='owner'){go('adminPane');return}if(!me){$('verifyMsg').textContent=tr('Login first.');return}const j=await api('/api/verification');if(j.verification)$('verifyMsg').innerHTML=`${tr('Current status')}: <b>${esc(tr(j.verification.status))}</b><br>${esc(tr(j.verification.message||''))}`}
 async function loadAdmin(){
  if(!me||me.role!=='owner')return;
+ await ensureOwnerDashboard();
  const j=await api('/api/admin/summary');
  $('customerFeeUSD').value=j.settings.customerFee??j.settings.customerFeeUSD??9.5;
  $('providerFeeUSD').value=j.settings.providerFee??j.settings.providerFeeUSD??9.5;
@@ -1857,3 +1858,16 @@ function addPasswordEyes(root=document){
 const passwordEyeObserver=new MutationObserver(()=>addPasswordEyes());
 passwordEyeObserver.observe(document.documentElement,{childList:true,subtree:true});
 addPasswordEyes();
+
+// Load owner-only HTML only after authenticated owner session.
+let ownerDashboardPromise=null;
+async function ensureOwnerDashboard(){
+ if(!me||me.role!=='owner')throw new Error('Owner access required');
+ if(document.getElementById('adminPane'))return;
+ if(!ownerDashboardPromise)ownerDashboardPromise=(async()=>{
+  const r=await fetch('/owner-dashboard.html',{credentials:'same-origin',cache:'no-store'});
+  if(!r.ok)throw new Error('Owner dashboard unavailable');
+  document.getElementById('ownerDashboardMount').innerHTML=await r.text();
+ })().catch(e=>{ownerDashboardPromise=null;throw e});
+ return ownerDashboardPromise;
+}
