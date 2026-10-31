@@ -23,7 +23,7 @@ function clientKey(req){return String(req.headers['x-forwarded-for']||req.socket
 function loginAllowed(req){const k=clientKey(req),now=Date.now(),windowMs=15*60*1000,max=10;let a=loginAttempts.get(k)||[];a=a.filter(t=>now-t<windowMs);loginAttempts.set(k,a);return a.length<max}
 function recordLoginFailure(req){const k=clientKey(req),a=loginAttempts.get(k)||[];a.push(Date.now());loginAttempts.set(k,a)}
 function clearLoginFailures(req){loginAttempts.delete(clientKey(req))}
-function setSecurityHeaders(res){res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=(self)');res.setHeader('Cross-Origin-Opener-Policy','same-origin');}
+function setSecurityHeaders(res){res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('X-Frame-Options','DENY');res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=(self)');res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Strict-Transport-Security','max-age=31536000; includeSubDomains');res.setHeader('Content-Security-Policy',"base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'");}
 
 function emptyDB(){return {users:[], sessions:[], passwordResets:[], listings:[], offers:[], bookings:[], matches:[], verifications:[], notifications:[], settings:{brandName:'TUT Move',siteUrl:'https://tutmove.com',customerFeeUSD:9.50,providerFeeUSD:9.50,customerFee:9.50,providerFee:9.50,commissionCurrency:'USD',defaultCurrency:'USD',ownerName:'',ownerEmail:'',legalEntity:'',supportEmail:'info@tutmove.com',launchMarkets:['USA','Canada','Europe','Middle East']}};}
 function normalizeDB(d){const st={...emptyDB().settings,...((d&&d.settings)||{})};if(!Object.prototype.hasOwnProperty.call(d?.settings||{},'customerFee'))st.customerFee=st.customerFeeUSD;if(!Object.prototype.hasOwnProperty.call(d?.settings||{},'providerFee'))st.providerFee=st.providerFeeUSD;if(!Object.prototype.hasOwnProperty.call(d?.settings||{},'commissionCurrency'))st.commissionCurrency='USD';return {...emptyDB(),...(d||{}),settings:st}}
@@ -94,7 +94,7 @@ function addNotification(db,userId,type,title,message,link='offers',dealId=null,
   if(!userId)return null;ssePending.add(userId);db.notifications=db.notifications||[];const n={id:id('n'),userId,type,title,message,link,dealId,offerId,read:false,createdAt:new Date().toISOString()};db.notifications.push(n);if(db.notifications.length>1000)db.notifications=db.notifications.slice(-1000);return n;
 }
 function verificationRecordForUser(db,userId){const u=db.users.find(x=>x.id===userId);const legacy=(db.verifications||[]).find(v=>v.userId===userId)||{};return {...legacy,...((u&&u.verification)||{})};}
-function json(res,status,obj){const s=JSON.stringify(obj);res.writeHead(status,{'Content-Type':'application/json','Content-Length':Buffer.byteLength(s),'Cache-Control':'no-store'});res.end(s)}
+function json(res,status,obj){const s=JSON.stringify(obj);res.writeHead(status,{'Content-Type':'application/json','Content-Length':Buffer.byteLength(s),'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'});res.end(s)}
 function getBody(req,limit=8e6){return new Promise((resolve,reject)=>{let b='';req.on('data',c=>{b+=c;if(b.length>limit){reject(new Error('Request too large'));req.destroy()}});req.on('end',()=>{try{resolve(b?JSON.parse(b):{})}catch(e){reject(e)}});req.on('error',reject)});}
 function cookies(req){const out={};(req.headers.cookie||'').split(';').forEach(x=>{const i=x.indexOf('=');if(i>0)out[x.slice(0,i).trim()]=decodeURIComponent(x.slice(i+1))});return out}
 function sessionIdsFromRequest(req){
@@ -428,7 +428,7 @@ function reconcileCompletedDeals(db){
   if(changed)recomputeMatches(db);return changed;
 }
 function stripeSigValid(raw,header,secret){try{const parts=String(header||'').split(',').map(x=>x.split('='));const t=parts.find(x=>x[0]==='t')?.[1];const sigs=parts.filter(x=>x[0]==='v1').map(x=>x[1]);if(!t||!sigs.length)return false;if(Math.abs(Date.now()/1000-Number(t))>300)return false;const expected=crypto.createHmac('sha256',secret).update(t+'.'+raw.toString('utf8')).digest('hex');return sigs.some(sig=>sig.length===expected.length&&crypto.timingSafeEqual(Buffer.from(sig),Buffer.from(expected)))}catch{return false}}
-async function stripeRequest(path,params,idempotencyKey){const key=process.env.STRIPE_SECRET_KEY;if(!key)throw new Error('Stripe secret key missing');const r=await fetch('https://api.stripe.com/v1/'+path,{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/x-www-form-urlencoded',...(idempotencyKey?{'Idempotency-Key':idempotencyKey}:{})},body:new URLSearchParams(params)});const j=await r.json();if(!r.ok)throw new Error(j?.error?.message||'Stripe request failed');return j;}
+async function stripeRequest(path,params,idempotencyKey){const key=process.env.STRIPE_SECRET_KEY;if(!key)throw new Error('Payment provider not configured');const r=await fetch('https://api.stripe.com/v1/'+path,{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/x-www-form-urlencoded',...(idempotencyKey?{'Idempotency-Key':idempotencyKey}:{})},body:new URLSearchParams(params)});const j=await r.json();if(!r.ok)throw new Error(j?.error?.message||'Payment request failed');return j;}
 function bookingFee(b,role){return Number(role==='buyer'?(b.customerFee??b.customerFeeUSD):(b.providerFee??b.providerFeeUSD))||0}
 function bookingFeeCurrency(b){return b.commissionCurrency==='EUR'?'EUR':'USD'}
 function zeroFeeRole(b,role){return bookingFee(b,role)===0;}
@@ -454,21 +454,22 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
    res.write('retry: 3000\n\nevent: hello\ndata: {}\n\n');
    let set=sseClients.get(u.id);if(!set){set=new Set();sseClients.set(u.id,set)}set.add(res);
    req.on('close',()=>{set.delete(res);if(!set.size&&sseClients.get(u.id)===set)sseClients.delete(u.id)});return}
-  if(p==='/api/health')return json(res,200,{ok:true,version:'96',site:'tutmove.com',database:await dbInfo()});
-  if(p==='/api/database/status'&&req.method==='GET')return json(res,200,await dbInfo());
+  if(p==='/api/owner/panel'&&req.method==='GET'){if(!isOwner(auth(req)))return json(res,403,{error:'Owner access required.'});const html=fs.readFileSync(path.join(ROOT,'owner-panel.html'));res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Content-Length':html.length,'Cache-Control':'no-store','X-Robots-Tag':'noindex, nofollow'});return res.end(html)}
+  if(p==='/api/health')return json(res,200,{ok:true,version:'99',site:'tutmove.com'});
+  if(p==='/api/database/status'&&req.method==='GET'){if(!isOwner(auth(req)))return json(res,403,{error:'Owner access required.'});return json(res,200,await dbInfo())}
 
   if(p==='/api/visit'&&req.method==='POST'){
     const body=await getBody(req);const visitorId=String(body.visitorId||'');if(!/^[0-9a-f-]{36}$/i.test(visitorId))return json(res,400,{error:'Invalid visitor ID'});
     const db=readDB(),digest=crypto.createHash('sha256').update(visitorId).digest('hex');db.visitorHashes=db.visitorHashes||[];
     const visitorUser=auth(req);
     if(isOwner(visitorUser)){if(db.visitorHashes.includes(digest)){db.visitorHashes=db.visitorHashes.filter(h=>h!==digest);await writeDB(db)}}
-    else if(!db.visitorHashes.includes(digest)){db.visitorHashes.push(digest);await writeDB(db)}
+    else if(db.visitorHashes.length<500000&&!db.visitorHashes.includes(digest)){db.visitorHashes.push(digest);await writeDB(db)}
     return json(res,200,{ok:true});
   }
-  if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}
-  if(p==='/robots.txt'&&req.method==='GET'){const body='User-agent: *\nAllow: /\nSitemap: https://tutmove.com/sitemap.xml\n';res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8'});return res.end(body);}
+  if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,supportEmail:st.supportEmail});}
+  if(p==='/robots.txt'&&req.method==='GET'){const body='User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /ownership.json\nSitemap: https://tutmove.com/sitemap.xml\n';res.writeHead(200,{'Content-Type':'text/plain; charset=utf-8'});return res.end(body);}
   if(p==='/sitemap.xml'&&req.method==='GET'){const body='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://tutmove.com/</loc></url></urlset>';res.writeHead(200,{'Content-Type':'application/xml; charset=utf-8'});return res.end(body);}
-  if(p==='/ownership.json'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{site:'TUT Move',domain:'tutmove.com',ownerConfigured:ownerExists(),legalEntity:st.legalEntity||null,statement:'Official TUT Move application instance.'});}
+  if(p==='/ownership.json'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{site:'TUT Move',domain:'tutmove.com',statement:'Official TUT Move application instance.'});}
 
   if(p==='/api/owner/status'&&req.method==='GET')return json(res,200,{ownerConfigured:ownerExists()});
   if(p==='/api/owner/setup'&&req.method==='POST'){
@@ -566,8 +567,8 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   }
 
   if(p==='/api/me'&&req.method==='GET'){const u=auth(req);return json(res,200,{user:u?safeUser(u):null});}
-  if(p==='/api/integrations/status'&&req.method==='GET'){const paymentCredentials=!!(process.env.STRIPE_SECRET_KEY||process.env.PAYMENT_PROVIDER_SECRET);const webhookSecret=!!(process.env.STRIPE_WEBHOOK_SECRET||process.env.PAYMENT_WEBHOOK_SECRET);const kycProvider=!!(process.env.KYC_PROVIDER||process.env.KYC_API_KEY);return json(res,200,{payment:{mode:paymentCredentials?'provider_credentials_detected':'test',credentialsDetected:paymentCredentials,webhookSecretDetected:webhookSecret,realCaptureEnabled:paymentCredentials&&webhookSecret},kyc:{providerConfigured:kycProvider,manualReviewEnabled:false}});}
-  if(p==='/api/settings'&&req.method==='GET'){return json(res,200,{settings:readDB().settings});}
+  if(p==='/api/integrations/status'&&req.method==='GET'){if(!isOwner(auth(req)))return json(res,403,{error:'Owner access required.'});const paymentCredentials=!!(process.env.STRIPE_SECRET_KEY||process.env.PAYMENT_PROVIDER_SECRET);const webhookSecret=!!(process.env.STRIPE_WEBHOOK_SECRET||process.env.PAYMENT_WEBHOOK_SECRET);const kycProvider=!!(process.env.KYC_PROVIDER||process.env.KYC_API_KEY);return json(res,200,{payment:{mode:paymentCredentials?'provider_credentials_detected':'test',credentialsDetected:paymentCredentials,webhookSecretDetected:webhookSecret,realCaptureEnabled:paymentCredentials&&webhookSecret},kyc:{providerConfigured:kycProvider,manualReviewEnabled:false}});}
+  if(p==='/api/settings'&&req.method==='GET'){if(!isOwner(auth(req)))return json(res,403,{error:'Owner access required.'});return json(res,200,{settings:readDB().settings});}
   if(p==='/api/admin/settings'&&req.method==='PUT'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const b=await getBody(req),db=readDB();for(const k of ['customerFee','providerFee'])if(Object.prototype.hasOwnProperty.call(b,k)){const n=Number(b[k]);if(b[k]===''||!Number.isFinite(n)||n<0||n>10000)return json(res,400,{error:'Fee must be between 0 and 10000'});db.settings[k]=Math.round(n*100)/100;}if(Object.prototype.hasOwnProperty.call(b,'commissionCurrency')){if(!['USD','EUR'].includes(b.commissionCurrency))return json(res,400,{error:'Only USD and EUR are supported for commission fees'});db.settings.commissionCurrency=b.commissionCurrency;}for(const k of ['brandName','siteUrl','ownerName','ownerEmail','legalEntity','supportEmail'])if(k in b)db.settings[k]=String(b[k]||'').trim().slice(0,180);await writeDB(db);return json(res,200,{settings:db.settings});}
   if(p==='/api/listings'&&req.method==='GET'){const db=readDB();const listings=db.listings.filter(x=>x.status==='open').sort((a,b)=>b.createdAt.localeCompare(a.createdAt)).map(x=>publicListing(x,db));return json(res,200,{listings});}
   if(p==='/api/listings'&&req.method==='POST'){
@@ -638,7 +639,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     b.feePayments[role].sessionId=session.id;b.feePayments[role].status='checkout_created';await writeDB(db);return json(res,200,{url:session.url,deadline:b.paymentDeadline});
   }
   if(p==='/api/stripe/webhook'&&req.method==='POST'){
-    const secret=process.env.STRIPE_WEBHOOK_SECRET;if(!secret)return json(res,503,{error:'Webhook secret is not configured.'});const raw=await rawBody(req);if(!stripeSigValid(raw,req.headers['stripe-signature'],secret))return json(res,400,{error:'Invalid Stripe signature.'});const event=JSON.parse(raw.toString('utf8'));
+    const secret=process.env.STRIPE_WEBHOOK_SECRET;if(!secret)return json(res,503,{error:'Webhook secret is not configured.'});const raw=await rawBody(req);if(!stripeSigValid(raw,req.headers['stripe-signature'],secret))return json(res,400,{error:'Invalid signature.'});const event=JSON.parse(raw.toString('utf8'));
     if(['checkout.session.completed','checkout.session.async_payment_succeeded'].includes(event.type)){const session=event.data?.object||{};if(session.payment_status==='paid'){const db=readDB(),b=db.bookings.find(x=>x.id===(session.metadata?.deal_id||session.client_reference_id)),role=session.metadata?.role;
       if(b?.feePayments&&['buyer','provider'].includes(role)&&b.feePayments[role].sessionId===session.id){const pay=b.feePayments[role],expected=Math.round(bookingFee(b,role)*100);
         if(Number(session.amount_total)!==expected||session.currency!==bookingFeeCurrency(b).toLowerCase())return json(res,400,{error:'Payment amount mismatch'});
@@ -733,7 +734,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   if(false&&p.startsWith('/api/admin/users/')&&p.endsWith('/verify')&&req.method==='POST'){const u=auth(req);if(!isOwner(u))return json(res,403,{error:'Owner access required.'});const uid=p.split('/')[4],db=readDB(),target=db.users.find(x=>x.id===uid);if(!target)return json(res,404,{error:'User not found.'});target.verified=true;target.verificationStatus='manual_verified';if(target.verification){target.verification.status='verified';target.verification.reviewedAt=new Date().toISOString();}await writeDB(db);return json(res,200,{user:safeUser(target)});}
   if(serveStatic(res,p,req))return;
   return json(res,404,{error:'Not found'});
- }catch(e){console.error(e);return json(res,500,{error:e.message||'Server error'});}
+ }catch(e){console.error(e);const m=String(e&&e.message||'');return json(res,500,{error:(!m||m.length>160||/[\/\\]|ENOENT|ECONN|relation |syntax|SQL|postgres|stack/i.test(m))?'Server error':m});}
 });
 initDB()
   .then(async()=>{const db=readDB();let changed=migrateAcceptedOffersToDeals(db);if(reconcileCompletedDeals(db))changed=true;if(changed)await writeDB(db);server.listen(PORT,()=>console.log(`TUT Move deal flow running on ${PORT}`));setInterval(async()=>{try{const d=readDB();let changed=false;for(const b of d.bookings||[])if(await refundExpiredDeal(b,d)){changed=true;if(b.status==='payment_expired'&&!b.expiryNotifiedAt){b.expiryNotifiedAt=new Date().toISOString();for(const uid of [b.buyerUserId,b.providerUserId])addNotification(d,uid,'payment','Payment window expired','The 10-minute deadline expired. Any captured fee is being refunded.','offers')}}if(changed)await writeDB(d)}catch(e){console.error('Payment expiry scan failed',e)}},60000)})
