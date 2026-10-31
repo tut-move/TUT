@@ -1025,3 +1025,27 @@ html[dir="rtl"] .aboutReference .aboutVision{text-align:right}
 .ownerStatCard strong{color:#e8bb60;font-size:clamp(25px,2.7vw,39px);font-weight:850;overflow-wrap:anywhere}
 @media(max-width:1050px){.ownerRoleStats{grid-template-columns:repeat(3,minmax(0,1fr))}.ownerMetricStats{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.ownerRoleStats,.ownerMetricStats{grid-template-columns:repeat(2,minmax(0,1fr))}.ownerStatCard{min-height:115px;padding:15px 8px}}
+
+/* About: restrained editorial layout, scoped to this page only. */
+.aboutEditorial{max-width:1000px;margin:0 auto;padding:24px 28px 56px!important;text-align:left;}
+.aboutEditorialSection{padding:22px 0 24px;border-bottom:1px solid rgba(210,167,73,.38);}
+.aboutEditorialSection:last-child{border-bottom:0;}
+.aboutEditorial .aboutKicker{display:block;font-size:11px;letter-spacing:.19em;font-weight:750;color:#e4b94e;margin-bottom:9px;}
+.aboutEditorial h2{font-size:clamp(25px,3vw,34px);line-height:1.2;letter-spacing:-.025em;max-width:800px;margin:0 0 13px;color:#f7f7f7;font-weight:760;}
+.aboutEditorial p{font-size:16px;line-height:1.7;max-width:760px;color:#d1d3d6;margin:0 0 9px;}
+.aboutEditorial .aboutHighlight{color:#edc25a;font-weight:700;}
+.aboutSteps{list-style:none;margin:18px 0 0;padding:0;max-width:800px;}
+.aboutSteps li{display:grid;grid-template-columns:50px 1fr;gap:16px;padding:0 0 19px;align-items:start;}
+.aboutStepNumber{border:1px solid #dcb34e;color:#e7bc50;border-radius:50%;width:39px;height:39px;display:grid;place-items:center;font-size:14px;font-weight:700;}
+.aboutEditorial .aboutSteps h3{font-size:17px;line-height:1.35;color:#e8bd55;margin:0 0 4px;}
+.aboutEditorial .aboutSteps p{font-size:15px;margin:0;}
+.aboutFounder{display:grid;grid-template-columns:210px minmax(0,1fr);gap:30px;align-items:center;}
+.aboutFounderIdentity{display:flex;flex-direction:column;align-items:flex-start;gap:5px;color:#e7bd58;}
+.aboutFounderIdentity img{width:115px;height:105px;object-fit:contain;}
+.aboutFounderIdentity strong{font-size:16px;}.aboutFounderIdentity small{font-size:13px;}
+.aboutFounderText{border-left:1px solid rgba(210,167,73,.55);padding-left:27px;}
+.aboutEditorial .goldBtn{margin-top:12px;}
+html[dir="rtl"] .aboutEditorial{text-align:right;}
+html[dir="rtl"] .aboutFounderText{border-left:0;border-right:1px solid rgba(210,167,73,.55);padding-left:0;padding-right:27px;}
+html[dir="rtl"] .aboutFounderIdentity{align-items:flex-start;}
+@media(max-width:650px){.aboutEditorial{padding:12px 19px 38px!important;}.aboutEditorialSection{padding:20px 0;}.aboutEditorial h2{font-size:26px;}.aboutEditorial p{font-size:15px;line-height:1.65;}.aboutSteps li{grid-template-columns:38px 1fr;gap:12px;padding-bottom:16px;}.aboutStepNumber{width:34px;height:34px;}.aboutFounder{grid-template-columns:1fr;gap:14px;}.aboutFounderIdentity img{width:85px;height:76px;}.aboutFounderText{border-left:0;padding-left:0;}html[dir="rtl"] .aboutFounderText{border-right:0;padding-right:0;}}
