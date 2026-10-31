@@ -3,8 +3,3 @@ node_modules/
 .env.*
 *.log
 .DS_Store
-
-# Never commit application database snapshots or uploaded documents
-/db.json
-/data/db.json
-/data/uploads/
