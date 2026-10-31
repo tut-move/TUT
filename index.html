@@ -20,7 +20,7 @@
   <meta property="og:url" content="https://tutmove.com/">
   <meta property="og:type" content="website">
   <title>TUT Move — Turn Unused Into Transport</title>
-  <link rel="stylesheet" href="/style.css?v=94.1-home-reference-final">
+  <link rel="stylesheet" href="/style.css?v=99-home-about">
 
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://tutmove.com/#org","name":"TUT Move","url":"https://tutmove.com/","logo":"https://tutmove.com/tut-emblem.png","email":"info@tutmove.com","description":"Online marketplace for drivers, trucks, trailers, loads, warehouse space and equipment."},{"@type":"WebSite","@id":"https://tutmove.com/#website","url":"https://tutmove.com/","name":"TUT Move","inLanguage":["en","ar","de","fr","es","pt"],"publisher":{"@id":"https://tutmove.com/#org"}}]}</script>
 </head>
@@ -56,6 +56,7 @@
       <select id="lang" onchange="manualLanguageOverride(this.value)" aria-label="Language">
         <option value="en">EN</option><option value="ar">AR</option><option value="de">DE</option><option value="fr">FR</option><option value="es">ES</option><option value="pt">PT</option>
       </select>
+      <button id="notificationBtn" class="notificationBtn hidden" type="button" onclick="toggleNotifications(event)" aria-label="Notifications">🔔<span id="notificationCount" class="notificationCount hidden">0</span></button>
       <div id="account"></div>
     </div>
   </header>
@@ -63,13 +64,10 @@
     <div class="liveTicker" aria-live="polite">
       <span class="liveDot"></span><b>LIVE</b>
     </div>
-    <button id="notificationBtn" class="notificationBtn hidden" type="button" onclick="toggleNotifications(event)" aria-label="Notifications">🔔<span id="notificationCount" class="notificationCount hidden">0</span></button>
     <div class="liveFeed" id="liveFeed" aria-label="Current marketplace offers" hidden>
       <div class="liveFeedTrack" id="liveFeedTrack"></div>
     </div>
   </section>
-<div id="notificationPanel" class="notificationPanel hidden"></div>
-<div id="notificationToast" class="notificationToast hidden" role="status" aria-live="polite"></div>
 
   <main>
     <section id="home" class="pane">
@@ -113,22 +111,18 @@
           </div>
         </div>
       </section>
-      <section class="confidenceStrip" aria-label="How TUT Move works">
-        <article><span>01</span><div><b data-ui-key="Publish">Publish</b><small data-ui-key="Tell the market what you have or need.">Tell the market what you have or need.</small></div></article>
-        <article><span>02</span><div><b data-ui-key="Match">Match</b><small data-ui-key="Compare relevant people and capacity.">Compare relevant people and capacity.</small></div></article>
-        <article><span>03</span><div><b data-ui-key="Agree">Agree</b><small data-ui-key="Offer, counter and accept your own terms.">Offer, counter and accept your own terms.</small></div></article>
-        <article><span>04</span><div><b data-ui-key="Secure">Secure</b><small data-ui-key="Verify identities and agree the payment terms.">Verify identities and agree the payment terms.</small></div></article>
-      </section>
-    
-      <section class="aboutBlock" aria-labelledby="aboutTitle">
-        <span class="eyebrow">ABOUT TUT MOVE</span>
-        <h2 id="aboutTitle">One place for drivers, trucks, loads, warehouses and equipment</h2>
-        <p>TUT Move is an online marketplace. Drivers, truck and trailer owners, warehouse owners, equipment owners and shippers post what they have or need, find a match, negotiate a price and agree a deal directly with each other.</p>
-        <div class="aboutGrid">
-          <article><h3>How a deal works</h3><p>Make an offer, counter, accept. Both sides review each other's masked details, choose Continue, pay their platform fee, then receive each other's contact details. After meeting and checking the originals in person, both confirm and get a Deal Record PDF.</p></article>
-          <article><h3>What it costs</h3><p>Creating an account, posting listings and making offers is free. For each deal that goes ahead, TUT Move charges a fixed platform fee per party, shown before you pay, by card through Stripe. The price of the service itself is paid directly between you and the other party.</p></article>
-          <article><h3>Your data</h3><p>ID and licence numbers are shown only partly (last characters). Document photos are covered before they are uploaded and are visible only to the other party in your deal. Your name and photo are shown so people know who they deal with.</p></article>
-          <article><h3>Checking each other</h3><p>TUT Move does not certify documents. Each party checks the original ID and licence in person before the service starts, and the platform records that both parties confirmed it.</p></article>
+      <section class="howBlock" aria-labelledby="aboutTitle">
+        <div class="howArt" role="img" aria-label="TUT Move"></div>
+        <div class="howInner">
+          <span class="howEyebrow" data-ui-key="HOW TUT MOVE WORKS">HOW TUT MOVE WORKS</span>
+          <h2 id="aboutTitle" data-ui-key="One place for drivers, trucks, loads, warehouses and equipment">One place for drivers, trucks, loads, warehouses and equipment</h2>
+          <p class="howLead" data-ui-key="TUT Move is an online marketplace. Drivers, truck and trailer owners, warehouse owners, equipment owners and shippers post what they have or need, find a match, negotiate a price and agree a deal directly with each other.">TUT Move is an online marketplace. Drivers, truck and trailer owners, warehouse owners, equipment owners and shippers post what they have or need, find a match, negotiate a price and agree a deal directly with each other.</p>
+          <ol class="howCards">
+            <li class="howCard c1"><span class="howNo">1</span><h3 data-ui-key="Find Your Match">Find Your Match</h3><p data-ui-key="Search for drivers, transport companies, cargo owners, warehouse owners or equipment owners that fit your needs.">Search for drivers, transport companies, cargo owners, warehouse owners or equipment owners that fit your needs.</p></li>
+            <li class="howCard c2"><span class="howNo">2</span><h3 data-ui-key="Make a Deal">Make a Deal</h3><p data-ui-key="Contact the other party, discuss the details and agree on the price and terms directly with each other.">Contact the other party, discuss the details and agree on the price and terms directly with each other.</p></li>
+            <li class="howCard c3"><span class="howNo">3</span><h3 data-ui-key="Check Each Other">Check Each Other</h3><p data-ui-key="Both sides review each other's details and documents. If a platform fee applies, you pay it to unlock the other party's contact details.">Both sides review each other's details and documents. If a platform fee applies, you pay it to unlock the other party's contact details.</p></li>
+            <li class="howCard c4"><span class="howNo">4</span><h3 data-ui-key="Complete Your Deal">Complete Your Deal</h3><p data-ui-key="After meeting and checking the originals in person, both parties confirm the deal and receive a Deal Record PDF for your reference.">After meeting and checking the originals in person, both parties confirm the deal and receive a Deal Record PDF for your reference.</p></li>
+          </ol>
         </div>
       </section>
 </section>
@@ -142,12 +136,12 @@
       </div>
       <section class="aboutGrid">
         <article><span class="aboutNo">01</span><h2 data-ui-key="One market. Multiple sides.">One market. Multiple sides.</h2><p data-ui-key="TUT Move does not own the trucks, employ the drivers, own the loads or control warehouse capacity. It brings independent supply and demand into one marketplace.">TUT Move does not own the trucks, employ the drivers, own the loads or control warehouse capacity. It brings independent supply and demand into one marketplace.</p></article>
-        <article><span class="aboutNo">02</span><h2 data-ui-key="AVAILABLE / WANTED">AVAILABLE / WANTED</h2><p data-ui-key="Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.">Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.</p></article>
+        <article><span class="aboutNo">02</span><h2 data-ui-key="Available or wanted">Available or wanted</h2><p data-ui-key="Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.">Users publish what is available or exactly what they are looking for. TUT Move helps surface relevant connections across drivers, trucks, loads and warehouse capacity.</p></article>
         <article><span class="aboutNo">03</span><h2 data-ui-key="The market decides.">The market decides.</h2><p data-ui-key="TUT Move does not dictate the transport price. Users can set a price, request quotes, make offers, counter and agree on their own commercial terms.">TUT Move does not dictate the transport price. Users can set a price, request quotes, make offers, counter and agree on their own commercial terms.</p></article>
       </section>
       <section class="founderReference">
         <div class="founderIdentity">
-          <img src="./tut-emblem.png" alt="TUT Move emblem">
+          <img src="./tut-emblem-clear.png" alt="TUT Move emblem">
           <h3>Abdelaziz Metwaly</h3><p data-ui-key="Founder, TUT Move">Founder, TUT Move</p>
           <div class="founderRule"><span>◆</span></div>
           <div class="founderValues"><span data-ui-key="PEOPLE">PEOPLE</span><i></i><span data-ui-key="OPPORTUNITIES">OPPORTUNITIES</span><i></i><span data-ui-key="A FAIRER WORLD">A FAIRER WORLD</span></div>
@@ -201,6 +195,7 @@
     </section>
 <section id="offers" class="pane hidden">
       <div class="pageHead"><div><span class="eyebrow">NEGOTIATION</span><h1>Offers & bookings</h1><p>Offer → counter → accept. Market price is decided by the parties.</p></div></div>
+      <div id="notificationPanel" class="notificationPanel hidden"></div>
       <div class="pageHead compact"><div><span class="eyebrow">DEALS</span><h2>Active Deals</h2><p>Accepted offers move here immediately. Continue with Basic Verification from the deal card.</p></div></div>
       <div id="dealActionMsg" class="msg"></div>
       <div id="bookingList" class="cards"></div>
@@ -377,6 +372,7 @@
     <span class="legalLinks"><button data-ui-key="Terms of Service" onclick="go('termsPane')">Terms of Service</button><button data-ui-key="Privacy Policy" onclick="go('privacyPane')">Privacy Policy</button><button data-ui-key="Cancellation & Refund" onclick="go('refundPane')">Cancellation & Refund</button><button data-ui-key="Disputes & Claims" onclick="go('disputesPane')">Disputes & Claims</button></span><span><a href="mailto:info@tutmove.com">info@tutmove.com</a></span>
 </footer>
 </div>
-<script defer src="/app.js?v=98-owner-dashboard"></script>
+<div id="notificationToast" class="notificationToast hidden" role="status" aria-live="polite"></div>
+<script defer src="/app.js?v=99-home-about"></script>
 </body>
 </html>

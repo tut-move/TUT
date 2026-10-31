@@ -305,8 +305,7 @@ html[dir="rtl"] #verify{text-align:right}html[dir="rtl"] .verifyStep{flex-direct
 @media(max-width:850px){.verifySteps,.compactVerify{grid-template-columns:1fr}.compactVerify button{grid-column:auto;max-width:none}.verifyPanelHead{display:block}.verifyShell>h2{font-size:34px}}
 
 
-/* ===============================================================
-   v32 GLOBAL LANGUAGE / DATE / RESPONSIVE FOUNDATION
+/* ========================================================   v32 GLOBAL LANGUAGE / DATE / RESPONSIVE FOUNDATION
    =============================================================== */
 
 /* Consistent touch targets across desktop, tablet and phone */
@@ -462,8 +461,7 @@ html[dir="rtl"] .brandLockup > span{align-items:flex-end}
 .verificationForm input[type=file]{padding:10px;background:#0a0a0a;border:1px dashed #5d5134}
 @media(max-width:700px){.checkCard{min-width:0;flex:1 1 45%}.routeBlock{padding:12px}}
 
-/* =========================================================
-   v48 — polished product UI + verification wizard + payments
+/* ==================================================   v48 — polished product UI + verification wizard + payments
    ========================================================= */
 :root{
   --bg:#080909;--panel:#101111;--panel2:#151616;--gold:#d9ad42;--gold2:#f2cf6b;
@@ -966,37 +964,74 @@ html[dir="rtl"] .v49Hero .heroCopy,html[dir="rtl"] .founderStory{text-align:righ
 .aboutGrid p{margin:0;color:#c4bdad;font-size:14px;line-height:1.65}
 @media(max-width:760px){.aboutGrid{grid-template-columns:1fr}.aboutBlock{padding:20px}}
 
-/* Bell lives beside LIVE and notifications float above the page (phone + desktop) */
-.liveBoard .notificationBtn{flex:0 0 auto;margin:0 10px 0 12px;height:30px;min-width:34px;border-color:rgba(215,175,69,.5);font-size:15px;position:relative;z-index:2;background:rgba(215,175,69,.08)}
+/* PHONE ONLY: bell beside LIVE, floating notifications, sticky LIVE bar */
+@keyframes bellRing{0%,100%{transform:rotate(0)}15%{transform:rotate(16deg)}30%{transform:rotate(-14deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-8deg)}75%{transform:rotate(4deg)}}
+@keyframes toastIn{from{transform:translateY(-12px);opacity:0}to{transform:none;opacity:1}}
+.notificationToast{display:none}
+@media(max-width:720px){
+.liveBoard .notificationBtn{flex:0 0 auto;height:30px!important;min-height:0!important;min-width:34px!important;padding:0!important;line-height:1!important;margin:0 8px 0 10px!important;align-self:center;border-color:rgba(215,175,69,.5);font-size:15px;position:relative;z-index:2;background:rgba(215,175,69,.08)}
 .liveBoard .notificationBtn.hidden{display:none}
 .liveBoard .notificationCount{right:-6px;top:-8px}
-@keyframes bellRing{0%,100%{transform:rotate(0)}15%{transform:rotate(16deg)}30%{transform:rotate(-14deg)}45%{transform:rotate(10deg)}60%{transform:rotate(-8deg)}75%{transform:rotate(4deg)}}
 .notificationBtn.ring{animation:bellRing .9s ease 2}
 .notificationBtn.hasNew{box-shadow:0 0 0 2px rgba(215,175,69,.45)}
-.notificationPanel{position:fixed;top:92px;left:8px;right:8px;max-width:440px;max-height:68vh;overflow:auto;z-index:400;margin:0;box-shadow:0 18px 48px rgba(0,0,0,.65);-webkit-overflow-scrolling:touch}
+.notificationPanel{position:fixed;top:132px;left:8px;right:8px;max-width:440px;max-height:68vh;overflow:auto;z-index:400;margin:0;box-shadow:0 18px 48px rgba(0,0,0,.65);-webkit-overflow-scrolling:touch;background:#0f0d09!important;opacity:1!important;color:#f4ecd8}
 .notificationPanel.hidden{display:none}
-.notificationToast{position:fixed;top:92px;left:8px;right:8px;max-width:440px;z-index:410;background:#14110a;border:1px solid #d6a94d;border-radius:14px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.7);cursor:pointer;animation:toastIn .25s ease}
+.notificationPanel .notificationItem p{opacity:.85}
+.notificationToast{display:block;position:fixed;top:132px;left:8px;right:8px;max-width:440px;z-index:410;background:#0f0d09;border:1px solid #d6a94d;border-radius:14px;padding:12px 14px;box-shadow:0 14px 40px rgba(0,0,0,.7);cursor:pointer;animation:toastIn .25s ease;color:#f4ecd8}
 .notificationToast.hidden{display:none}
 .notificationToast strong{display:block;color:#f2d28a;font-size:14px}.notificationToast span{display:block;font-size:13px;opacity:.9;margin-top:2px}
-@keyframes toastIn{from{transform:translateY(-12px);opacity:0}to{transform:none;opacity:1}}
-@media(min-width:721px){.notificationPanel,.notificationToast{left:auto;right:24px;width:420px}}
-.liveBoard{overflow:visible!important}
-.liveBoard .notificationBtn{height:30px!important;min-height:0!important;min-width:34px!important;padding:0!important;line-height:1!important;margin:0 8px 0 10px!important;align-self:center}
+.liveBoard{overflow:visible!important;position:sticky;top:0;z-index:45}
 .liveBoard .liveTicker{flex:0 0 auto!important;min-width:0!important}
-.notificationPanel,.notificationToast{background:#0f0d09!important;opacity:1!important;color:#f4ecd8}
-.notificationPanel .notificationItem p{opacity:.85}
-.notificationPanel{top:132px}.notificationToast{top:132px}
-/* keep the LIVE bar (with the bell) visible while scrolling, right under the sticky header */
-.liveBoard{position:sticky;top:var(--topbarH,0px);z-index:45}
 html,body{overflow-x:clip!important}
 .topbar{position:static!important}
-.postStep.quickSkip{display:none!important}
-.quickNeedBanner{font-size:15px}.quickNeedBanner b{font-size:18px;color:#f2d28a}
+}
 /* automatic step numbers (works with any hidden step) */
 .smartPostForm{counter-reset:ps}
 .smartPostForm .postStep:not(.quickSkip){counter-increment:ps}
 .smartPostForm .postStepNo{font-size:0!important;line-height:0}
 .smartPostForm .postStepNo::before{content:counter(ps);font-size:15px;line-height:1;font-weight:800}
+/* HOW TUT MOVE WORKS — real text over restrained Egyptian artwork */
+.howBlock{position:relative;margin:48px 0 8px;border:1px solid rgba(215,175,69,.35);border-radius:20px;overflow:hidden;background:#060504}
+.howArt{height:clamp(130px,23vw,270px);background:url('./how-hero.webp') center top/cover no-repeat;-webkit-mask-image:linear-gradient(#000 55%,transparent);mask-image:linear-gradient(#000 55%,transparent)}
+.howInner{position:relative;margin-top:-34px;padding:0 clamp(16px,3vw,34px) clamp(22px,3vw,34px);text-align:center}
+.howEyebrow{display:inline-flex;align-items:center;gap:14px;font-size:12px;letter-spacing:.32em;color:#d7af45;font-weight:700}
+.howEyebrow::before,.howEyebrow::after{content:"";width:clamp(26px,8vw,90px);height:1px;background:linear-gradient(90deg,transparent,rgba(215,175,69,.8))}
+.howEyebrow::after{transform:scaleX(-1)}
+.howInner h2{margin:12px auto 10px;max-width:820px;font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:clamp(22px,3.6vw,38px);line-height:1.2;color:#f3e6c8}
+.howLead{margin:0 auto 26px;max-width:760px;color:#cfc6b2;line-height:1.65;font-size:clamp(14px,1.6vw,16px)}
+.howCards{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:left}
+.howCard{position:relative;padding:20px 18px 128px;border:1px solid rgba(215,175,69,.5);border-radius:14px;background:linear-gradient(160deg,#17120b,#0b0907);box-shadow:0 0 22px rgba(215,175,69,.07);overflow:hidden;min-height:300px}
+.howCard::after{content:"";position:absolute;left:0;right:0;bottom:0;height:116px;background-repeat:no-repeat;background-position:center bottom;background-size:100% auto;opacity:.92;-webkit-mask-image:linear-gradient(transparent,#000 38%);mask-image:linear-gradient(transparent,#000 38%);pointer-events:none}
+.howCard.c1::after{background-image:url('./how-1.webp')}.howCard.c2::after{background-image:url('./how-2.webp')}.howCard.c3::after{background-image:url('./how-3.webp')}.howCard.c4::after{background-image:url('./how-4.webp')}
+.howNo{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1.5px solid #d7af45;color:#f1d77a;font-family:Georgia,serif;font-weight:700;font-size:19px;background:rgba(215,175,69,.08)}
+.howCard h3{margin:12px 0 8px;font-family:Georgia,'Times New Roman',serif;font-size:19px;color:#e8c46a}
+.howCard p{margin:0;color:#e4dbc6;font-size:14.5px;line-height:1.55}
+@media(max-width:1000px){.howCards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.howArt{background-image:url('./how-hero-m.webp');background-size:100% auto;height:auto;aspect-ratio:800/255}.howCard::after{background-size:cover;background-position:center top}.howCards{grid-template-columns:1fr}.howCard{min-height:0;padding-bottom:118px}.howBlock{margin-top:36px}}
+/* ABOUT PAGE — one type scale, one alignment, one look */
+.aboutReference{max-width:1060px}
+.aboutReference .eyebrow,.aboutReference .aboutHero .eyebrow,.aboutReference .aboutVision .eyebrow,.aboutReference .founderLabel{font-family:inherit;font-size:12px;font-weight:800;letter-spacing:.24em;color:#d7af45;text-transform:uppercase}
+.aboutReference .aboutHero{max-width:860px;padding:8px 18px 26px}
+.aboutReference .aboutHero h1{font-size:clamp(34px,4.6vw,54px);line-height:1.06;letter-spacing:-.03em;margin:12px 0 18px;font-weight:800}
+.aboutReference .aboutHero>p{font-size:16px;line-height:1.65;color:#c4c0b6;margin:0 0 14px;max-width:760px}
+.aboutReference .aboutHero .aboutLead{font-size:18px;line-height:1.5;font-weight:700;color:#f4efe2;margin-top:18px}
+.aboutReference .aboutGrid{gap:16px;margin:0 18px 30px}
+.aboutReference .aboutGrid article{min-height:0;padding:22px 22px 24px}
+.aboutReference .aboutNo{font-size:12px;letter-spacing:.2em;color:#d7af45}
+.aboutReference .aboutGrid h2{font-size:21px;line-height:1.2;margin:12px 0 10px;font-weight:750;text-transform:none;letter-spacing:0}
+.aboutReference .aboutGrid p{font-size:15px;line-height:1.6;color:#b9b6ad}
+.founderReference{padding:30px 18px;gap:36px;grid-template-columns:36% 64%}
+.founderIdentity img{width:min(200px,80%);height:auto;max-height:150px;margin-bottom:8px}
+.founderIdentity h3{font-family:inherit;font-size:21px;font-weight:750;color:#f0cf7a;margin:0 0 4px}
+.founderIdentity>p{font-size:15px;color:#d7af45}
+.founderValues{font-size:11px}
+.founderStory h2,.aboutReference .aboutVision h2{font-family:inherit;font-size:clamp(24px,2.8vw,32px);line-height:1.15;font-weight:800;color:#f4efe2;margin:12px 0 14px;letter-spacing:-.02em}
+.founderStory p,.aboutReference .aboutVision p{font-size:16px;line-height:1.65;color:#c4c0b6;margin:0 0 12px}
+.founderStory strong{font-family:inherit;font-size:19px;font-weight:800;color:#d7af45;margin-top:14px}
+.aboutReference .aboutVision{text-align:left;max-width:860px;margin:0;padding:36px 18px 20px}
+.aboutReference .aboutVision .goldBtn{font-size:15px;padding:13px 30px;margin-top:6px}
+html[dir="rtl"] .aboutReference .aboutVision{text-align:right}
+@media(max-width:800px){.founderReference{grid-template-columns:1fr;padding:26px 14px}.aboutReference .aboutGrid{margin:0 14px 24px}.aboutReference .aboutHero{padding:6px 14px 20px}.aboutReference .aboutHero>p{font-size:15.5px}.founderStory p,.aboutReference .aboutVision p{font-size:15.5px}.aboutReference .aboutVision{padding:28px 14px 12px}}
 
 /* Owner-only numerical dashboard; no sidebar, icons or extra controls. */
 .ownerDashboard #adminArea{margin-top:18px}
