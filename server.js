@@ -460,7 +460,9 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   if(p==='/api/visit'&&req.method==='POST'){
     const body=await getBody(req);const visitorId=String(body.visitorId||'');if(!/^[0-9a-f-]{36}$/i.test(visitorId))return json(res,400,{error:'Invalid visitor ID'});
     const db=readDB(),digest=crypto.createHash('sha256').update(visitorId).digest('hex');db.visitorHashes=db.visitorHashes||[];
-    if(!db.visitorHashes.includes(digest)){db.visitorHashes.push(digest);await writeDB(db)}
+    const visitorUser=auth(req);
+    if(isOwner(visitorUser)){if(db.visitorHashes.includes(digest)){db.visitorHashes=db.visitorHashes.filter(h=>h!==digest);await writeDB(db)}}
+    else if(!db.visitorHashes.includes(digest)){db.visitorHashes.push(digest);await writeDB(db)}
     return json(res,200,{ok:true});
   }
   if(p==='/api/site'&&req.method==='GET'){const st=readDB().settings;return json(res,200,{brandName:st.brandName,siteUrl:st.siteUrl,legalEntity:st.legalEntity,supportEmail:st.supportEmail,launchMarkets:st.launchMarkets});}

@@ -1027,7 +1027,7 @@ html[dir="rtl"] .aboutReference .aboutVision{text-align:right}
 @media(max-width:600px){.ownerRoleStats,.ownerMetricStats{grid-template-columns:repeat(2,minmax(0,1fr))}.ownerStatCard{min-height:115px;padding:15px 8px}}
 
 /* About: restrained editorial layout, scoped to this page only. */
-.aboutEditorial{max-width:1000px;margin:0 auto;padding:24px 28px 56px!important;text-align:left;}
+.aboutEditorial{width:100%;max-width:1000px;margin:0;padding:24px 28px 56px!important;text-align:left;}
 .aboutEditorialSection{padding:22px 0 24px;border-bottom:1px solid rgba(210,167,73,.38);}
 .aboutEditorialSection:last-child{border-bottom:0;}
 .aboutEditorial .aboutKicker{display:block;font-size:11px;letter-spacing:.19em;font-weight:750;color:#e4b94e;margin-bottom:9px;}
@@ -1045,7 +1045,14 @@ html[dir="rtl"] .aboutReference .aboutVision{text-align:right}
 .aboutFounderIdentity strong{font-size:16px;}.aboutFounderIdentity small{font-size:13px;}
 .aboutFounderText{border-left:1px solid rgba(210,167,73,.55);padding-left:27px;}
 .aboutEditorial .goldBtn{margin-top:12px;}
-html[dir="rtl"] .aboutEditorial{text-align:right;}
+html[dir="rtl"] .aboutEditorial{text-align:right;margin-left:0;margin-right:0;}
 html[dir="rtl"] .aboutFounderText{border-left:0;border-right:1px solid rgba(210,167,73,.55);padding-left:0;padding-right:27px;}
 html[dir="rtl"] .aboutFounderIdentity{align-items:flex-start;}
 @media(max-width:650px){.aboutEditorial{padding:12px 19px 38px!important;}.aboutEditorialSection{padding:20px 0;}.aboutEditorial h2{font-size:26px;}.aboutEditorial p{font-size:15px;line-height:1.65;}.aboutSteps li{grid-template-columns:38px 1fr;gap:12px;padding-bottom:16px;}.aboutStepNumber{width:34px;height:34px;}.aboutFounder{grid-template-columns:1fr;gap:14px;}.aboutFounderIdentity img{width:85px;height:76px;}.aboutFounderText{border-left:0;padding-left:0;}html[dir="rtl"] .aboutFounderText{border-right:0;padding-right:0;}}
+
+/* Password visibility and owner user management */
+.passwordEyeWrap{position:relative;display:block;width:100%;min-width:0}
+.passwordEyeWrap input{width:100%;box-sizing:border-box;padding-inline-end:48px!important}
+.passwordEyeButton{position:absolute;inset-inline-end:5px;top:50%;transform:translateY(-50%);height:38px;width:40px;border:0;background:transparent;color:var(--text);cursor:pointer;font-size:19px;z-index:1}
+.passwordEyeButton:focus-visible{outline:2px solid var(--gold);border-radius:6px}
+.adminUsersGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;margin-top:12px}

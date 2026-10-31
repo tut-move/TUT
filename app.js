@@ -300,7 +300,7 @@ function fillCountries(){ detectLocalMarket(); }
 async function init(){startTranslationObserver();
   setLanguage(localStorage.getItem('tut_lang')||'en');
   try{const j=await api('/api/me');me=j.user||null}catch(e){me=null}
-  if(me?.role!=='owner'){try{let vid=localStorage.getItem('tut_visitor_id');if(!vid){vid=(globalThis.crypto?.randomUUID?.()||'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16)}));localStorage.setItem('tut_visitor_id',vid)}fetch('/api/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({visitorId:vid})}).catch(()=>{});}catch(_){}}
+  if(true){try{let vid=localStorage.getItem('tut_visitor_id');if(!vid){vid=(globalThis.crypto?.randomUUID?.()||'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return (c==='x'?r:(r&3|8)).toString(16)}));localStorage.setItem('tut_visitor_id',vid)}fetch('/api/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({visitorId:vid})}).catch(()=>{});}catch(_){}}
   detectLocalMarket();renderHeaderOverrides();detectCountryByIP();
   renderAccount();renderAuth();renderFields();togglePrice();
   await ownerStatus();await loadMarket();
@@ -374,7 +374,8 @@ function renderAuth(){setTimeout(enforceOwnerPrivacy,0);
  syncRoleChoices(); translateNodeTree($('authArea'));
 }
 async function register(){try{detectLocalMarket();const selectedRole=$('rrole')?.value||'';const roles=selectedRole?[selectedRole]:[];if(!roles.length){$('rmsg').textContent=tr('Choose one role to continue.');return}if(!$('rlegal')?.checked){$('rmsg').textContent=tr('You must agree to the Terms of Service and Privacy Policy.');return}const j=await api('/api/register',{method:'POST',body:JSON.stringify({name:$('rname').value,email:$('remail').value,phone:$('rphone').value,password:$('rpass').value,roles,country:$('rcountry').value,language:$('lang').value,currency:currencyFor($('rcountry').value),acceptedTerms:true,termsVersion:'2026-09-17'})});me=j.user;renderAccount();renderAuth();alert(tr(j.message||'Account created. Verify your email to activate the account.'));go('accountPane');if(j.emailVerificationSent===false){setTimeout(()=>{const m=$('activationMsg');if(m)m.textContent=tr('The verification email was not sent. Use Resend email to try again.')},100)}}catch(e){$('rmsg').textContent=tr(e.message)}}
-async function login(){try{const j=await api('/api/login',{method:'POST',body:JSON.stringify({email:$('lemail').value,password:$('lpass').value})});me=j.user;renderAccount();renderAuth();const next=sessionStorage.getItem('tut_after_login');sessionStorage.removeItem('tut_after_login');if(next?.startsWith('offer:')){go('market');setTimeout(()=>{const p=next.split(':');openOffer(p[1],p[2])},250)}else if(next?.startsWith('contact:')){go('market');setTimeout(()=>contactListing(next.split(':')[1]),250)}else go(me.role==='owner'?'adminPane':'market')}catch(e){$('lmsg').textContent=tr(e.message)}}
+function syncOwnerVisitor(){const visitorId=localStorage.getItem('tut_visitor_id');if(visitorId)fetch('/api/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({visitorId})}).catch(()=>{});}
+async function login(){try{const j=await api('/api/login',{method:'POST',body:JSON.stringify({email:$('lemail').value,password:$('lpass').value})});me=j.user;if(me.role==='owner')syncOwnerVisitor();renderAccount();renderAuth();const next=sessionStorage.getItem('tut_after_login');sessionStorage.removeItem('tut_after_login');if(next?.startsWith('offer:')){go('market');setTimeout(()=>{const p=next.split(':');openOffer(p[1],p[2])},250)}else if(next?.startsWith('contact:')){go('market');setTimeout(()=>contactListing(next.split(':')[1]),250)}else go(me.role==='owner'?'adminPane':'market')}catch(e){$('lmsg').textContent=tr(e.message)}}
 function showForgotPassword(){
  const box=document.querySelector('.authMode[data-mode="login"]');if(!box)return;
  box.innerHTML=`<span class="eyebrow">${tr('PASSWORD RECOVERY')}</span><h3>${tr('Reset your password')}</h3><p class="muted">${tr('Enter your account email. We will send you a secure reset link.')}</p><div class="authFields"><input id="forgotEmail" type="email" autocomplete="email" placeholder="${esc(tr('Email'))}"></div><button class="goldBtn full" onclick="requestPasswordReset()">${tr('Send reset link')}</button><button type="button" class="forgotLink" onclick="renderAuth();showAuthMode('login')">${tr('Back to login')}</button><div id="forgotMsg" class="msg"></div>`;
@@ -929,7 +930,7 @@ async function loadAdmin(){
  ];
  const metrics=[['Total visitors',s.visitors||0],['Total registered users',s.users||0],['Total deals',s.completedDeals||0],['Platform revenue',s.revenueDisplay||'USD 0.00']];
  const card=([label,value])=>`<div class="ownerStatCard"><span>${esc(tr(label))}</span><strong>${esc(String(value))}</strong></div>`;
- $('adminArea').innerHTML=`<div class="ownerStatsGrid ownerRoleStats">${cards.map(card).join('')}</div><div class="ownerStatsGrid ownerMetricStats">${metrics.map(card).join('')}</div>`;
+ $('adminArea').innerHTML=`<div class="ownerStatsGrid ownerRoleStats">${cards.map(card).join('')}</div><div class="ownerStatsGrid ownerMetricStats">${metrics.map(card).join('')}</div><section class="panel" style="margin-top:22px"><h3>${tr('Manage user accounts')}</h3><input id="adminUserSearch" type="search" placeholder="${esc(tr('Search users by name or email'))}" oninput="renderAdminUsers()" style="width:100%;margin:12px 0"><div id="adminUsersList" class="adminUsersGrid"></div></section>`;window.__adminUsers=j.users||[];renderAdminUsers();
  translateNodeTree($('adminArea'));
 }
 
@@ -1840,3 +1841,19 @@ const ABOUT_EDITORIAL_TRANSLATIONS={"ar":{"ABOUT TUT MOVE":"من نحن — TUT 
 for(const [language,entries] of Object.entries(ABOUT_EDITORIAL_TRANSLATIONS)){Object.assign(UI_TRANSLATIONS[language] ||= {},entries);}
 
 for(const [language,entries] of Object.entries(ABOUT_EDITORIAL_TRANSLATIONS)){if(typeof V49_TRANSLATIONS!=="undefined")Object.assign(V49_TRANSLATIONS[language] ||= {},entries);}
+
+// Password visibility controls for dynamically rendered login, registration and reset forms.
+function addPasswordEyes(root=document){
+ root.querySelectorAll('input[type="password"]').forEach(input=>{
+  if(input.dataset.eyeReady)return;input.dataset.eyeReady='1';
+  const wrap=document.createElement('span');wrap.className='passwordEyeWrap';
+  input.parentNode.insertBefore(wrap,input);wrap.appendChild(input);
+  const btn=document.createElement('button');btn.type='button';btn.className='passwordEyeButton';
+  btn.textContent='👁';btn.setAttribute('aria-label','Show password');btn.setAttribute('aria-pressed','false');
+  btn.addEventListener('click',()=>{const show=input.type==='password';input.type=show?'text':'password';btn.setAttribute('aria-label',show?'Hide password':'Show password');btn.setAttribute('aria-pressed',String(show));});
+  wrap.appendChild(btn);
+ });
+}
+const passwordEyeObserver=new MutationObserver(()=>addPasswordEyes());
+passwordEyeObserver.observe(document.documentElement,{childList:true,subtree:true});
+addPasswordEyes();
