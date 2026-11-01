@@ -1056,3 +1056,11 @@ html[dir="rtl"] .aboutFounderIdentity{align-items:flex-start;}
 .passwordEyeButton{position:absolute;inset-inline-end:5px;top:50%;transform:translateY(-50%);height:38px;width:40px;border:0;background:transparent;color:var(--text);cursor:pointer;font-size:19px;z-index:1}
 .passwordEyeButton:focus-visible{outline:2px solid var(--gold);border-radius:6px}
 .adminUsersGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:12px;margin-top:12px}
+
+/* Cancel deal dialog + notification-to-deal highlight */
+.cancelDlg{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.72);display:grid;place-items:center;padding:16px}
+.cancelBox{width:100%;max-width:440px;background:#12100a;border:1px solid rgba(215,175,69,.45);border-radius:16px;padding:20px;max-height:90vh;overflow:auto}
+.cancelBox h3{margin:0 0 6px}.cancelBox label{display:block;margin:12px 0 0}.cancelBox select,.cancelBox textarea{width:100%;box-sizing:border-box;margin-top:6px}
+.cancelDealBtn{border-color:rgba(255,120,100,.55)!important;color:#ffb3a6!important}
+.dealFlash{animation:dealFlash 1.8s ease 2}
+@keyframes dealFlash{0%,100%{box-shadow:0 0 0 0 rgba(231,188,80,0)}50%{box-shadow:0 0 0 3px rgba(231,188,80,.85)}}
