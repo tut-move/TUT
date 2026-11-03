@@ -821,7 +821,12 @@ function dealStageBlock(b){
  const vs=b.verificationState||{},myReady=me.id===b.buyerUserId?vs.buyerReady:vs.providerReady,otherReady=me.id===b.buyerUserId?vs.providerReady:vs.buyerReady;
  const feePayerId=b.feePayerUserId||b.buyerUserId,isFeePayer=me.id===feePayerId;
  if(b.paymentStatus!=='paid'){
-   if(b.status==='payment_expired')return '<p>The payment window expired. Any captured fee is being refunded. Contact support if you do not receive your refund.</p>';
+   if(b.status==='payment_expired'){const role=me.id===b.buyerUserId?'buyer':'provider',pay=(b.feePayments||{})[role]||{},amt=pay.amountMinor?`${(pay.amountMinor/100).toFixed(2)} ${pay.currency||b.commissionCurrency||'USD'}`:'';let line;
+  if(pay.status==='refunded')line=`<p class="refundLine ok">✓ Refunded in full${amt?`: <b>${amt}</b>`:''}. Your bank may take 5–10 business days to show it.</p>`;
+  else if(pay.status==='refund_pending')line=`<p class="refundLine">Refund started${amt?`: <b>${amt}</b>`:''} — the full amount you paid is on its way back to your payment method.</p>`;
+  else if(pay.status==='paid')line=`<p class="refundLine">Your payment${amt?` of <b>${amt}</b>`:''} was received. A full refund is being processed automatically.</p>`;
+  else line=`<p class="refundLine">You were not charged for this deal.</p>`;
+  return `<p>The payment window expired.</p>${line}`}
    const ready=mine&&other,terms=b.dealTerms||{},myTerms=me.id===b.buyerUserId?terms.buyer:terms.provider,otherTerms=me.id===b.buyerUserId?terms.provider:terms.buyer;
    const mySide=me.id===b.buyerUserId?'buyer':'provider',otherSide=mySide==='buyer'?'provider':'buyer',myMissing=vs[mySide+'Missing']||[],otherMissing=vs[otherSide+'Missing']||[],otherSub=!!vs[otherSide+'Submitted'];
    const vChip=(t,ok)=>`<span class="vChip ${ok?'ok':''}">${ok?'✓ ':''}${esc(t)}</span>`;

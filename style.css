@@ -1064,3 +1064,4 @@ html[dir="rtl"] .aboutFounderIdentity{align-items:flex-start;}
 .cancelDealBtn{border-color:rgba(255,120,100,.55)!important;color:#ffb3a6!important}
 .dealFlash{animation:dealFlash 1.8s ease 2}
 @keyframes dealFlash{0%,100%{box-shadow:0 0 0 0 rgba(231,188,80,0)}50%{box-shadow:0 0 0 3px rgba(231,188,80,.85)}}
+.refundLine{padding:10px 12px;border:1px solid rgba(215,175,69,.4);border-radius:10px}.refundLine.ok{border-color:rgba(120,200,140,.6)}
