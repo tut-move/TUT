@@ -831,7 +831,7 @@ function dealStageBlock(b){
    const proposed=terms.buyer,recipientDecision=terms.provider?.decision;
    const termsBlock=ready?`</section><section class="vSec"><div class="vHead"><span class="vNum">2</span><div><h4>Underlying deal payment</h4></div></div><p><b>Payer:</b> ${esc(b.buyerName||b.buyer?.name||b.partyLabels?.buyer||'Requester')} · <b>Recipient:</b> ${esc(b.providerName||b.provider?.name||b.partyLabels?.provider||'Service provider')}. TUT Move does not collect the service price.</p>${terms.confirmed?`<div class="dealFacts">${valueLine('Agreed payment method',terms.settlementMethod)}${valueLine('Agreed payment timing',terms.paymentTiming)}</div>`:isPayer?`<p>Only the payer chooses the payment method. The recipient must approve it.</p><div class="dealTermsForm"><label>Payment method<select id="settle_${b.id}"><option>Cash</option><option>Bank Transfer</option><option>Cash / Bank Transfer</option><option>Other agreed method</option></select></label><label>Payment timing<select id="timing_${b.id}"><option>Upon meeting</option><option>Upon handover</option><option>Before handover</option><option>After delivery / service</option><option>As agreed between the parties</option></select></label><button class="outlineBtn mini" onclick="saveDealTerms('${b.id}')">${proposed?'Update proposal':'Send for approval'}</button></div>${recipientDecision==='rejected'?'<p class="muted">Recipient requested different payment terms. Submit a new proposal.</p>':proposed?'<p class="muted">Waiting for recipient approval.</p>':''}`:proposed?`<div class="dealFacts">${valueLine('Proposed payment method',proposed.settlementMethod)}${valueLine('Proposed payment timing',proposed.paymentTiming)}</div>${recipientDecision==='rejected'?'<p class="muted">You requested a change. Waiting for a new proposal.</p>':`<div class="actions"><button class="goldBtn mini" onclick="reviewDealTerms('${b.id}','accept')">Accept payment terms</button><button class="outlineBtn mini" onclick="reviewDealTerms('${b.id}','reject')">Reject / request change</button></div>`}`:'<p class="muted">Waiting for payer to propose payment terms.</p>'}`:'';
    const role=me.id===b.buyerUserId?'buyer':'provider',minePay=b.feePayments?.[role],fee=role==='buyer'?(b.customerFee??b.customerFeeUSD):(b.providerFee??b.providerFeeUSD);
-   const feeBlock=terms.confirmed&&b.paymentStatus!=='paid'?(b.feePayments?`</section><section class="vSec"><div class="vHead"><span class="vNum">3</span><div><h4>TUT Move platform fee</h4></div></div><p>Your fixed fee: <b>USD ${money(fee)}</b>. The other party pays their own fee. Both payments must be confirmed within 10 minutes of the first checkout. If the window expires, collected fees are refunded. Platform fees are generally non-refundable once the deal is completed, except incorrect/duplicate charges or legally required refunds.</p><p>Deadline: ${b.paymentDeadline?esc(new Date(b.paymentDeadline).toLocaleString()):'Starts when the first party begins payment'}</p>${Number(fee)===0?'<p>✓ No platform fee is required from you.</p>':minePay?.status==='paid'?'<p>✓ Your fee paid; waiting for the other party.</p>':`<label><input type="checkbox" id="feeAgree_${b.id}"> I understand and accept the platform fee and refund terms.</label><button class="goldBtn mini" onclick="startCardCheckout('${b.id}')">Pay my USD fee</button>`}`:`<p>This older deal uses a previous fee structure. Contact support before paying.</p>`):'';
+   const feeBlock=terms.confirmed&&b.paymentStatus!=='paid'?(b.feePayments?`</section><section class="vSec"><div class="vHead"><span class="vNum">3</span><div><h4>TUT Move platform fee</h4></div></div><p>Your fixed fee: <b>USD ${money(fee)}</b>. The other party pays their own fee. Both payments must be confirmed within 5 minutes of the first checkout. If the window expires, collected fees are refunded. Platform fees are generally non-refundable once the deal is completed, except incorrect/duplicate charges or legally required refunds.</p><p>Deadline: ${b.paymentDeadline?esc(new Date(b.paymentDeadline).toLocaleString()):'Starts when the first party begins payment'}</p>${Number(fee)===0?'<p>✓ No platform fee is required from you.</p>':minePay?.status==='paid'?'<p>✓ Your fee paid; waiting for the other party.</p>':`<label><input type="checkbox" id="feeAgree_${b.id}"> I understand and accept the platform fee and refund terms.</label><button class="goldBtn mini" onclick="startCardCheckout('${b.id}')">Pay my USD fee</button>`}`:`<p>This older deal uses a previous fee structure. Contact support before paying.</p>`):'';
    return `<section class="vSec"><div class="vHead"><span class="vNum">1</span><div><h4>Basic verification</h4><p class="muted">Review the other party's masked details, then choose Continue or Reject. Full document numbers are never shown.</p></div></div>
    <div class="vRows"><div class="vRow"><span>You</span>${vChip(myReady?'Complete':'Incomplete',myReady)}${myReady?'':`<button class="outlineBtn mini" onclick="go('verify')">Complete my verification</button>`}</div>${myReady||!myMissing.length?'':`<p class="vMissing">Still needed from you: ${esc(myMissing.join(', '))}</p>`}
    <div class="vRow"><span>Other party</span>${vChip(otherReady?'Complete':otherSub?'Incomplete':'Waiting',otherReady)}${otherSub?`<button class="outlineBtn mini" onclick="loadBasicProfile('${b.id}')">View what they sent</button>`:''}</div>${otherReady||!otherSub||!otherMissing.length?'':`<p class="vMissing">Still needed from them: ${esc(otherMissing.join(', '))}</p>`}${otherSub?'':'<p class="muted">They have not sent anything yet.</p>'}</div>
@@ -1056,7 +1056,8 @@ window.addEventListener('DOMContentLoaded',()=>{renderTrustFields();setTimeout(l
 const docMask={identity:null,license:null};
 const DOC_LABEL={identity:'Government ID',license:'Licence / permit'};
 const DOC_INPUT={identity:'verifyIdentityFile',license:'verifyLicenceFile'};
-function dmSensitive(t){const d=(t.match(/\d/g)||[]).length,l=(t.match(/[A-Za-z]/g)||[]).length;return d>=2||(d>=1&&l>=3&&t.length>=5)}
+const DM_DIG=/[0-9\u0660-\u0669\u06F0-\u06F9]/g;
+function dmSensitive(t){const d=(t.match(DM_DIG)||[]).length,l=(t.match(/[A-Za-z]/g)||[]).length;return d>=2||(d>=1&&l>=2&&t.length>=4)}
 let dmTessLoading=null;
 function dmLoadTesseract(){
   if(window.Tesseract)return Promise.resolve();
@@ -1080,24 +1081,44 @@ function dmConfirm(kind){const st=docMask[kind];if(st)st.confirmed=!!document.ge
 function dmUndo(kind){const st=docMask[kind];if(!st)return;const i=[...st.boxes].map(b=>b.manual).lastIndexOf(true);if(i>=0)st.boxes.splice(i,1);dmRender(kind)}
 function dmClear(kind){const st=docMask[kind];if(!st)return;st.boxes=st.boxes.filter(b=>!b.manual);dmRender(kind)}
 function dmExport(kind){const st=docMask[kind];dmRender(kind);return st.canvas.toDataURL('image/jpeg',0.88)}
+// Rotate a canvas by 0/90/180/270 degrees clockwise.
+function dmRotated(src,deg){if(!deg)return src;const c=document.createElement('canvas'),sw=deg===180?src.width:src.height,sh=deg===180?src.height:src.width;c.width=sw;c.height=sh;const x=c.getContext('2d');x.translate(sw/2,sh/2);x.rotate(deg*Math.PI/180);x.drawImage(src,-src.width/2,-src.height/2);return c}
+function dmScaled(src,max){const k=Math.min(1,max/Math.max(src.width,src.height));if(k>=1)return {c:src,k:1};const c=document.createElement('canvas');c.width=Math.round(src.width*k);c.height=Math.round(src.height*k);c.getContext('2d').drawImage(src,0,0,c.width,c.height);return {c,k}}
+// Map a point on the rotated canvas back to the original (unrotated) canvas. W,H = original size.
+function dmUnrotatePoint(deg,x,y,W,H){if(deg===90)return [y,H-x];if(deg===180)return [W-x,H-y];if(deg===270)return [W-y,x];return [x,y]}
+let dmWorkerP=null;
+async function dmGetWorker(){if(dmWorkerP)return dmWorkerP;dmWorkerP=(async()=>{await dmLoadTesseract();try{return await window.Tesseract.createWorker('eng+ara',1,window.__tessOpts||{})}catch(e){return await window.Tesseract.createWorker('eng',1,window.__tessOpts||{})}})();dmWorkerP.catch(()=>{dmWorkerP=null});return dmWorkerP}
+function dmWordScore(words){let n=0,sum=0;for(const w of words||[]){const t=String(w.text||'');if((w.confidence||0)>=60&&/[A-Za-z0-9\u0660-\u0669]{3,}/.test(t)){n++;sum+=w.confidence}}return sum}
+// Finds the orientation in which the document is readable (portrait, landscape, upside down, sideways) and returns its words with boxes in ORIGINAL image coordinates.
+async function dmReadAnyOrientation(base){
+  const worker=await dmGetWorker();let best={deg:0,score:-1};
+  for(const deg of [0,90,180,270]){const q=dmScaled(dmRotated(base,deg),1100);const {data}=await worker.recognize(q.c);const sc=dmWordScore(data.words);if(sc>best.score)best={deg,score:sc};if(deg===0&&sc>=1500)break}
+  const rot=dmRotated(base,best.deg),big=dmScaled(rot,2000),up=big.k<1?big:{c:rot,k:1};
+  const {data}=await worker.recognize(up.c);const W=base.width,H=base.height,out=[];
+  for(const w of data.words||[]){const k=up.k,x0=w.bbox.x0/k,y0=w.bbox.y0/k,x1=w.bbox.x1/k,y1=w.bbox.y1/k;
+    const p=dmUnrotatePoint(best.deg,x0,y0,W,H),q=dmUnrotatePoint(best.deg,x1,y1,W,H);
+    out.push({text:w.text,confidence:w.confidence,deg:best.deg,x:Math.min(p[0],q[0]),y:Math.min(p[1],q[1]),w:Math.abs(p[0]-q[0]),h:Math.abs(p[1]-q[1]),len:String(w.text||'').trim().length})}
+  return {words:out,deg:best.deg}
+}
 async function dmAuto(kind){
   const st=docMask[kind];if(!st)return;
   dmStatus(kind,'Reading the document in your browser to find numbers (first time can take a little while)...');
   try{
-    await dmLoadTesseract();
-    const {data}=await window.Tesseract.recognize(st.base,'eng',window.__tessOpts||{});
+    const r=await dmReadAnyOrientation(st.base);
     if(docMask[kind]!==st)return;
     let n=0;
-    for(const w of (data.words||[])){
-      const t=String(w.text||'').trim();if(!t||(w.confidence||0)<25||!dmSensitive(t))continue;
-      let {x0,y0,x1,y1}=w.bbox;const len=t.length;
-      if(len>=8)x1=x0+(x1-x0)*(len-3)/len;      // keep the last 3 characters visible, cover the rest
-      const pad=Math.max(3,Math.round((y1-y0)*0.15));
-      st.boxes.push({x:x0-pad,y:y0-pad,w:(x1-x0)+2*pad,h:(y1-y0)+2*pad,manual:false});n++;
+    for(const w of r.words){
+      const t=String(w.text||'').trim();if(!t||(w.confidence||0)<20||!dmSensitive(t))continue;
+      let {x,y,w:bw,h:bh}=w;
+      const horizontal=r.deg===0||r.deg===180;
+      // keep the last 3 characters visible on long numbers, cover the rest (along the text direction)
+      if(w.len>=8){const keep=(w.len-3)/w.len;if(horizontal){if(r.deg===0)bw*=keep;else{x+=bw*(1-keep);bw*=keep}}else{if(r.deg===90){y+=bh*(1-keep);bh*=keep}else bh*=keep}}
+      const pad=Math.max(4,Math.round(Math.min(bw,bh)*0.2));
+      st.boxes.push({x:x-pad,y:y-pad,w:bw+2*pad,h:bh+2*pad,manual:false});n++;
     }
     dmRender(kind);
     if(n>0)dmStatus(kind,`Automatically covered ${n} item(s). Check the image carefully and drag to cover anything that was missed.`);
-    else dmStatus(kind,'WARNING: no numbers were detected automatically. This usually means the reader could not read this document. Cover every number, date and code yourself before sending.',true);
+    else dmStatus(kind,'WARNING: no numbers were detected automatically. Try a sharper, well-lit photo. Cover every number, date and code yourself before sending.',true);
   }catch(e){
     dmStatus(kind,'WARNING: automatic reading is not available right now. Cover every number, date and code yourself before sending.',true);
   }
