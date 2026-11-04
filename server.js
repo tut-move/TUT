@@ -48,6 +48,7 @@ async function initDB(){
       data JSONB NOT NULL,
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     )`);
+    await pgPool.query(`CREATE TABLE IF NOT EXISTS tut_uploads (name TEXT PRIMARY KEY, mime TEXT NOT NULL, data BYTEA NOT NULL, created_at TIMESTAMPTZ NOT NULL DEFAULT NOW())`);
     const r=await pgPool.query('SELECT data FROM tut_app_state WHERE id=1');
     if(r.rows.length){
       dbCache=normalizeDB(r.rows[0].data);
@@ -60,6 +61,7 @@ async function initDB(){
       );
     }
     console.log('TUT Move database: PostgreSQL persistent storage connected');
+    try{if(fs.existsSync(UPLOADS))for(const n of fs.readdirSync(UPLOADS)){const mime=/\.png$/.test(n)?'image/png':/\.webp$/.test(n)?'image/webp':/\.svg$/.test(n)?'image/svg+xml':/\.pdf$/.test(n)?'application/pdf':'image/jpeg';await pgPool.query('INSERT INTO tut_uploads (name,mime,data) VALUES ($1,$2,$3) ON CONFLICT (name) DO NOTHING',[n,mime,fs.readFileSync(path.join(UPLOADS,n))])}}catch(e){console.error('Upload migration failed',e.message)}
   }else{
     dbCache=readLocalDB();
     writeLocalDB(dbCache);
@@ -74,7 +76,11 @@ const sseClients=new Map(),ssePending=new Set();
 function ssePush(userIds){for(const uid of userIds){const set=sseClients.get(uid);if(!set)continue;for(const r of set){try{r.write('event: update\ndata: {"t":'+Date.now()+'}\n\n')}catch(e){}}}}
 function sseFlush(){if(!ssePending.size)return;const ids=[...ssePending];ssePending.clear();ssePush(ids)}
 setInterval(()=>{for(const set of sseClients.values())for(const r of set){try{r.write(': ping\n\n')}catch(e){}}},20000).unref();
+const uploadQueue=[];
+async function flushUploads(){if(!pgPool){uploadQueue.length=0;return}while(uploadQueue.length){const u=uploadQueue[0];await pgPool.query('INSERT INTO tut_uploads (name,mime,data) VALUES ($1,$2,$3) ON CONFLICT (name) DO UPDATE SET data=EXCLUDED.data,mime=EXCLUDED.mime',[u.name,u.mime,u.bytes]);uploadQueue.shift()}}
+async function readUploadBytes(name){name=String(name||'');if(!/^[A-Za-z0-9._-]+$/.test(name))return null;const file=path.join(UPLOADS,name);try{if(fs.existsSync(file))return fs.readFileSync(file)}catch(e){}if(pgPool){const r=await pgPool.query('SELECT data FROM tut_uploads WHERE name=$1',[name]);if(r.rows.length){const b=r.rows[0].data;try{fs.mkdirSync(UPLOADS,{recursive:true});fs.writeFileSync(file,b)}catch(e){}return b}}return null}
 async function writeDB(db){
+  await flushUploads();
   dbCache=normalizeDB(db);
   if(pgPool){
     await pgPool.query(
@@ -248,7 +254,7 @@ function recomputeMatches(db){
   out.sort((a,b)=>b.score-a.score);db.matches=out.slice(0,250);return db.matches;
 }
 function sanitizeData(data){const out={};for(const [k,v] of Object.entries(data||{})){if(typeof v==='string')out[k]=v.slice(0,500);else if(typeof v==='number'||typeof v==='boolean')out[k]=v;}return out}
-function saveDataUrl(userId,kind,dataUrl){if(!dataUrl||typeof dataUrl!=='string')return null;const m=dataUrl.match(/^data:(image\/(?:jpeg|png|webp|heic|heif)|application\/pdf);base64,(.+)$/);if(!m)return null;const buf=Buffer.from(m[2],'base64');if(buf.length>8*1024*1024)throw new Error('File too large (8MB max).');const ext=m[1]==='application/pdf'?'pdf':m[1].split('/')[1].replace('jpeg','jpg');fs.mkdirSync(UPLOADS,{recursive:true});const name=`${userId}_${kind}_${Date.now()}.${ext}`;fs.writeFileSync(path.join(UPLOADS,name),buf);return {name,mime:m[1],size:buf.length};}
+function saveDataUrl(userId,kind,dataUrl){if(!dataUrl||typeof dataUrl!=='string')return null;const m=dataUrl.match(/^data:(image\/(?:jpeg|png|webp|heic|heif)|application\/pdf);base64,(.+)$/);if(!m)return null;const buf=Buffer.from(m[2],'base64');if(buf.length>8*1024*1024)throw new Error('File too large (8MB max).');const ext=m[1]==='application/pdf'?'pdf':m[1].split('/')[1].replace('jpeg','jpg');fs.mkdirSync(UPLOADS,{recursive:true});const name=`${userId}_${kind}_${Date.now()}.${ext}`;fs.writeFileSync(path.join(UPLOADS,name),buf);uploadQueue.push({name,mime:m[1],bytes:buf});return {name,mime:m[1],size:buf.length};}
 // Privacy-first automatic document preview: never persist or share the raw document.
 // This safe fallback intentionally hides the ENTIRE document because generic OCR cannot
 // guarantee detection of all identifiers in arbitrary international documents.
@@ -269,7 +275,7 @@ function safeDocumentPreview(userId,kind,raw,legalName){
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="630" viewBox="0 0 1000 630"><rect width="1000" height="630" fill="#121922"/><rect x="30" y="30" width="940" height="570" rx="22" fill="#202b39" stroke="#c6a15c" stroke-width="5"/><text x="65" y="105" font-family="sans-serif" font-size="32" fill="#e8bd68">TUT MOVE - PRIVACY PREVIEW</text><text x="65" y="170" font-family="sans-serif" font-size="30" fill="white">${label}</text><rect x="65" y="205" width="870" height="245" fill="black"/><text x="90" y="330" font-family="sans-serif" font-size="27" fill="white">DOCUMENT CONTENT AUTOMATICALLY HIDDEN</text><text x="65" y="510" font-family="sans-serif" font-size="26" fill="white">Name: ${name}</text><text x="65" y="560" font-family="sans-serif" font-size="20" fill="#e8bd68">Original document image is not stored or shared.</text></svg>`;
   fs.mkdirSync(UPLOADS,{recursive:true});
   const nameFile=`${userId}_${kind}_${Date.now()}_privacy.svg`;
-  fs.writeFileSync(path.join(UPLOADS,nameFile),svg,{flag:'wx'});
+  fs.writeFileSync(path.join(UPLOADS,nameFile),svg,{flag:'wx'});uploadQueue.push({name:nameFile,mime:'image/svg+xml',bytes:Buffer.from(svg)});
   return {name:nameFile,mime:'image/svg+xml',size:Buffer.byteLength(svg),masked:true,redactionMethod:'full_document_safe_fallback_v1'};
 }
 // Document already masked by the user in the browser (original never uploaded). Only a JPEG is accepted.
@@ -280,7 +286,7 @@ function saveMaskedDocument(userId,kind,raw){
   if(!(bytes[0]===255&&bytes[1]===216&&bytes[2]===255))throw new Error('Photo contents do not match the selected image format.');
   fs.mkdirSync(UPLOADS,{recursive:true});
   const nameFile=`${userId}_${kind}_${Date.now()}_masked.jpg`;
-  fs.writeFileSync(path.join(UPLOADS,nameFile),bytes,{flag:'wx'});
+  fs.writeFileSync(path.join(UPLOADS,nameFile),bytes,{flag:'wx'});uploadQueue.push({name:nameFile,mime:'image/jpeg',bytes});
   return {name:nameFile,mime:'image/jpeg',size:bytes.length,masked:true,redactionMethod:'user_confirmed_mask_v1'};
 }
 function docSafe(f){return !!f&&['full_document_safe_fallback_v1','user_confirmed_mask_v1'].includes(f.redactionMethod)}
@@ -441,19 +447,49 @@ function activateFeeFreeSides(b){
    b.paymentMode=zeroFeeRole(b,'buyer')&&zeroFeeRole(b,'provider')?'no_fee':'stripe_fee_only';
  }
 }
-async function createStripeCheckout(b,siteUrl,role){const currency=bookingFeeCurrency(b);const amount=Math.round(bookingFee(b,role)*100);if(amount<50)throw new Error('Fee must be at least 0.50 '+currency);const expires=Math.max(Math.floor(Date.now()/1000)+1800,Math.floor(Date.parse(b.paymentDeadline||0)/1000));return stripeRequest('checkout/sessions',{'mode':'payment','success_url':`${siteUrl}/?payment=success&deal=${encodeURIComponent(b.id)}`,'cancel_url':`${siteUrl}/?payment=cancelled&deal=${encodeURIComponent(b.id)}`,'client_reference_id':b.id,'metadata[deal_id]':b.id,'metadata[role]':role,'metadata[expected_fee_minor]':String(amount),'line_items[0][quantity]':'1','line_items[0][price_data][currency]':currency.toLowerCase(),'line_items[0][price_data][unit_amount]':String(amount),'line_items[0][price_data][product_data][name]':`TUT Move ${role} platform fee — ${b.id}`,'expires_at':String(expires)},`checkout-${b.id}-${role}-${Date.now()}`)}
+async function createStripeCheckout(b,siteUrl,role){const currency=bookingFeeCurrency(b);const amount=Math.round(bookingFee(b,role)*100);if(amount<50)throw new Error('Fee must be at least 0.50 '+currency);const expires=Math.max(Math.floor(Date.now()/1000)+1800,Math.floor(Date.parse(b.paymentDeadline||0)/1000));return stripeRequest('checkout/sessions',{'mode':'payment','success_url':`${siteUrl}/?payment=success&deal=${encodeURIComponent(b.id)}`,'cancel_url':`${siteUrl}/?payment=cancelled&deal=${encodeURIComponent(b.id)}`,'payment_method_types[0]':'card','payment_intent_data[capture_method]':'manual','client_reference_id':b.id,'metadata[deal_id]':b.id,'metadata[role]':role,'metadata[expected_fee_minor]':String(amount),'line_items[0][quantity]':'1','line_items[0][price_data][currency]':currency.toLowerCase(),'line_items[0][price_data][unit_amount]':String(amount),'line_items[0][price_data][product_data][name]':`TUT Move ${role} platform fee — ${b.id}`,'expires_at':String(expires)},`checkout-${b.id}-${role}-${Date.now()}`)}
 
-function refundNote(db,b,role,done){if(!db)return;const pay=b.feePayments[role],uid=role==='buyer'?b.buyerUserId:b.providerUserId,amt=((Number(pay.amountMinor)||Math.round(bookingFee(b,role)*100))/100).toFixed(2)+' '+(pay.currency||bookingFeeCurrency(b));if(done)addNotification(db,uid,'payment','Refund completed','Your platform fee of '+amt+' was refunded in full. Your bank may take 5-10 business days to show it.','offers',b.id);else addNotification(db,uid,'payment','Refund started','Your platform fee of '+amt+' is being refunded in full to your original payment method.','offers',b.id)}
+function feeAmountText(b,role){const pay=b.feePayments[role]||{};return ((Number(pay.amountMinor)||Math.round(bookingFee(b,role)*100))/100).toFixed(2)+' '+(pay.currency||bookingFeeCurrency(b))}
+function roleUser(b,role){return role==='buyer'?b.buyerUserId:b.providerUserId}
+function refundNote(db,b,role,done){if(!db)return;const uid=roleUser(b,role),amt=feeAmountText(b,role);if(done)addNotification(db,uid,'payment','Refund completed','Your platform fee of '+amt+' was refunded in full. Your bank may take 5-10 business days to show it.','offers',b.id);else addNotification(db,uid,'payment','Refund started','Your platform fee of '+amt+' is being refunded in full to your original payment method.','offers',b.id)}
+function holdReleasedNote(db,b,role){if(!db)return;addNotification(db,roleUser(b,role),'payment','Card hold released','The hold of '+feeAmountText(b,role)+' on your card was released. You were not charged. Your bank may take a few days to show it.','offers',b.id)}
+// Reads the real state of a fee payment from the payment provider (does not depend on webhooks).
 async function stripeSyncFeePayment(b,role,db){const pay=b.feePayments&&b.feePayments[role];if(!pay)return;
- if(pay.sessionId&&pay.status==='checkout_created'){try{const s=await stripeGet('checkout/sessions/'+encodeURIComponent(pay.sessionId));if(s.payment_status==='paid'){pay.status='paid';pay.amountMinor=Number(s.amount_total)||pay.amountMinor;pay.currency=String(s.currency||pay.currency||'').toUpperCase();pay.paymentIntent=s.payment_intent;pay.paidAt=pay.paidAt||new Date().toISOString()}}catch(e){pay.syncError=e.message}}
- if(pay.status==='paid'&&!pay.paymentIntent&&pay.sessionId){try{const s=await stripeGet('checkout/sessions/'+encodeURIComponent(pay.sessionId));if(s.payment_intent)pay.paymentIntent=s.payment_intent}catch(e){pay.syncError=e.message}}
+ if(pay.sessionId&&pay.status==='checkout_created'){try{const s=await stripeGet('checkout/sessions/'+encodeURIComponent(pay.sessionId)+'?expand[]=payment_intent');const pi=s.payment_intent&&typeof s.payment_intent==='object'?s.payment_intent:null;
+   if(pi){const expected=Math.round(bookingFee(b,role)*100);if(Number(pi.amount)!==expected||String(pi.currency).toLowerCase()!==bookingFeeCurrency(b).toLowerCase()){pay.syncError='Payment amount mismatch'}else{
+     pay.paymentIntent=pi.id;pay.amountMinor=Number(pi.amount);pay.currency=String(pi.currency).toUpperCase();
+     if(pi.status==='requires_capture'){pay.status='authorized';pay.authorizedAt=pay.authorizedAt||new Date().toISOString()}
+     else if(pi.status==='succeeded'){pay.status='paid';pay.paidAt=pay.paidAt||new Date().toISOString()}
+     else if(pi.status==='canceled'){pay.status='cancelled_hold'}}}
+  }catch(e){pay.syncError=e.message}}
+ if(pay.status==='paid'&&!pay.paymentIntent&&pay.sessionId){try{const s=await stripeGet('checkout/sessions/'+encodeURIComponent(pay.sessionId));if(s.payment_intent)pay.paymentIntent=typeof s.payment_intent==='string'?s.payment_intent:s.payment_intent.id}catch(e){pay.syncError=e.message}}
  if(pay.status==='refund_pending'&&pay.refundId){try{const r=await stripeGet('refunds/'+encodeURIComponent(pay.refundId));pay.refundStatus=r.status;if(r.status==='succeeded'){pay.status='refunded';pay.refundedAt=pay.refundedAt||new Date().toISOString();refundNote(db,b,role,true)}else if(r.status==='failed'||r.status==='canceled'){pay.status='paid';pay.refundError='Refund '+r.status+' at the payment provider';pay.refundId=null}}catch(e){pay.syncError=e.message}}}
+// Releases the card hold: the customer is never charged.
+async function releaseHold(b,role,tag,db){const pay=b.feePayments&&b.feePayments[role];if(!pay||pay.status!=='authorized'||!pay.paymentIntent)return false;
+ try{await stripeRequest('payment_intents/'+encodeURIComponent(pay.paymentIntent)+'/cancel',{'cancellation_reason':'requested_by_customer'},`${tag}-hold-${b.id}-${role}`);pay.status='cancelled_hold';pay.holdReleasedAt=new Date().toISOString();delete pay.holdError;holdReleasedNote(db,b,role);return true}
+ catch(e){try{const pi=await stripeGet('payment_intents/'+encodeURIComponent(pay.paymentIntent));if(pi.status==='canceled'){pay.status='cancelled_hold';holdReleasedNote(db,b,role);return true}}catch(e2){}pay.holdError=e.message;console.error('Hold release requires retry',b.id,role,e.message);return false}}
+// Full refund of a captured fee (only needed if a capture was already taken and the deal then fails).
 async function refundFeePayment(b,role,tag,db){const pay=b.feePayments&&b.feePayments[role];if(!pay||pay.status!=='paid')return false;if(!pay.paymentIntent){await stripeSyncFeePayment(b,role,db)}if(!pay.paymentIntent){pay.refundError='Missing payment reference';return false}
  try{const r=await stripeRequest('refunds',{'payment_intent':pay.paymentIntent,...(pay.amountMinor?{'amount':String(pay.amountMinor)}:{}),'reason':'requested_by_customer'},`${tag}-refund-${b.id}-${role}`);pay.refundId=r.id;pay.refundStatus=r.status;pay.status=r.status==='succeeded'?'refunded':'refund_pending';pay.refundRequestedAt=new Date().toISOString();delete pay.refundError;if(pay.status==='refunded')pay.refundedAt=new Date().toISOString();refundNote(db,b,role,pay.status==='refunded');return true}catch(e){pay.refundError=e.message;console.error('Refund requires retry',b.id,role,e.message);return false}}
-async function refundExpiredDeal(b,db){if(!b.feePayments||!b.paymentDeadline||Date.now()<Date.parse(b.paymentDeadline)||b.paymentStatus==='paid'||['cancelled','completed','deal_open'].includes(b.status))return false;const firstExpiry=b.status!=='payment_expired';b.status='payment_expired';b.paymentStatus='expired';for(const role of ['buyer','provider']){const pay=b.feePayments[role];if(!pay)continue;
- if(pay.status!=='checkout_created'||!pay.finalSynced){delete pay.syncError;await stripeSyncFeePayment(b,role,db);if(!pay.syncError&&pay.status==='checkout_created')pay.finalSynced=true}
+// Undo any money movement for one side: release a hold, or refund a capture.
+async function undoFeePayment(b,role,tag,db){const pay=b.feePayments&&b.feePayments[role];if(!pay)return;if(pay.status==='authorized')await releaseHold(b,role,tag,db);else if(pay.status==='paid')await refundFeePayment(b,role,tag,db)}
+// Charges both sides only when BOTH have a valid card hold; otherwise nobody is charged.
+async function settleDeal(b,db){if(!b.feePayments||['payment_expired','cancelled','completed','deal_open'].includes(b.status)||b.paymentStatus==='paid')return;
+ const roles=['buyer','provider'],ready=r=>['authorized','paid','waived'].includes(b.feePayments[r]?.status);
+ if(!roles.every(ready))return;
+ if(b.paymentDeadline&&Date.now()>Date.parse(b.paymentDeadline))return;
+ let failed=false;
+ for(const role of roles){const pay=b.feePayments[role];if(pay.status!=='authorized')continue;
+  try{await stripeRequest('payment_intents/'+encodeURIComponent(pay.paymentIntent)+'/capture',{},`capture-${b.id}-${role}`);pay.status='paid';pay.paidAt=new Date().toISOString();delete pay.captureError}
+  catch(e){pay.captureError=e.message;console.error('Capture failed',b.id,role,e.message);try{const pi=await stripeGet('payment_intents/'+encodeURIComponent(pay.paymentIntent));if(pi.status==='succeeded'){pay.status='paid';pay.paidAt=pay.paidAt||new Date().toISOString();continue}}catch(e2){}failed=true;break}}
+ if(failed){b.status='payment_expired';b.paymentStatus='failed';for(const role of roles)await undoFeePayment(b,role,'capturefail',db);for(const uid of [b.buyerUserId,b.providerUserId])addNotification(db,uid,'payment','Payment could not be completed','The payment could not be completed, so the deal was not opened. You were not charged, or any charge is being returned in full.','offers',b.id);return}
+ if(roles.every(r=>['paid','waived'].includes(b.feePayments[r].status))){b.paymentStatus='paid';b.status='deal_open';b.commissionPaidAt=b.commissionPaidAt||new Date().toISOString();b.paymentMode='stripe_fee_only';for(const uid of [b.buyerUserId,b.providerUserId])addNotification(db,uid,'payment','Both platform fees confirmed','Both parties paid their fees. The deal is now open and contact details are unlocked.','offers',b.id)}}
+async function refundExpiredDeal(b,db){if(!b.feePayments||!b.paymentDeadline||Date.now()<Date.parse(b.paymentDeadline)||b.paymentStatus==='paid'||['cancelled','completed','deal_open'].includes(b.status))return false;const firstExpiry=b.status!=='payment_expired';b.status='payment_expired';b.paymentStatus=b.paymentStatus==='failed'?'failed':'expired';for(const role of ['buyer','provider']){const pay=b.feePayments[role];if(!pay)continue;
+ if(pay.status==='checkout_created'&&!pay.finalSynced||['authorized','paid','refund_pending'].includes(pay.status)&&!pay.paymentIntent){delete pay.syncError;await stripeSyncFeePayment(b,role,db);if(!pay.syncError&&pay.status==='checkout_created')pay.finalSynced=true}
  if(pay.sessionId&&pay.status==='checkout_created'&&!pay.sessionExpired){try{await stripeRequest('checkout/sessions/'+encodeURIComponent(pay.sessionId)+'/expire',{},'expire-'+pay.sessionId);pay.sessionExpired=true;}catch(e){pay.expiryError=e.message;console.error('Checkout expiry needs follow-up',b.id,role,e.message)}}
- if(pay.status==='paid')await refundFeePayment(b,role,'expiry',db)}return firstExpiry;}
+ if(pay.status==='refund_pending')await stripeSyncFeePayment(b,role,db);
+ await undoFeePayment(b,role,'expiry',db)}
+ if(firstExpiry)for(const uid of [b.buyerUserId,b.providerUserId])addNotification(db,uid,'payment','Payment window expired','One side did not pay within 5 minutes. Nobody was charged: any card hold is being released.','offers',b.id);return firstExpiry;}
 
 
 const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
@@ -572,7 +608,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     db.bookings=db.bookings.filter(x=>x.buyerUserId!==uid&&x.providerUserId!==uid&&!listingIds.has(x.listingId)&&!offerIds.has(x.offerId));
     db.verifications=db.verifications.filter(x=>x.userId!==uid);db.notifications=(db.notifications||[]).filter(x=>x.userId!==uid);
     db.matches=[];recomputeMatches(db);
-    try{if(fs.existsSync(UPLOADS)){for(const name of fs.readdirSync(UPLOADS)){if(name.startsWith(uid+'_')){try{fs.unlinkSync(path.join(UPLOADS,name))}catch{}}}}}catch{}
+    try{if(fs.existsSync(UPLOADS)){for(const name of fs.readdirSync(UPLOADS)){if(name.startsWith(uid+'_')){try{fs.unlinkSync(path.join(UPLOADS,name))}catch{}}}}if(pgPool)await pgPool.query('DELETE FROM tut_uploads WHERE name LIKE $1',[uid.replace(/[%_\\]/g,'')+'\\_%'])}catch{}
     db.sessions=(db.sessions||[]).filter(x=>x.userId!==uid);
     await writeDB(db);res.setHeader('Set-Cookie',clearSessionCookie());return json(res,200,{ok:true,message:'Account deleted.'});
   }
@@ -643,7 +679,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     if(zeroFeeRole(b,role))return json(res,409,{error:'No payment is required for this participant.'});
     if(!['commission_due','payment_pending'].includes(b.status))return json(res,409,{error:'Payment is not available for this deal.'});
     if(await refundExpiredDeal(b,db)){await writeDB(db);return json(res,409,{error:'The 5-minute payment window expired; any captured fee is being refunded.'});}
-    if(['paid','refund_pending','refunded'].includes(b.feePayments[role].status))return json(res,409,{error:'This fee has already been processed.'});
+    if(['authorized','paid','refund_pending','refunded'].includes(b.feePayments[role].status))return json(res,409,{error:'Your payment was already received for this deal.'});
     if(!b.paymentDeadline)b.paymentDeadline=new Date(Date.now()+5*60*1000).toISOString();
     b.status='payment_pending';await writeDB(db);
     const session=await createStripeCheckout(b,db.settings.siteUrl||'https://tutmove.com',role);
@@ -651,16 +687,14 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
   }
   if(p==='/api/stripe/webhook'&&req.method==='POST'){
     const secret=process.env.STRIPE_WEBHOOK_SECRET;if(!secret)return json(res,503,{error:'Webhook secret is not configured.'});const raw=await rawBody(req);if(!stripeSigValid(raw,req.headers['stripe-signature'],secret))return json(res,400,{error:'Invalid signature.'});const event=JSON.parse(raw.toString('utf8'));
-    if(['checkout.session.completed','checkout.session.async_payment_succeeded'].includes(event.type)){const session=event.data?.object||{};if(session.payment_status==='paid'){const db=readDB(),b=db.bookings.find(x=>x.id===(session.metadata?.deal_id||session.client_reference_id)),role=session.metadata?.role;
-      if(b?.feePayments&&['buyer','provider'].includes(role)&&b.feePayments[role].sessionId===session.id){const pay=b.feePayments[role],expected=Math.round(bookingFee(b,role)*100);
-        if(Number(session.amount_total)!==expected||session.currency!==bookingFeeCurrency(b).toLowerCase())return json(res,400,{error:'Payment amount mismatch'});
-        if(pay.status!=='paid'&&pay.status!=='refund_pending'){pay.status='paid';pay.paymentIntent=session.payment_intent;pay.paidAt=new Date().toISOString();pay.amountMinor=Number(session.amount_total);pay.currency=String(session.currency||'').toUpperCase();}
-        if(b.status==='payment_expired'||Date.now()>Date.parse(b.paymentDeadline)){await refundExpiredDeal(b,db);if(pay.status==='paid')await refundFeePayment(b,role,'expiry',db)}
-        else if(['paid','waived'].includes(b.feePayments.buyer.status)&&['paid','waived'].includes(b.feePayments.provider.status)){b.paymentStatus='paid';b.status='deal_open';b.commissionPaidAt=new Date().toISOString();for(const uid of [b.buyerUserId,b.providerUserId])addNotification(db,uid,'payment','Both platform fees confirmed','Both parties paid their fees. The deal is now open.','offers',b.id);}
-        else for(const uid of [b.buyerUserId,b.providerUserId])addNotification(db,uid,'payment','One platform fee confirmed','Waiting for the second fee before the 5-minute deadline.','offers',b.id);
-        await writeDB(db);
-      }
-    }}
+    if(['checkout.session.completed','checkout.session.async_payment_succeeded','payment_intent.amount_capturable_updated'].includes(event.type)){const obj=event.data?.object||{};let dealId=obj.metadata?.deal_id||obj.client_reference_id,role=obj.metadata?.role;
+      const db=readDB(),b=db.bookings.find(x=>x.id===dealId);
+      if(b?.feePayments&&['buyer','provider'].includes(role)&&b.feePayments[role].status==='checkout_created'){await stripeSyncFeePayment(b,role,db);
+        if(b.feePayments[role].syncError==='Payment amount mismatch')return json(res,400,{error:'Payment amount mismatch'});
+        if(b.status==='payment_expired'||Date.now()>Date.parse(b.paymentDeadline)){await refundExpiredDeal(b,db)}
+        else{const st=b.feePayments[role].status;await settleDeal(b,db);if(st==='authorized'&&b.status==='payment_pending')for(const uid of [b.buyerUserId,b.providerUserId])addNotification(db,uid,'payment',uid===roleUser(b,role)?'Your card hold is confirmed':'The other party paid','Funds are only held, not charged. They are charged only if both sides complete payment within the 5-minute deadline.','offers',b.id)}
+        await writeDB(db)}
+    }
     if(event.type==='charge.refunded'){const db=readDB();for(const b of db.bookings||[])for(const role of ['buyer','provider'])if(b.feePayments?.[role]?.paymentIntent&&b.feePayments[role].paymentIntent===event.data?.object?.payment_intent){if(b.feePayments[role].status!=='refunded'){b.feePayments[role].status='refunded';b.feePayments[role].refundedAt=new Date().toISOString();refundNote(db,b,role,true)}}await writeDB(db)}
     return json(res,200,{received:true});
   }
@@ -673,9 +707,8 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     const f=other?.verification?.files?.[kind];
     if(!f||!['image/jpeg','image/png','image/webp','image/svg+xml'].includes(f.mime))return json(res,404,{error:'No preview.'});
     if(kind!=='selfie'&&(!f.masked||!docSafe(f)))return json(res,403,{error:'Document must be masked before sharing.'});
-    const base=path.resolve(UPLOADS)+path.sep,file=path.resolve(UPLOADS,String(f.name||''));
-    if(!file.startsWith(base)||!fs.existsSync(file))return json(res,404,{error:'Photo not found.'});
-    const data=fs.readFileSync(file);res.writeHead(200,{'Content-Type':f.mime,'Content-Length':data.length,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; sandbox"});return res.end(data);
+    const data=await readUploadBytes(f.name);if(!data)return json(res,404,{error:'Photo not found. Ask the sender to send it again.'});
+    res.writeHead(200,{'Content-Type':f.mime,'Content-Length':data.length,'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'none'; sandbox"});return res.end(data);
   }
   if(/^\/api\/bookings\/[^/]+\/basic-profile$/.test(p)&&req.method==='GET'){
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});const otherId=u.id===b.buyerUserId?b.providerUserId:b.buyerUserId,other=db.users.find(x=>x.id===otherId),me=db.users.find(x=>x.id===u.id);const ov=other?.verification||{};return json(res,200,{myReady:verificationReady(me,db,b),otherReady:verificationReady(other,db,b),profile:{displayName:String(ov.legalName||other?.name||'').split(/\s+/).slice(0,2).join(' '),capacity:capacityLabel(bookingDealType(b,db),otherId===b.buyerUserId?'buyer':'provider',other),country:ov.country||other?.country||'',role:ov.role||other?.role||'',emailVerified:!!other?.emailVerifiedAt,contactUnlocked:false,phone:'',email:'',identityProvided:!!ov.files?.identity?.name,identityNumberMasked:maskValue(ov.identityNumber),birthDateMasked:ov.birthDate?String(ov.birthDate).slice(0,4):'',selfieProvided:!!ov.files?.selfie?.name,licenceProvided:!!ov.files?.license?.name,licenceLevel:licenceRequirement(db,other?.id,b).licence,identityPreview:docSafe(ov.files?.identity),selfiePreview:!!ov.files?.selfie?.name,licencePreview:docSafe(ov.files?.license),photoVersion:Date.parse(ov.submittedAt)||0,licenceNumberMasked:maskValue(ov.licenceNumber),licenceExpiry:'',licenceClasses:[]},docConsent:{mine:!!b.docConsent?.[u.id===b.buyerUserId?'buyer':'provider'],other:!!b.docConsent?.[u.id===b.buyerUserId?'provider':'buyer'],unlocked:docsUnlocked(b)},basicVerification:b.basicVerification||{}});
@@ -724,7 +757,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
     const u=auth(req);if(!u)return json(res,401,{error:'Login required.'});const bid=p.split('/')[3],db=readDB(),b=db.bookings.find(x=>x.id===bid);if(!b)return json(res,404,{error:'Booking not found.'});if(![b.buyerUserId,b.providerUserId].includes(u.id))return json(res,403,{error:'Not part of this deal.'});
     if(['cancelled','completed'].includes(b.status))return json(res,409,{error:'This deal is already closed.'});if(b.paymentStatus==='paid')return json(res,409,{error:'This deal is already paid and open. Contact support to dispute it.'});
     const body=await getBody(req).catch(()=>({}));const reasons=['better_offer','no_longer_needed','price_not_agreed','verification_problem','not_responding','other'];const reason=reasons.includes(body.reason)?body.reason:'other';const note=String(body.note||'').replace(/[\u0000-\u001f]/g,' ').trim().slice(0,400);if(note.length<5)return json(res,400,{error:'Please write the cancellation reason (at least 5 characters).'});
-    for(const role of ['buyer','provider']){const pay=b.feePayments&&b.feePayments[role];if(!pay)continue;if(pay.sessionId&&pay.status==='checkout_created'&&!pay.sessionExpired){try{await stripeRequest('checkout/sessions/'+encodeURIComponent(pay.sessionId)+'/expire',{},'expire-'+pay.sessionId);pay.sessionExpired=true}catch(e){pay.expiryError=e.message}}await stripeSyncFeePayment(b,role,db);if(pay.status==='paid')await refundFeePayment(b,role,'cancel',db)}
+    for(const role of ['buyer','provider']){const pay=b.feePayments&&b.feePayments[role];if(!pay)continue;await stripeSyncFeePayment(b,role,db);if(pay.sessionId&&pay.status==='checkout_created'&&!pay.sessionExpired){try{await stripeRequest('checkout/sessions/'+encodeURIComponent(pay.sessionId)+'/expire',{},'expire-'+pay.sessionId);pay.sessionExpired=true}catch(e){pay.expiryError=e.message}}await undoFeePayment(b,role,'cancel',db)}
     b.status='cancelled';b.paymentStatus=b.paymentStatus==='unpaid'?'unpaid':'cancelled';b.cancelledAt=new Date().toISOString();b.cancelledBy=u.id;b.cancelReason=reason;b.cancelNote=note;b.basicVerification=b.basicVerification||{};b.basicVerification.rejectedBy=u.id;const listing=db.listings.find(x=>x.id===b.listingId);if(listing&&listing.status==='booked')listing.status='open';const offer=db.offers.find(x=>x.id===b.offerId);if(offer)offer.status='cancelled_by_party';
     const other=u.id===b.buyerUserId?b.providerUserId:b.buyerUserId;addNotification(db,other,'deal_cancelled','Deal cancelled','The other party cancelled this deal. Reason: '+note,'offers',b.id,b.offerId);recomputeMatches(db);await writeDB(db);return json(res,200,{ok:true});
   }
@@ -754,5 +787,7 @@ const server=http.createServer(async(req,res)=>{setSecurityHeaders(res);
  }catch(e){console.error(e);const m=String(e&&e.message||'');return json(res,500,{error:(!m||m.length>160||/[\/\\]|ENOENT|ECONN|relation |syntax|SQL|postgres|stack/i.test(m))?'Server error':m});}
 });
 initDB()
-  .then(async()=>{const db=readDB();let changed=migrateAcceptedOffersToDeals(db);if(reconcileCompletedDeals(db))changed=true;if(changed)await writeDB(db);server.listen(PORT,()=>console.log(`TUT Move deal flow running on ${PORT}`));setInterval(async()=>{try{const d=readDB();let changed=false;for(const b of d.bookings||[]){const before=JSON.stringify(b.feePayments||{});const first=await refundExpiredDeal(b,d);if(JSON.stringify(b.feePayments||{})!==before)changed=true;if(first){changed=true;if(b.status==='payment_expired'&&!b.expiryNotifiedAt){b.expiryNotifiedAt=new Date().toISOString();for(const uid of [b.buyerUserId,b.providerUserId])addNotification(d,uid,'payment','Payment window expired','The 5-minute deadline expired. Any captured fee is being refunded.','offers')}}}if(changed)await writeDB(d)}catch(e){console.error('Payment expiry scan failed',e)}},20000)})
+  .then(async()=>{const db=readDB();let changed=migrateAcceptedOffersToDeals(db);if(reconcileCompletedDeals(db))changed=true;if(changed)await writeDB(db);server.listen(PORT,()=>console.log(`TUT Move deal flow running on ${PORT}`));setInterval(async()=>{try{const d=readDB();let changed=false;for(const b of d.bookings||[]){const before=JSON.stringify(b.feePayments||{})+b.status+b.paymentStatus;
+ if(b.feePayments&&b.status==='payment_pending'&&b.paymentStatus!=='paid'){for(const role of ['buyer','provider'])if(b.feePayments[role]?.status==='checkout_created')await stripeSyncFeePayment(b,role,d);await settleDeal(b,d)}
+ await refundExpiredDeal(b,d);if(JSON.stringify(b.feePayments||{})+b.status+b.paymentStatus!==before)changed=true}if(changed)await writeDB(d)}catch(e){console.error('Payment scan failed',e)}},20000)})
   .catch(err=>{console.error('Database initialization failed:',err);process.exit(1)});

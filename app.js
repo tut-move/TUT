@@ -836,7 +836,7 @@ function dealStageBlock(b){
    const proposed=terms.buyer,recipientDecision=terms.provider?.decision;
    const termsBlock=ready?`</section><section class="vSec"><div class="vHead"><span class="vNum">2</span><div><h4>Underlying deal payment</h4></div></div><p><b>Payer:</b> ${esc(b.buyerName||b.buyer?.name||b.partyLabels?.buyer||'Requester')} · <b>Recipient:</b> ${esc(b.providerName||b.provider?.name||b.partyLabels?.provider||'Service provider')}. TUT Move does not collect the service price.</p>${terms.confirmed?`<div class="dealFacts">${valueLine('Agreed payment method',terms.settlementMethod)}${valueLine('Agreed payment timing',terms.paymentTiming)}</div>`:isPayer?`<p>Only the payer chooses the payment method. The recipient must approve it.</p><div class="dealTermsForm"><label>Payment method<select id="settle_${b.id}"><option>Cash</option><option>Bank Transfer</option><option>Cash / Bank Transfer</option><option>Other agreed method</option></select></label><label>Payment timing<select id="timing_${b.id}"><option>Upon meeting</option><option>Upon handover</option><option>Before handover</option><option>After delivery / service</option><option>As agreed between the parties</option></select></label><button class="outlineBtn mini" onclick="saveDealTerms('${b.id}')">${proposed?'Update proposal':'Send for approval'}</button></div>${recipientDecision==='rejected'?'<p class="muted">Recipient requested different payment terms. Submit a new proposal.</p>':proposed?'<p class="muted">Waiting for recipient approval.</p>':''}`:proposed?`<div class="dealFacts">${valueLine('Proposed payment method',proposed.settlementMethod)}${valueLine('Proposed payment timing',proposed.paymentTiming)}</div>${recipientDecision==='rejected'?'<p class="muted">You requested a change. Waiting for a new proposal.</p>':`<div class="actions"><button class="goldBtn mini" onclick="reviewDealTerms('${b.id}','accept')">Accept payment terms</button><button class="outlineBtn mini" onclick="reviewDealTerms('${b.id}','reject')">Reject / request change</button></div>`}`:'<p class="muted">Waiting for payer to propose payment terms.</p>'}`:'';
    const role=me.id===b.buyerUserId?'buyer':'provider',minePay=b.feePayments?.[role],fee=role==='buyer'?(b.customerFee??b.customerFeeUSD):(b.providerFee??b.providerFeeUSD);
-   const feeBlock=terms.confirmed&&b.paymentStatus!=='paid'?(b.feePayments?`</section><section class="vSec"><div class="vHead"><span class="vNum">3</span><div><h4>TUT Move platform fee</h4></div></div><p>Your fixed fee: <b>USD ${money(fee)}</b>. The other party pays their own fee. Both payments must be confirmed within 5 minutes of the first checkout. If the window expires, collected fees are refunded. Platform fees are generally non-refundable once the deal is completed, except incorrect/duplicate charges or legally required refunds.</p><p>Deadline: ${b.paymentDeadline?esc(new Date(b.paymentDeadline).toLocaleString()):'Starts when the first party begins payment'}</p>${Number(fee)===0?'<p>✓ No platform fee is required from you.</p>':minePay?.status==='paid'?'<p>✓ Your fee paid; waiting for the other party.</p>':`<label><input type="checkbox" id="feeAgree_${b.id}"> I understand and accept the platform fee and refund terms.</label><button class="goldBtn mini" onclick="startCardCheckout('${b.id}')">Pay my USD fee</button>`}`:`<p>This older deal uses a previous fee structure. Contact support before paying.</p>`):'';
+   const feeBlock=terms.confirmed&&b.paymentStatus!=='paid'?(b.feePayments?`</section><section class="vSec"><div class="vHead"><span class="vNum">3</span><div><h4>TUT Move platform fee</h4></div></div><p>Your fixed fee: <b>${b.commissionCurrency==='EUR'?'EUR':'USD'} ${money(fee)}</b>. The other party pays the same fee. Your card is only <b>held</b>, not charged, until both sides confirm within 5 minutes. If the other side does not pay in time, your hold is released and you pay nothing. Platform fees are generally non-refundable once the deal is open, except incorrect or duplicate charges or legally required refunds.</p><p>Deadline: ${b.paymentDeadline?esc(new Date(b.paymentDeadline).toLocaleString()):'Starts when the first party begins payment'}</p>${Number(fee)===0?'<p>✓ No platform fee is required from you.</p>':['authorized','paid'].includes(minePay?.status)?'<p>✓ Your card hold is confirmed (not charged yet). Waiting for the other party; you are charged only if both sides complete within the deadline.</p>':`<label><input type="checkbox" id="feeAgree_${b.id}"> I understand and accept the platform fee and refund terms.</label><button class="goldBtn mini" onclick="startCardCheckout('${b.id}')">Pay my fee</button>`}`:`<p>This older deal uses a previous fee structure. Contact support before paying.</p>`):'';
    return `<section class="vSec"><div class="vHead"><span class="vNum">1</span><div><h4>Basic verification</h4><p class="muted">Review the other party's masked details, then choose Continue or Reject. Full document numbers are never shown.</p></div></div>
    <div class="vRows"><div class="vRow"><span>You</span>${vChip(myReady?'Complete':'Incomplete',myReady)}${myReady?'':`<button class="outlineBtn mini" onclick="go('verify')">Complete my verification</button>`}</div>${myReady||!myMissing.length?'':`<p class="vMissing">Still needed from you: ${esc(myMissing.join(', '))}</p>`}
    <div class="vRow"><span>Other party</span>${vChip(otherReady?'Complete':otherSub?'Incomplete':'Waiting',otherReady)}${otherSub?`<button class="outlineBtn mini" onclick="loadBasicProfile('${b.id}')">View what they sent</button>`:''}</div>${otherReady||!otherSub||!otherMissing.length?'':`<p class="vMissing">Still needed from them: ${esc(otherMissing.join(', '))}</p>`}${otherSub?'':'<p class="muted">They have not sent anything yet.</p>'}</div>
@@ -1075,6 +1075,13 @@ function dmPanel(kind){
   if(!p){p=document.createElement('div');p.id='dm_'+kind;p.className='docMaskPanel';document.getElementById('verifyMaskEditor').appendChild(p)}
   return p;
 }
+
+// Phones can discard canvas memory when the tab sleeps or the page scrolls; redraw the photo from the original file so it never goes black.
+async function dmRestore(kind){const st=docMask[kind];if(!st||!st.file||st.restoring)return;st.restoring=true;try{const bmp=await createImageBitmap(st.file);const b=st.base,x=b.getContext('2d');x.clearRect(0,0,b.width,b.height);x.drawImage(bmp,0,0,b.width,b.height);bmp.close?.();dmRender(kind)}catch(e){}st.restoring=false}
+function dmRestoreAll(){for(const k of Object.keys(docMask))if(docMask[k])dmRestore(k)}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)dmRestoreAll()});
+window.addEventListener('pageshow',dmRestoreAll);
+setInterval(()=>{for(const k of Object.keys(docMask)){const st=docMask[k];if(!st||!st.canvas||!st.canvas.isConnected)continue;try{const c=st.canvas,x=c.getContext('2d'),d=x.getImageData(Math.floor(c.width/2),Math.floor(c.height/2),1,1).data;if(d[3]===0||(d[0]+d[1]+d[2]===0&&!st.boxes.some(b=>b.x<=c.width/2&&b.x+b.w>=c.width/2&&b.y<=c.height/2&&b.y+b.h>=c.height/2)))dmRestore(k)}catch(e){}}},2500);
 function dmStatus(kind,text,warn){const el=document.getElementById('dmStatus_'+kind);if(el){el.textContent=text;el.className=warn?'dmWarn':'muted'}}
 function dmRender(kind,preview){
   const st=docMask[kind];if(!st)return;const cv=st.canvas,ctx=cv.getContext('2d');
@@ -1105,22 +1112,47 @@ async function dmReadAnyOrientation(base){
     out.push({text:w.text,confidence:w.confidence,deg:best.deg,x:Math.min(p[0],q[0]),y:Math.min(p[1],q[1]),w:Math.abs(p[0]-q[0]),h:Math.abs(p[1]-q[1]),len:String(w.text||'').trim().length})}
   return {words:out,deg:best.deg}
 }
+// Finds barcode-like areas (dense parallel bars) on a canvas. Returns boxes in that canvas' coordinates.
+function dmFindBarcodes(cv){const W=cv.width,H=cv.height,k=Math.min(1,900/Math.max(W,H)),w=Math.max(8,Math.round(W*k)),h=Math.max(8,Math.round(H*k)),t=document.createElement('canvas');t.width=w;t.height=h;const x=t.getContext('2d');x.drawImage(cv,0,0,w,h);let d;try{d=x.getImageData(0,0,w,h).data}catch(e){return[]}
+ const g=new Float32Array(w*h);for(let i=0;i<w*h;i++)g[i]=d[i*4]*.3+d[i*4+1]*.59+d[i*4+2]*.11;
+ const C=Math.max(8,Math.round(Math.min(w,h)/45)),cw=Math.ceil(w/C),ch=Math.ceil(h/C),hit=new Uint8Array(cw*ch);
+ for(const dir of ['v','h']){hit.fill(0);for(let cy=0;cy<ch;cy++)for(let cx=0;cx<cw;cx++){let a=0,b=0,flips=0,last=0;const y0=cy*C,x0=cx*C,y1=Math.min(h-1,y0+C),x1=Math.min(w-1,x0+C);
+   for(let yy=y0;yy<y1;yy++)for(let xx=x0;xx<x1;xx++){const dx=Math.abs(g[yy*w+xx+1]-g[yy*w+xx]),dy=Math.abs(g[(yy+1)*w+xx]-g[yy*w+xx]);a+=dx;b+=dy}
+   // vertical bars: strong horizontal gradient, weak vertical gradient (and the reverse for rotated codes)
+   const strong=dir==='v'?a:b,weak=dir==='v'?b:a;if(strong>C*C*9&&strong>weak*3.2)hit[cy*cw+cx]=1}
+  const seen=new Uint8Array(cw*ch),out=[];for(let i=0;i<cw*ch;i++){if(!hit[i]||seen[i])continue;const q=[i];seen[i]=1;let n=0,mnx=1e9,mny=1e9,mxx=-1,mxy=-1;while(q.length){const j=q.pop(),cx=j%cw,cy=(j/cw)|0;n++;mnx=Math.min(mnx,cx);mxx=Math.max(mxx,cx);mny=Math.min(mny,cy);mxy=Math.max(mxy,cy);for(const[nx,ny]of[[cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1]]){if(nx<0||ny<0||nx>=cw||ny>=ch)continue;const m=ny*cw+nx;if(hit[m]&&!seen[m]){seen[m]=1;q.push(m)}}}
+   const bw=(mxx-mnx+1),bh=(mxy-mny+1);if(n>=6&&(dir==='v'?bw>=bh*1.6:bh>=bw*1.6)||n>=10&&n>=bw*bh*0.6&&Math.min(bw,bh)>=3&&Math.max(bw,bh)>=5&&bw*bh<=cw*ch*0.25)out.push({x:mnx*C/k,y:mny*C/k,w:bw*C/k,h:bh*C/k})}
+  if(out.length)return out}
+ return[]}
+function dmIsName(t,names){const n=String(t||'').toLowerCase().replace(/[^a-z؀-ۿ]/g,'');return n.length>=3&&names.some(x=>x===n)}
+const DM_ADDR=/(stra(ß|ss)e|str\.|platz|weg\b|allee|anschrift|adresse|address|street|road|avenue|\bst\.|عنوان|شارع)/i;
+function dmWordSensitive(t){const s=String(t||'').trim();if(!s)return false;const d=(s.match(DM_DIG)||[]).length,l=(s.match(/[A-Za-z]/g)||[]).length;
+ return d>=1&&(d>=2||l>=1||s.length>=3)||/[<]{2,}/.test(s)||/^[A-Z0-9<]{9,}$/.test(s)||(l>=3&&/^[A-Z0-9]{6,}$/.test(s)&&/[0-9]/.test(s))}
+function dmMergeWords(a,b){const out=a.slice();for(const w of b){if(!out.some(o=>{const ix=Math.max(0,Math.min(o.x+o.w,w.x+w.w)-Math.max(o.x,w.x)),iy=Math.max(0,Math.min(o.y+o.h,w.y+w.h)-Math.max(o.y,w.y));return ix*iy>0.5*Math.min(o.w*o.h,w.w*w.h)}))out.push(w)}return out}
+function dmEnhanced(src){const c=document.createElement('canvas');c.width=src.width;c.height=src.height;const x=c.getContext('2d');x.filter='grayscale(1) contrast(1.9) brightness(1.05)';x.drawImage(src,0,0);return c}
 async function dmAuto(kind){
   const st=docMask[kind];if(!st)return;
   dmStatus(kind,'Reading the document in your browser to find numbers (first time can take a little while)...');
   try{
     const r=await dmReadAnyOrientation(st.base);
     if(docMask[kind]!==st)return;
-    let n=0;
-    for(const w of r.words){
-      const t=String(w.text||'').trim();if(!t||(w.confidence||0)<20||!dmSensitive(t))continue;
-      let {x,y,w:bw,h:bh}=w;
-      const horizontal=r.deg===0||r.deg===180;
-      // keep the last 3 characters visible on long numbers, cover the rest (along the text direction)
-      if(w.len>=8){const keep=(w.len-3)/w.len;if(horizontal){if(r.deg===0)bw*=keep;else{x+=bw*(1-keep);bw*=keep}}else{if(r.deg===90){y+=bh*(1-keep);bh*=keep}else bh*=keep}}
-      const pad=Math.max(4,Math.round(Math.min(bw,bh)*0.2));
-      st.boxes.push({x:x-pad,y:y-pad,w:bw+2*pad,h:bh+2*pad,manual:false});n++;
+    let words=r.words,deg=r.deg;
+    // second pass on a high-contrast copy catches faint print and holograms
+    try{const worker=await dmGetWorker(),rot=dmRotated(dmEnhanced(st.base),deg),big=dmScaled(rot,2000),up=big.k<1?big:{c:rot,k:1},{data}=await worker.recognize(up.c),W=st.base.width,H=st.base.height,extra=[];
+      for(const w of data.words||[]){const k=up.k,p=dmUnrotatePoint(deg,w.bbox.x0/k,w.bbox.y0/k,W,H),q=dmUnrotatePoint(deg,w.bbox.x1/k,w.bbox.y1/k,W,H);extra.push({text:w.text,confidence:w.confidence,deg,x:Math.min(p[0],q[0]),y:Math.min(p[1],q[1]),w:Math.abs(p[0]-q[0]),h:Math.abs(p[1]-q[1]),len:String(w.text||'').trim().length})}
+      words=dmMergeWords(words,extra)}catch(e){}
+    const names=String($('verifyLegalName')?.value||'').toLowerCase().split(/\s+/).map(x=>x.replace(/[^a-z؀-ۿ]/g,'')).filter(x=>x.length>=3);
+    // lines that carry an address keyword are covered entirely
+    const addrLines=words.filter(w=>DM_ADDR.test(String(w.text||''))&&!dmIsName(w.text,names));
+    let n=0;const push=(x,y,bw,bh)=>{const pad=Math.max(4,Math.round(Math.min(bw,bh)*0.2));st.boxes.push({x:x-pad,y:y-pad,w:bw+2*pad,h:bh+2*pad,manual:false});n++};
+    for(const w of words){
+      const t=String(w.text||'').trim();if(!t||(w.confidence||0)<15||dmIsName(t,names))continue;
+      const onAddr=addrLines.some(a=>{const horiz=deg===0||deg===180;return horiz?Math.abs((a.y+a.h/2)-(w.y+w.h/2))<Math.max(a.h,w.h)*0.8:Math.abs((a.x+a.w/2)-(w.x+w.w/2))<Math.max(a.w,w.w)*0.8});
+      if(!(dmWordSensitive(t)||onAddr))continue;
+      push(w.x,w.y,w.w,w.h);
     }
+    // barcodes and similar striped codes (measured upright, then mapped back)
+    try{const up=dmRotated(st.base,deg);for(const bc of dmFindBarcodes(up)){const p=dmUnrotatePoint(deg,bc.x,bc.y,st.base.width,st.base.height),q=dmUnrotatePoint(deg,bc.x+bc.w,bc.y+bc.h,st.base.width,st.base.height);push(Math.min(p[0],q[0]),Math.min(p[1],q[1]),Math.abs(p[0]-q[0]),Math.abs(p[1]-q[1]))}}catch(e){}
     dmRender(kind);
     if(n>0)dmStatus(kind,`Automatically covered ${n} item(s). Check the image carefully and drag to cover anything that was missed.`);
     else dmStatus(kind,'WARNING: no numbers were detected automatically. Try a sharper, well-lit photo. Cover every number, date and code yourself before sending.',true);
